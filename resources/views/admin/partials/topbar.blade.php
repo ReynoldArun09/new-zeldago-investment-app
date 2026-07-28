@@ -25,9 +25,9 @@
     <div class="flex items-center gap-1 ml-auto">
 
         {{-- Globe --}}
-        <button class="w-9 h-9 flex items-center justify-center text-white/40 hover:text-white/80 rounded-lg transition-colors">
+        <a href="{{ url('/') }}" target="_blank" class="w-9 h-9 flex items-center justify-center text-white/40 hover:text-white/80 rounded-lg transition-colors">
             @include('admin.partials.icon', ['name' => 'globe', 'size' => 18])
-        </button>
+        </a>
 
         {{-- Notifications --}}
         <div class="relative" id="notif-wrapper">
@@ -79,9 +79,9 @@
         </div>
 
         {{-- Settings --}}
-        <button class="w-9 h-9 flex items-center justify-center text-white/40 hover:text-white/80 rounded-lg transition-colors">
+        <a href="{{ route('admin.settings.admin') }}" class="w-9 h-9 flex items-center justify-center text-white/40 hover:text-white/80 rounded-lg transition-colors">
             @include('admin.partials.icon', ['name' => 'wrench', 'size' => 18])
-        </button>
+        </a>
 
         {{-- User dropdown --}}
         <div class="relative" id="user-wrapper">
