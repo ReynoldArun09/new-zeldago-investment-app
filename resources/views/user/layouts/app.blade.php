@@ -90,15 +90,18 @@
 <body class="antialiased flex h-screen overflow-hidden">
 
     <!-- Sidebar -->
-    <aside class="w-64 flex-shrink-0 bg-sidebar border-r border-indigo-100/10 flex flex-col transition-all duration-300">
+    <aside id="user-sidebar" class="fixed top-0 left-0 h-full w-64 z-30 flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0 lg:static lg:z-auto bg-sidebar border-r border-indigo-100/10">
         <!-- Logo -->
-        <div class="h-16 flex items-center px-6 border-b border-indigo-100/10">
+        <div class="h-16 flex items-center justify-between px-6 border-b border-indigo-100/10 shrink-0">
             <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-200/50">
                     {{ substr($appName, 0, 1) }}
                 </div>
                 <span class="font-bold text-lg tracking-tight" style="color: var(--sidebar-text);">{{ $appName }}</span>
             </div>
+            <button onclick="closeSidebar()" class="lg:hidden text-slate-400 hover:text-slate-600 transition-colors p-1">
+                <i class="ph ph-x text-xl"></i>
+            </button>
         </div>
 
         <!-- Navigation -->
@@ -244,13 +247,19 @@
         </div>
     </aside>
 
+    <!-- Mobile overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-20 hidden lg:hidden" onclick="closeSidebar()"></div>
+
     <!-- Main Content -->
     <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
         <!-- Top Navbar -->
-        <header class="h-16 flex items-center justify-between px-8 bg-transparent z-10 sticky top-0 backdrop-blur-sm border-b border-indigo-100/30">
-            <!-- Search -->
-            <div class="flex-1 max-w-md">
-                <div class="relative" x-data>
+        <header class="h-16 flex items-center justify-between px-4 sm:px-8 bg-transparent z-10 sticky top-0 backdrop-blur-sm border-b border-indigo-100/30">
+            <!-- Left: Hamburger & Search -->
+            <div class="flex flex-1 items-center max-w-md">
+                <button onclick="openSidebar()" class="lg:hidden text-slate-500 hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-50 mr-2 shrink-0">
+                    <i class="ph ph-list text-2xl"></i>
+                </button>
+                <div class="relative w-full" x-data>
                     <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
                     <input type="text" readonly @click="$dispatch('open-palette')" placeholder="Search menu... (Ctrl+K)" class="w-full bg-white/50 border border-indigo-100/50 rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:bg-white transition-all cursor-pointer">
                     <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -398,6 +407,21 @@
 
     @stack('scripts')
     <script>
+        const sidebar = document.getElementById('user-sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        window.openSidebar = function () {
+            sidebar.classList.remove('-translate-x-full');
+            sidebar.classList.add('translate-x-0');
+            overlay.classList.remove('hidden');
+        };
+
+        window.closeSidebar = function () {
+            sidebar.classList.add('-translate-x-full');
+            sidebar.classList.remove('translate-x-0');
+            overlay.classList.add('hidden');
+        };
+
         document.addEventListener('alpine:init', () => {
             Alpine.data('commandPalette', () => ({
                 open: false,
