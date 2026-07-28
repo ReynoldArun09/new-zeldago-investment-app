@@ -70,6 +70,15 @@ function admin_sidebar_menu(): array
         ],
 
         [
+            'label'    => 'Withdrawal Management',
+            'icon'     => 'money',
+            'children' => [
+                ['label' => 'All Withdrawals',      'href' => '/admin/withdrawals',                  'icon' => 'list'],
+                ['label' => 'Pending Requests',     'href' => '/admin/withdrawals/pending',          'icon' => 'clock'],
+            ],
+        ],
+
+        [
             'label'    => 'KYC Management',
             'icon'     => 'shield-check',
             'children' => [

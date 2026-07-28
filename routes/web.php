@@ -165,6 +165,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/commissions', [\App\Http\Controllers\Admin\ReportController::class, 'commissionsReport'])->name('commissions');
             Route::get('/withdrawals', [\App\Http\Controllers\Admin\ReportController::class, 'withdrawalsReport'])->name('withdrawals');
         });
+
+        // Withdrawal Management
+        Route::prefix('withdrawals')->name('withdrawals.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\WithdrawalController::class, 'index'])->name('index');
+            Route::get('/pending', [\App\Http\Controllers\Admin\WithdrawalController::class, 'pending'])->name('pending');
+            Route::post('/{id}/approve', [\App\Http\Controllers\Admin\WithdrawalController::class, 'approve'])->name('approve');
+            Route::post('/{id}/reject', [\App\Http\Controllers\Admin\WithdrawalController::class, 'reject'])->name('reject');
+        });
         
         Route::get('/commission-log', [\App\Http\Controllers\Admin\CommissionLogController::class, 'index'])->name('commission-log');
 

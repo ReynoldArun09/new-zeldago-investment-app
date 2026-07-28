@@ -99,6 +99,7 @@
                         <th class="px-6 py-4">Amount</th>
                         <th class="px-6 py-4">Method</th>
                         <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4 text-right">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -126,6 +127,51 @@
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-red-50 text-red-700 border border-red-200" title="{{ $withdrawal->admin_message }}">
                                         <i class="ph ph-x-circle text-red-500"></i> Rejected
                                     </span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 text-right" x-data="{ openDetails: false }">
+                                @if($withdrawal->status === 'approved')
+                                    <button @click="openDetails = true" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 underline">Details</button>
+                                    
+                                    <!-- Details Modal -->
+                                    <div x-show="openDetails" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
+                                        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                                            <div x-show="openDetails" @click="openDetails = false" class="fixed inset-0 transition-opacity" aria-hidden="true">
+                                                <div class="absolute inset-0 bg-gray-900/75 backdrop-blur-sm"></div>
+                                            </div>
+                                            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                                            <div x-show="openDetails" class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full">
+                                                <div class="bg-white px-6 pt-5 pb-4">
+                                                    <h3 class="text-lg font-bold text-gray-800 mb-4 text-left">
+                                                        Withdrawal Approved
+                                                    </h3>
+                                                    <hr class="border-gray-100 mb-4 -mx-6">
+                                                    
+                                                    <div class="space-y-4 text-left">
+                                                        <div>
+                                                            <p class="text-sm text-gray-500 mb-1">Transaction ID / Hash</p>
+                                                            <p class="font-mono text-gray-800 bg-gray-50 p-2 rounded-lg border border-gray-200 break-all">{{ $withdrawal->trx_id }}</p>
+                                                        </div>
+                                                        @if($withdrawal->proof_image)
+                                                        <div>
+                                                            <p class="text-sm text-gray-500 mb-2">Proof of Payment</p>
+                                                            <img src="{{ asset($withdrawal->proof_image) }}" alt="Proof" class="w-full rounded-lg border border-gray-200 shadow-sm max-h-64 object-contain">
+                                                        </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                                <div class="bg-white px-6 py-4 border-t border-gray-100 flex justify-end">
+                                                    <button type="button" @click="openDetails = false" class="rounded-lg px-4 py-2 bg-indigo-600 text-sm font-medium text-white hover:bg-indigo-700">
+                                                        Close
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @elseif($withdrawal->status === 'rejected')
+                                    <button @click="alert('{{ addslashes($withdrawal->admin_message) }}')" class="text-xs font-medium text-red-600 hover:text-red-800 underline">Reason</button>
+                                @else
+                                    <span class="text-xs text-gray-400">-</span>
                                 @endif
                             </td>
                         </tr>

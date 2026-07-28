@@ -383,7 +383,7 @@
                     </svg>
                     <h2 class="text-sm font-semibold text-gray-700">Pending Withdrawals</h2>
                 </div>
-                <a href="#" class="text-xs text-indigo-600 hover:underline">View All</a>
+                <a href="{{ route('admin.withdrawals.pending') }}" class="text-xs text-indigo-600 hover:underline">View All</a>
             </div>
             <div class="overflow-x-auto flex-1">
                 <table class="w-full text-sm">
@@ -405,7 +405,7 @@
                                 {{ format_currency($withdrawal->amount) }}
                             </td>
                             <td class="px-5 py-3 text-right">
-                                <a href="#" class="px-3 py-1 bg-[var(--theme-primary)] text-white text-xs font-medium rounded hover:opacity-90 transition-opacity">
+                                <a href="{{ route('admin.withdrawals.pending') }}" class="px-3 py-1 bg-[var(--theme-primary)] text-white text-xs font-medium rounded hover:opacity-90 transition-opacity">
                                     View
                                 </a>
                             </td>
