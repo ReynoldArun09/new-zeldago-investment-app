@@ -10,7 +10,7 @@
     </div>
 </div>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
     <!-- Sponsor Card -->
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col items-center text-center">
         <div class="w-16 h-16 bg-indigo-50 text-primary rounded-full flex items-center justify-center mb-4 border border-indigo-100">
@@ -32,27 +32,6 @@
                 <p class="text-sm text-gray-500">You joined directly.</p>
             </div>
         @endif
-    </div>
-
-    <!-- Referral Stats -->
-    <div class="lg:col-span-2 bg-gradient-to-br from-indigo-900 to-indigo-950 rounded-2xl shadow-sm border border-indigo-800 p-6 sm:p-8 text-white relative overflow-hidden flex flex-col justify-center">
-        <!-- Background Pattern -->
-        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 24px 24px;"></div>
-        
-        <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-            <div>
-                <h3 class="text-indigo-200 font-medium mb-1">Total Direct Referrals</h3>
-                <div class="text-4xl font-black">{{ $user->directReferrals->count() }}</div>
-                <p class="text-sm text-indigo-300 mt-2">Share your referral link to grow your network.</p>
-            </div>
-            
-            <div class="bg-indigo-950/50 backdrop-blur-sm p-4 rounded-xl border border-indigo-700/50">
-                <p class="text-xs text-indigo-300 mb-1 font-medium uppercase tracking-wider">Your Referral Link</p>
-                <div class="flex items-center gap-2">
-                    <code class="text-sm text-indigo-100 select-all">{{ url('/register?ref=' . $user->referral_code) }}</code>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 

@@ -129,11 +129,11 @@
                     </div>
                 </div>
             </div>
-            <!-- Network Submenu -->
+            <!-- My team Submenu -->
             <div x-data="{ open: {{ request()->routeIs('user.network.*') ? 'true' : 'false' }} }">
                 <button @click="open = !open" class="sidebar-link w-full flex justify-between items-center outline-none {{ request()->routeIs('user.network.*') ? 'active' : '' }}">
                     <div class="flex items-center gap-3">
-                        <i class="ph ph-share-network"></i> Network
+                        <i class="ph ph-users"></i> My team
                     </div>
                     <i class="ph ph-caret-down text-xs transition-transform duration-200" :class="{'rotate-180': open}"></i>
                 </button>
