@@ -1,0 +1,127 @@
+<?php
+
+use App\Models\Setting;
+
+/*
+|--------------------------------------------------------------------------
+| Admin Sidebar Menu Helpers
+|--------------------------------------------------------------------------
+*/
+
+function get_setting(string $key, $default = null)
+{
+    try {
+        $setting = Setting::where('key', $key)->first();
+        return $setting ? $setting->value : $default;
+    } catch (\Exception $e) {
+        return $default;
+    }
+}
+
+function format_currency($amount)
+{
+    $symbol = get_setting('currency_symbol', 'Rs');
+    $code = get_setting('currency_code', 'INR');
+    
+    return $symbol . number_format((float)$amount, 2) . ' ' . $code;
+}
+
+function default_currency()
+{
+    return get_setting('currency_code', 'INR');
+}
+
+function admin_sidebar_menu(): array
+{
+    return [
+        [
+            'label' => 'Dashboard',
+            'icon'  => 'home',
+            'href'  => '/admin/dashboard',
+        ],
+
+        [
+            'label'    => 'Investments',
+            'icon'     => 'chart-line-up',
+            'children' => [
+                ['label' => 'All Investments',       'href' => '/admin/investments',               'icon' => 'list'],
+                ['label' => 'Active Investments',    'href' => '/admin/investments/active',        'icon' => 'check-circle'],
+                ['label' => 'Completed Investments', 'href' => '/admin/investments/completed',     'icon' => 'check-square-offset'],
+                ['label' => 'Closed Investments',    'href' => '/admin/investments/closed',        'icon' => 'x-circle'],
+                ['label' => 'Close Requests',        'href' => '/admin/investments/close-requests','icon' => 'clock'],
+            ],
+        ],
+
+        [
+            'label'    => 'User Management',
+            'icon'     => 'users',
+            'children' => [
+                ['label' => 'All Users',           'href' => '/admin/users',              'icon' => 'users'],
+            ],
+        ],
+
+        [
+            'label'    => 'ROI Management',
+            'icon'     => 'percent',
+            'children' => [
+                ['label' => 'All ROI',             'href' => '/admin/roi',                           'icon' => 'list'],
+                ['label' => 'Pending Requests',    'href' => '/admin/roi/pending',                   'icon' => 'clock'],
+            ],
+        ],
+
+        [
+            'label'    => 'KYC Management',
+            'icon'     => 'shield-check',
+            'children' => [
+                ['label' => 'All KYC',             'href' => '/admin/verification/kyc',              'icon' => 'list'],
+                ['label' => 'Pending KYC',         'href' => '/admin/verification/kyc/pending',      'icon' => 'clock'],
+                ['label' => 'Approved KYC',        'href' => '/admin/verification/kyc/approved',     'icon' => 'check-circle'],
+                ['label' => 'Rejected KYC',        'href' => '/admin/verification/kyc/rejected',     'icon' => 'x-circle'],
+            ],
+        ],
+
+        [
+            'label'    => 'Nominee Management',
+            'icon'     => 'shield-check',
+            'children' => [
+                ['label' => 'All Nominee',         'href' => '/admin/verification/nominee',          'icon' => 'list'],
+                ['label' => 'Pending Nominee',     'href' => '/admin/verification/nominee/pending',  'icon' => 'clock'],
+                ['label' => 'Approved Nominee',    'href' => '/admin/verification/nominee/approved', 'icon' => 'check-circle'],
+                ['label' => 'Rejected Nominee',    'href' => '/admin/verification/nominee/rejected', 'icon' => 'x-circle'],
+            ],
+        ],
+
+        [
+            'label'    => 'Reports',
+            'icon'     => 'chart-pie-slice',
+            'children' => [
+                ['label' => 'Investment Report',   'href' => '/admin/reports/investment',            'icon' => 'trend-up'],
+                ['label' => 'ROI Report',          'href' => '/admin/reports/roi',                   'icon' => 'percent'],
+                ['label' => 'Commissions Report',  'href' => '/admin/reports/commissions',           'icon' => 'coins'],
+                ['label' => 'Withdrawals Report',  'href' => '/admin/reports/withdrawals',           'icon' => 'bank'],
+            ],
+        ],
+
+        [
+            'label'    => 'Support Tickets',
+            'icon'     => 'headset',
+            'children' => [
+                ['label' => 'All Tickets',         'href' => '/admin/support',                       'icon' => 'list'],
+            ],
+        ],
+
+        [
+            'label'    => 'Commission Log',
+            'icon'     => 'list-dashes',
+            'href'     => '/admin/commission-log',
+        ],
+
+        [
+            'label'    => 'System Settings',
+            'icon'     => 'settings',
+            'children' => [
+                ['label' => 'Admin Settings',      'href' => '/admin/settings/admin',      'icon' => 'shield-check'],
+            ],
+        ],
+    ];
+}
