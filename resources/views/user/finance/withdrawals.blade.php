@@ -16,7 +16,7 @@
         </div>
         <div>
             <p class="text-indigo-200 text-sm font-medium">Available Balance</p>
-            <p class="text-2xl font-black">${{ number_format(auth()->user()->balance, 2) }}</p>
+            <p class="text-2xl font-black">${{ number_format(auth()->user()->wallet_balance, 2) }}</p>
         </div>
     </div>
 </div>
@@ -58,7 +58,7 @@
             
             <div>
                 <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Amount ($)</label>
-                <input type="number" name="amount" id="amount" min="10" max="{{ auth()->user()->balance }}" step="0.01" required
+                <input type="number" name="amount" id="amount" min="10" max="{{ auth()->user()->wallet_balance }}" step="0.01" required
                     class="block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50" placeholder="0.00">
                 <p class="text-xs text-gray-500 mt-1">Minimum withdrawal is $10.00.</p>
             </div>

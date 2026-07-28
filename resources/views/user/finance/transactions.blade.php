@@ -16,7 +16,7 @@
         </div>
         <div>
             <p class="text-indigo-200 text-sm font-medium">Available Balance</p>
-            <p class="text-2xl font-black">${{ number_format(auth()->user()->balance, 2) }}</p>
+            <p class="text-2xl font-black">${{ number_format(auth()->user()->wallet_balance, 2) }}</p>
         </div>
     </div>
 </div>

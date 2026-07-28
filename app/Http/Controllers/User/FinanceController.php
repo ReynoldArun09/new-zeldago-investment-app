@@ -33,13 +33,13 @@ class FinanceController extends Controller
         $user = Auth::user();
         
         $request->validate([
-            'amount' => 'required|numeric|min:10|max:' . $user->balance,
+            'amount' => 'required|numeric|min:10|max:' . $user->wallet_balance,
             'payout_method' => 'required|string|max:50',
             'payout_details' => 'required|string',
         ]);
 
         // Deduct balance
-        $user->balance -= $request->amount;
+        $user->wallet_balance -= $request->amount;
         $user->save();
 
         // Create withdrawal request
