@@ -26,7 +26,7 @@ class DashboardController extends Controller
 
         // Total ROI Received
         $total_roi = \App\Models\RoiLog::where('user_id', $user->id)
-            ->where('status', 'approved')
+            ->where('status', 'credited')
             ->sum('amount');
             
         // Calculate total commissions (Level Bonuses)

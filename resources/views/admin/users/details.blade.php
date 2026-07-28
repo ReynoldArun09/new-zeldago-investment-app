@@ -10,7 +10,7 @@
         <h1 class="text-base font-semibold text-gray-700">
             User Detail &ndash; {{ $user->username }}
         </h1>
-        <form method="POST" action="{{ route('admin.users.impersonate', $user->username ?? $user->id) }}">
+        <form method="POST" target="_blank" action="{{ route('admin.users.impersonate', $user->username ?? $user->id) }}">
             @csrf
             <button type="submit"
                 class="flex items-center gap-1.5 text-sm border rounded-none px-3 py-1.5 hover:opacity-80 transition-opacity"

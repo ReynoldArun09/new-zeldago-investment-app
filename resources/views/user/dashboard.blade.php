@@ -57,7 +57,7 @@
         <!-- Card 3 -->
         <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden" style="background-color: #00a65a;">
             <div class="p-4 flex flex-col justify-center">
-                <p class="text-xs mb-1 font-medium opacity-90">Level Bonuses</p>
+                <p class="text-xs mb-1 font-medium opacity-90">Total Commission</p>
                 <p class="text-xl font-bold tracking-wide">{{ format_currency($total_commissions) }}</p>
             </div>
             <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0,0,0,0.1);">
@@ -120,7 +120,7 @@
                                     </td>
                                     <td class="px-5 py-4 text-center">
                                         <span class="px-2 py-1 rounded text-xs font-medium 
-                                            @if($roi->status == 'approved') bg-green-100 text-green-700
+                                            @if($roi->status == 'credited' || $roi->status == 'approved') bg-green-100 text-green-700
                                             @elseif($roi->status == 'pending') bg-yellow-100 text-yellow-700
                                             @else bg-red-100 text-red-700
                                             @endif">
