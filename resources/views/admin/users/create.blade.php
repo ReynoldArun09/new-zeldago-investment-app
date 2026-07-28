@@ -58,9 +58,9 @@
                         class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm text-gray-700 outline-none focus:border-[var(--theme-primary)] transition-colors">
                 </div>
 
-                {{-- MLM Information --}}
+                {{-- Information --}}
                 <div class="sm:col-span-2 mt-4">
-                    <h2 class="text-sm font-semibold text-gray-800 border-b pb-2 mb-4">MLM Information</h2>
+                    <h2 class="text-sm font-semibold text-gray-800 border-b pb-2 mb-4">Information</h2>
                 </div>
 
                 <div>
@@ -77,6 +77,7 @@
                     <input type="text" name="sponsor" id="sponsor" value="{{ old('sponsor') }}"
                         class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm text-gray-700 outline-none focus:border-[var(--theme-primary)] transition-colors"
                         placeholder="Enter Sponsor Username or Code">
+                    <p id="sponsor_name_display" class="text-sm mt-1"></p>
                 </div>
             </div>
 
@@ -108,6 +109,44 @@
 
         accountTypeSelect.addEventListener('change', toggleSponsorField);
         toggleSponsorField(); // Initial check
+
+        // Sponsor Lookup
+        const sponsorDisplay = document.getElementById('sponsor_name_display');
+        let timeoutId;
+
+        function searchSponsor() {
+            clearTimeout(timeoutId);
+            const val = sponsorInput.value.trim();
+            if(val.length === 0) {
+                sponsorDisplay.textContent = '';
+                return;
+            }
+            sponsorDisplay.textContent = 'Searching...';
+            sponsorDisplay.className = 'text-sm mt-1 text-gray-500 font-medium';
+            
+            timeoutId = setTimeout(() => {
+                fetch(`{{ route('admin.api.users.search') }}?search=${encodeURIComponent(val)}`)
+                .then(res => res.json())
+                .then(res => {
+                    if(res.success && res.data.length > 0) {
+                        const user = res.data.find(u => u.username === val || u.referral_code === val) || res.data[0];
+                        sponsorDisplay.textContent = 'Found: ' + user.name + ' (@' + user.username + ')';
+                        sponsorDisplay.className = 'text-sm mt-1 text-green-600 font-medium';
+                    } else {
+                        sponsorDisplay.textContent = 'User not found';
+                        sponsorDisplay.className = 'text-sm mt-1 text-red-500 font-medium';
+                    }
+                }).catch(() => {
+                    sponsorDisplay.textContent = 'Error fetching user';
+                    sponsorDisplay.className = 'text-sm mt-1 text-red-500 font-medium';
+                });
+            }, 500);
+        }
+
+        sponsorInput.addEventListener('input', searchSponsor);
+        if(sponsorInput.value.trim() !== '') {
+            searchSponsor();
+        }
     });
 </script>
 @endsection
