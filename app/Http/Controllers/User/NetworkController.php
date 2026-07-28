@@ -27,4 +27,31 @@ class NetworkController extends Controller
 
         return view('user.network.genealogy', compact('user'));
     }
+
+    public function addInvestor(Request $request)
+    {
+        if (Auth::user()->account_type !== 'Agent') {
+            return back()->with('error', 'Unauthorized action.');
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
+        ]);
+
+        $sponsor = Auth::user();
+
+        $user = new \App\Models\User();
+        $user->name = $request->name;
+        $user->username = $request->username;
+        $user->email = $request->email;
+        $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
+        $user->account_type = 'Normal User';
+        $user->sponsor_id = $sponsor->id;
+        $user->save();
+
+        return back()->with('success', 'Investor added successfully.');
+    }
 }

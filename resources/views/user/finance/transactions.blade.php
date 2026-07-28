@@ -1,12 +1,12 @@
 @extends('user.layouts.app')
 
-@section('title', 'Transactions')
+@section('title', $pageTitle ?? 'Transactions')
 
 @section('content')
 <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
     <div>
-        <h1 class="text-2xl font-bold text-gray-900">Transactions</h1>
-        <p class="text-gray-600 mt-1">A detailed ledger of your commissions, investments, and withdrawals.</p>
+        <h1 class="text-2xl font-bold text-gray-900">{{ $pageTitle ?? 'Transactions' }}</h1>
+        <p class="text-gray-600 mt-1">{{ $pageSubtitle ?? 'A detailed ledger of your transactions.' }}</p>
     </div>
     
     <!-- Balance Card -->
@@ -16,7 +16,7 @@
         </div>
         <div>
             <p class="text-indigo-200 text-sm font-medium">Available Balance</p>
-            <p class="text-2xl font-black">${{ number_format(auth()->user()->wallet_balance, 2) }}</p>
+            <p class="text-2xl font-black">{{ get_setting('currency_symbol', '$') }}{{ number_format(auth()->user()->wallet_balance, 2) }}</p>
         </div>
     </div>
 </div>
@@ -51,6 +51,10 @@
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-red-50 text-red-700 border border-red-200">
                                     <i class="ph ph-money text-red-500"></i> Withdrawal
                                 </span>
+                            @elseif($transaction->type === 'ROI')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                                    <i class="ph ph-chart-line-up text-blue-500"></i> ROI Return
+                                </span>
                             @else
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
                                     <i class="ph ph-briefcase text-primary"></i> Investment
@@ -61,7 +65,7 @@
                             {{ $transaction->description }}
                         </td>
                         <td class="px-6 py-4 text-right font-bold {{ $transaction->amount > 0 ? 'text-green-600' : 'text-gray-900' }}">
-                            {{ $transaction->amount > 0 ? '+' : '' }}${{ number_format($transaction->amount, 2) }}
+                            {{ $transaction->amount > 0 ? '+' : '' }}{{ get_setting('currency_symbol', '$') }}{{ number_format($transaction->amount, 2) }}
                         </td>
                     </tr>
                 @empty

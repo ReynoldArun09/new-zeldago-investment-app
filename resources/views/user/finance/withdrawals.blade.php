@@ -16,7 +16,7 @@
         </div>
         <div>
             <p class="text-indigo-200 text-sm font-medium">Available Balance</p>
-            <p class="text-2xl font-black">${{ number_format(auth()->user()->wallet_balance, 2) }}</p>
+            <p class="text-2xl font-black">{{ get_setting('currency_symbol', '$') }}{{ number_format($available_balance, 2) }}</p>
         </div>
     </div>
 </div>
@@ -57,26 +57,20 @@
             @csrf
             
             <div>
-                <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Amount ($)</label>
-                <input type="number" name="amount" id="amount" min="10" max="{{ auth()->user()->wallet_balance }}" step="0.01" required
+                <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Amount ({{ get_setting('currency_symbol', '$') }})</label>
+                <input type="number" name="amount" id="amount" min="10" max="{{ $available_balance }}" step="0.01" required
                     class="block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50" placeholder="0.00">
-                <p class="text-xs text-gray-500 mt-1">Minimum withdrawal is $10.00.</p>
+                <p class="text-xs text-gray-500 mt-1">Minimum withdrawal is {{ get_setting('currency_symbol', '$') }}10.00.</p>
             </div>
             
             <div>
                 <label for="payout_method" class="block text-sm font-medium text-gray-700 mb-1">Payout Method</label>
                 <select name="payout_method" id="payout_method" required class="block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50">
                     <option value="">Select Method...</option>
+                    <option value="Cash">Cash</option>
+                    <option value="UPI">UPI</option>
                     <option value="Bank Transfer">Bank Transfer</option>
-                    <option value="Crypto (USDT)">Crypto (USDT TRC20)</option>
-                    <option value="PayPal">PayPal</option>
                 </select>
-            </div>
-            
-            <div>
-                <label for="payout_details" class="block text-sm font-medium text-gray-700 mb-1">Payout Details</label>
-                <textarea name="payout_details" id="payout_details" rows="3" required placeholder="Enter bank account details, wallet address, or PayPal email..."
-                    class="block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50"></textarea>
             </div>
             
             <button type="submit" class="w-full px-4 py-3 bg-primary text-white rounded-xl font-medium shadow-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 mt-2">
@@ -109,7 +103,7 @@
                                 {{ $withdrawal->created_at->format('M d, Y') }}
                             </td>
                             <td class="px-6 py-4 font-bold text-gray-900">
-                                ${{ number_format($withdrawal->amount, 2) }}
+                                {{ get_setting('currency_symbol', '$') }}{{ number_format($withdrawal->amount, 2) }}
                             </td>
                             <td class="px-6 py-4 text-gray-600">
                                 {{ $withdrawal->payout_method }}
@@ -153,10 +147,10 @@
                                                             <p class="font-mono text-gray-800 bg-gray-50 p-2 rounded-lg border border-gray-200 break-all">{{ $withdrawal->trx_id }}</p>
                                                         </div>
                                                         @if($withdrawal->proof_image)
-                                                        <div>
-                                                            <p class="text-sm text-gray-500 mb-2">Proof of Payment</p>
-                                                            <img src="{{ asset($withdrawal->proof_image) }}" alt="Proof" class="w-full rounded-lg border border-gray-200 shadow-sm max-h-64 object-contain">
-                                                        </div>
+                                                            <div class="mt-4">
+                                                                <p class="text-xs font-medium text-gray-500 mb-2">Payment Proof</p>
+                                                            <img src="{{ Storage::url($withdrawal->proof_image) }}" alt="Proof" class="w-full rounded-lg border border-gray-200 shadow-sm max-h-64 object-contain">
+                                                            </div>
                                                         @endif
                                                     </div>
                                                 </div>

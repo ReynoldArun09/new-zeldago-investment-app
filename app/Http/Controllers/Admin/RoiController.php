@@ -62,14 +62,60 @@ class RoiController extends Controller
     }
 
     /**
+     * Show processing ROI requests
+     */
+    public function processing(Request $request)
+    {
+        $query = RoiLog::with(['user', 'investment'])->where('status', 'processing')->orderByDesc('created_at');
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('trx_id', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($uq) use ($search) {
+                      $uq->where('username', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $logs = $query->paginate(20);
+        $roiSettings = Setting::where('key', 'roi_settings')->value('value') ?? [];
+
+        return view('admin.roi.processing', compact('logs', 'roiSettings'));
+    }
+
+    /**
+     * Move a pending ROI request to processing
+     */
+    public function process(Request $request, $id)
+    {
+        $roiLog = RoiLog::findOrFail($id);
+
+        if ($roiLog->status !== 'pending') {
+            return redirect()->back()->with('error', 'ROI is not in pending status.');
+        }
+
+        $roiLog->status = 'processing';
+        $roiLog->save();
+
+        return redirect()->back()->with('success', 'ROI request is now processing.');
+    }
+
+    /**
      * Approve a pending ROI request
      */
     public function approve(Request $request, $id)
     {
+        $request->validate([
+            'payment_method' => 'required|string',
+            'payment_trx_id' => 'required|string',
+            'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
         $roiLog = RoiLog::with(['user', 'investment'])->findOrFail($id);
 
-        if ($roiLog->status !== 'pending') {
-            return redirect()->back()->with('error', 'ROI is not in pending status.');
+        if ($roiLog->status !== 'processing') {
+            return redirect()->back()->with('error', 'ROI is not in processing status.');
         }
 
         $roiAmount = 0;
@@ -86,7 +132,15 @@ class RoiController extends Controller
             return redirect()->back()->with('error', 'Invalid ROI amount or rate provided.');
         }
 
+        $proofPath = null;
+        if ($request->hasFile('payment_proof')) {
+            $proofPath = $request->file('payment_proof')->store('roi_proofs', 'public');
+        }
+
         $roiLog->amount = $roiAmount;
+        $roiLog->payment_method = $request->payment_method;
+        $roiLog->payment_trx_id = $request->payment_trx_id;
+        $roiLog->payment_proof = $proofPath;
         $roiLog->status = 'credited';
         $roiLog->save();
 
@@ -157,8 +211,8 @@ class RoiController extends Controller
 
         $roiLog = RoiLog::with('user')->findOrFail($id);
 
-        if ($roiLog->status !== 'pending') {
-            return redirect()->back()->with('error', 'ROI is not in pending status.');
+        if (!in_array($roiLog->status, ['pending', 'processing'])) {
+            return redirect()->back()->with('error', 'ROI cannot be rejected from its current status.');
         }
 
         $roiLog->status = 'rejected';

@@ -7,9 +7,6 @@ use App\Http\Controllers\AuthController as UserAuthController;
 Route::middleware('guest')->group(function () {
     Route::get('/', [UserAuthController::class, 'showLoginForm'])->name('login');
     Route::post('/', [UserAuthController::class, 'login']);
-
-    Route::get('/register', [UserAuthController::class, 'showRegisterForm'])->name('register');
-    Route::post('/register', [UserAuthController::class, 'register']);
 });
 
 Route::middleware('auth')->group(function () {
@@ -28,11 +25,13 @@ Route::middleware('auth')->group(function () {
     Route::prefix('network')->name('user.network.')->group(function () {
         Route::get('/referrals', [\App\Http\Controllers\User\NetworkController::class, 'referrals'])->name('referrals');
         Route::get('/genealogy', [\App\Http\Controllers\User\NetworkController::class, 'genealogy'])->name('genealogy');
+        Route::post('/add-investor', [\App\Http\Controllers\User\NetworkController::class, 'addInvestor'])->name('add-investor');
     });
 
     // User Finance
     Route::prefix('finance')->name('user.finance.')->group(function () {
-        Route::get('/transactions', [\App\Http\Controllers\User\FinanceController::class, 'transactions'])->name('transactions');
+        Route::get('/transactions/commissions', [\App\Http\Controllers\User\FinanceController::class, 'commissionTransactions'])->name('transactions.commissions');
+        Route::get('/transactions/roi', [\App\Http\Controllers\User\FinanceController::class, 'roiTransactions'])->name('transactions.roi');
         Route::get('/withdrawals', [\App\Http\Controllers\User\FinanceController::class, 'withdrawals'])->name('withdrawals');
         Route::post('/withdrawals', [\App\Http\Controllers\User\FinanceController::class, 'submitWithdrawal'])->name('withdrawals.submit');
     });
@@ -103,6 +102,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('users/{username}/ban', [\App\Http\Controllers\Admin\UserController::class, 'ban'])->name('users.ban');
         Route::post('users/{username}/notify', [\App\Http\Controllers\Admin\UserController::class, 'notify'])->name('users.notification');
         Route::post('users/{username}/impersonate', [\App\Http\Controllers\Admin\UserController::class, 'impersonate'])->name('users.impersonate');
+        Route::put('users/{username}/become-agent', [\App\Http\Controllers\Admin\UserController::class, 'becomeAgent'])->name('users.become-agent');
 
         // Settings routes
         Route::prefix('settings')->name('settings.')->group(function () {
@@ -148,6 +148,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::prefix('roi')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\RoiController::class, 'index'])->name('roi.index');
             Route::get('/pending', [\App\Http\Controllers\Admin\RoiController::class, 'pending'])->name('roi.pending');
+            Route::get('/processing', [\App\Http\Controllers\Admin\RoiController::class, 'processing'])->name('roi.processing');
+            Route::post('/{id}/process', [\App\Http\Controllers\Admin\RoiController::class, 'process'])->name('roi.process');
             Route::post('/{id}/approve', [\App\Http\Controllers\Admin\RoiController::class, 'approve'])->name('roi.approve');
             Route::post('/{id}/reject', [\App\Http\Controllers\Admin\RoiController::class, 'reject'])->name('roi.reject');
         });

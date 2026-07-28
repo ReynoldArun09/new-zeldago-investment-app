@@ -35,24 +35,33 @@ class WithdrawalController extends Controller
             'proof_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120'
         ]);
 
-        $withdrawal = Withdrawal::with('user')->findOrFail($id);
-        if ($withdrawal->status !== 'pending') {
+        $imageName = time() . '_' . str_replace(' ', '_', $request->file('proof_image')->getClientOriginalName());
+        $proofPath = $request->file('proof_image')->storeAs('proofs', $imageName, 'public');
+
+        $result = \Illuminate\Support\Facades\DB::transaction(function () use ($request, $id, $proofPath) {
+            $withdrawal = Withdrawal::with('user')->lockForUpdate()->findOrFail($id);
+            if ($withdrawal->status !== 'pending') {
+                return false;
+            }
+
+            $withdrawal->status = 'approved';
+            $withdrawal->trx_id = $request->trx_id;
+            $withdrawal->proof_image = $proofPath;
+            $withdrawal->save();
+            
+            return $withdrawal;
+        });
+
+        if (!$result) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($proofPath);
             return back()->with('error', 'Withdrawal is not pending.');
         }
 
-        $imageName = time() . '_' . str_replace(' ', '_', $request->file('proof_image')->getClientOriginalName());
-        $request->file('proof_image')->move(public_path('uploads/proofs'), $imageName);
-        $proofPath = 'uploads/proofs/' . $imageName;
-
-        $withdrawal->status = 'approved';
-        $withdrawal->trx_id = $request->trx_id;
-        $withdrawal->proof_image = $proofPath;
-        $withdrawal->save();
-
-        if ($withdrawal->user) {
-            $withdrawal->user->notify(new \App\Notifications\GenericNotification(
+        if ($result->user) {
+            $currency = get_setting('currency_symbol', '$');
+            $result->user->notify(new \App\Notifications\GenericNotification(
                 'Withdrawal Approved',
-                "Your withdrawal of $" . number_format($withdrawal->amount, 2) . " has been approved. Transaction ID: " . $withdrawal->trx_id
+                "Your withdrawal of " . $currency . number_format($result->amount, 2) . " has been approved. Transaction ID: " . $result->trx_id
             ));
         }
 
@@ -65,32 +74,44 @@ class WithdrawalController extends Controller
             'reject_note' => 'required|string|max:500'
         ]);
 
-        $withdrawal = Withdrawal::with('user')->findOrFail($id);
-        if ($withdrawal->status !== 'pending') {
+        $result = \Illuminate\Support\Facades\DB::transaction(function () use ($request, $id) {
+            $withdrawal = Withdrawal::with('user')->lockForUpdate()->findOrFail($id);
+            if ($withdrawal->status !== 'pending') {
+                return false;
+            }
+
+            $withdrawal->status = 'rejected';
+            $withdrawal->admin_message = $request->reject_note;
+            $withdrawal->save();
+
+            // Refund to wallet_balance
+            $user = $withdrawal->user;
+            if ($user) {
+                $lockedUser = \App\Models\User::where('id', $user->id)->lockForUpdate()->first();
+                $lockedUser->wallet_balance += $withdrawal->amount;
+                $lockedUser->save();
+
+                Transaction::create([
+                    'user_id' => $lockedUser->id,
+                    'amount' => $withdrawal->amount,
+                    'type' => 'withdrawal_refund',
+                    'description' => 'Refund for rejected withdrawal.',
+                    'reference_id' => $withdrawal->id,
+                ]);
+            }
+            
+            return $withdrawal;
+        });
+
+        if (!$result) {
             return back()->with('error', 'Withdrawal is not pending.');
         }
 
-        $withdrawal->status = 'rejected';
-        $withdrawal->admin_message = $request->reject_note;
-        $withdrawal->save();
-
-        // Refund to wallet_balance
-        $user = $withdrawal->user;
-        if ($user) {
-            $user->wallet_balance += $withdrawal->amount;
-            $user->save();
-
-            Transaction::create([
-                'user_id' => $user->id,
-                'amount' => $withdrawal->amount,
-                'type' => 'withdrawal_refund',
-                'description' => 'Refund for rejected withdrawal.',
-                'reference_id' => $withdrawal->id,
-            ]);
-
-            $user->notify(new \App\Notifications\GenericNotification(
+        if ($result->user) {
+            $currency = get_setting('currency_symbol', '$');
+            $result->user->notify(new \App\Notifications\GenericNotification(
                 'Withdrawal Rejected',
-                "Your withdrawal of $" . number_format($withdrawal->amount, 2) . " was rejected and refunded to your wallet. Reason: " . $request->reject_note
+                "Your withdrawal of " . $currency . number_format($result->amount, 2) . " was rejected and refunded to your wallet. Reason: " . $request->reject_note
             ));
         }
 

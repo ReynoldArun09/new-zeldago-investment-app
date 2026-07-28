@@ -68,6 +68,7 @@ function admin_sidebar_menu(): array
             'children' => [
                 ['label' => 'All ROI',             'href' => '/admin/roi',                           'icon' => 'list'],
                 ['label' => 'Pending Requests',    'href' => '/admin/roi/pending',                   'icon' => 'clock'],
+                ['label' => 'Processing Requests', 'href' => '/admin/roi/processing',                'icon' => 'spinner'],
             ],
         ],
 

@@ -20,10 +20,10 @@ class InvestmentController extends Controller
             // Map the route parameter to the DB status
             // DB statuses: PENDING, ACTIVE, COMPLETED, CLOSED, CLOSE_REQUEST
             $dbStatus = match ($status) {
-                'active' => 'ACTIVE',
-                'completed' => 'COMPLETED',
-                'closed' => 'CLOSED',
-                'close-requests' => 'CLOSE_REQUEST',
+                'active' => Investment::STATUS_ACTIVE,
+                'completed' => Investment::STATUS_COMPLETED,
+                'closed' => Investment::STATUS_CLOSED,
+                'close-requests' => Investment::STATUS_CLOSE_REQUEST,
                 default => strtoupper($status),
             };
             
@@ -69,7 +69,7 @@ class InvestmentController extends Controller
     public function approve($id)
     {
         $investment = Investment::findOrFail($id);
-        $investment->status = 'ACTIVE';
+        $investment->status = Investment::STATUS_ACTIVE;
         
         $roiSetting = \App\Models\Setting::where('key', 'roi_settings')->first();
         $settings = $roiSetting ? $roiSetting->value : [];
@@ -96,7 +96,7 @@ class InvestmentController extends Controller
     public function reject($id)
     {
         $investment = Investment::findOrFail($id);
-        $investment->status = 'REJECTED';
+        $investment->status = Investment::STATUS_REJECTED;
         $investment->save();
 
         if ($investment->user) {

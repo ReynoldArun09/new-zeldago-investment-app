@@ -38,7 +38,7 @@
             <button onclick="toggleNotif()" class="relative w-9 h-9 flex items-center justify-center text-white/40 hover:text-white/80 rounded-lg transition-colors">
                 @include('admin.partials.icon', ['name' => 'bell', 'size' => 18])
                 @if($unreadCount > 0)
-                <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-[#0d1e45]"></span>
+                <span class="absolute top-0 right-0 min-w-[16px] h-4 px-1 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full ring-2 ring-[#0d1e45]">{{ $unreadCount > 99 ? '99+' : $unreadCount }}</span>
                 @endif
             </button>
             <div id="notif-dropdown"

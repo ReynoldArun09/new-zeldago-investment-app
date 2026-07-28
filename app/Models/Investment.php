@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Investment extends Model
 {
+    public const STATUS_PENDING = 'PENDING';
+    public const STATUS_ACTIVE = 'ACTIVE';
+    public const STATUS_COMPLETED = 'COMPLETED';
+    public const STATUS_CLOSED = 'CLOSED';
+    public const STATUS_REJECTED = 'REJECTED';
+    public const STATUS_CLOSE_REQUEST = 'CLOSE_REQUEST';
+
     protected $fillable = [
         'user_id',
         'trx_id',

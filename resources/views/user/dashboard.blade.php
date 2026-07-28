@@ -7,6 +7,7 @@
 @section('title', 'Dashboard')
 
 @section('content')
+<div x-data="{ showAddInvestorModal: false }">
     <!-- Page Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
         <div>
@@ -25,9 +26,16 @@
             <p class="text-sm text-slate-500">Manage your asset packages, check logs, and monitor yields in real-time.</p>
         </div>
         
-        <button class="bg-indigo-100/50 hover:bg-indigo-100 text-primary text-sm font-semibold py-2.5 px-4 rounded-xl transition-colors border border-indigo-100 shadow-sm flex items-center gap-2">
-            Download Statements
-        </button>
+        <div class="flex items-center gap-2">
+            @if(Auth::user()->account_type === 'Agent')
+            <button @click="showAddInvestorModal = true" class="bg-primary hover:opacity-90 text-white text-sm font-semibold py-2.5 px-4 rounded-xl transition-colors border border-primary shadow-sm flex items-center gap-2">
+                <i class="ph ph-user-plus"></i> Add Investor
+            </button>
+            @endif
+            <button class="bg-indigo-100/50 hover:bg-indigo-100 text-primary text-sm font-semibold py-2.5 px-4 rounded-xl transition-colors border border-indigo-100 shadow-sm flex items-center gap-2">
+                Download Statements
+            </button>
+        </div>
     </div>
 
     <!-- Stat Cards -->
@@ -140,7 +148,7 @@
     <div class="bg-white rounded-2xl p-6 shadow-sm shadow-indigo-100/50 border border-slate-50 flex flex-col">
         <div class="flex justify-between items-center mb-6">
             <h3 class="text-sm font-bold text-indigo-950">Recent Commissions</h3>
-            <a href="{{ route('user.finance.transactions') }}" class="text-xs text-primary font-semibold hover:underline">View All</a>
+            <a href="{{ route('user.finance.transactions.commissions') }}" class="text-xs text-primary font-semibold hover:underline">View All</a>
         </div>
         @if($recent_commissions->isEmpty())
             <div class="flex-1 flex items-center justify-center py-10">
@@ -181,6 +189,101 @@
             </div>
         @endif
     </div>
+
+    @if(Auth::user()->account_type === 'Agent')
+    <!-- Add Investor Modal -->
+    <template x-teleport="body">
+        <div x-show="showAddInvestorModal" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div x-show="showAddInvestorModal" x-transition.opacity class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" @click="showAddInvestorModal = false"></div>
+            
+            <div x-show="showAddInvestorModal" 
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                class="relative bg-white rounded-2xl shadow-xl w-[40%] max-h-[90vh] overflow-hidden flex flex-col z-10 border border-indigo-50">
+                
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
+                    <h3 class="font-bold text-lg text-indigo-950 flex items-center gap-2">
+                        <i class="ph ph-user-plus text-primary"></i> Add Investor
+                    </h3>
+                    <button @click="showAddInvestorModal = false" class="text-slate-400 hover:text-slate-600 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100">
+                        <i class="ph ph-x text-lg"></i>
+                    </button>
+                </div>
+
+                <div class="p-6 overflow-y-auto">
+                    <form method="POST" action="{{ route('user.network.add-investor') }}" class="space-y-6">
+                        @csrf
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div class="sm:col-span-2">
+                                <h2 class="text-sm font-semibold text-slate-800 border-b border-slate-100 pb-2 mb-4">Basic Information</h2>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Full Name <span class="text-red-500">*</span></label>
+                                <input type="text" name="name" value="{{ old('name') }}" required
+                                    class="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Username <span class="text-red-500">*</span></label>
+                                <input type="text" name="username" value="{{ old('username') }}" required
+                                    class="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Email <span class="text-red-500">*</span></label>
+                                <input type="email" name="email" value="{{ old('email') }}" required
+                                    class="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+                            </div>
+                            <div x-data="{ showPassword: false }">
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Password <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <input :type="showPassword ? 'text' : 'password'" name="password" required minlength="8"
+                                        class="w-full bg-slate-50/50 border border-slate-200 rounded-xl pl-4 pr-10 py-2.5 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+                                    <button type="button" @click="showPassword = !showPassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition-colors">
+                                        <i class="ph text-lg" :class="showPassword ? 'ph-eye-slash' : 'ph-eye'"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-2 mt-2">
+                                <h2 class="text-sm font-semibold text-slate-800 border-b border-slate-100 pb-2 mb-4">Information</h2>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Account Type <span class="text-red-500">*</span></label>
+                                <input type="text" value="Investor" disabled
+                                    class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none cursor-not-allowed pointer-events-none select-none">
+                                <input type="hidden" name="account_type" value="Normal User">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Sponsor <span class="text-red-500">*</span></label>
+                                <input type="text" name="sponsor" value="{{ Auth::user()->username }}" disabled
+                                    class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none cursor-not-allowed pointer-events-none select-none">
+                            </div>
+                        </div>
+
+                        <div class="mt-8 pt-5 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+                            <button type="button" @click="showAddInvestorModal = false" class="px-5 py-2.5 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-primary hover:opacity-90 rounded-xl transition-opacity flex items-center gap-2">
+                                Add Investor
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </template>
+    @endif
+</div>
+    
+    <!-- Alpine.js is already included in app.blade.php -->
 @endsection
 
 

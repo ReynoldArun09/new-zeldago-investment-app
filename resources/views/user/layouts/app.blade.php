@@ -111,6 +111,7 @@
             </a>
 
             <!-- Investments Submenu -->
+            @if(Auth::user()->account_type !== 'Agent')
             <div x-data="{ open: false }">
                 <button @click="open = !open" class="sidebar-link w-full flex justify-between items-center outline-none">
                     <div class="flex items-center gap-3">
@@ -132,7 +133,9 @@
                     </div>
                 </div>
             </div>
+            @endif
             <!-- My team Submenu -->
+            @if(Auth::user()->account_type !== 'Normal User')
             <div x-data="{ open: {{ request()->routeIs('user.network.*') ? 'true' : 'false' }} }">
                 <button @click="open = !open" class="sidebar-link w-full flex justify-between items-center outline-none {{ request()->routeIs('user.network.*') ? 'active' : '' }}">
                     <div class="flex items-center gap-3">
@@ -151,6 +154,7 @@
                     </div>
                 </div>
             </div>
+            @endif
 
             <!-- Finance Submenu -->
             <div x-data="{ open: {{ request()->routeIs('user.finance.*') ? 'true' : 'false' }} }">
@@ -162,12 +166,20 @@
                 </button>
                 <div x-show="open" x-transition.opacity style="display: {{ request()->routeIs('user.finance.*') ? 'block' : 'none' }};" class="pl-[33px] py-1">
                     <div class="border-l border-indigo-200/20 space-y-1 py-1">
-                        <a href="{{ route('user.finance.transactions') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.finance.transactions') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.finance.transactions') ? '' : 'color: var(--sidebar-muted);' }}">
-                            <i class="ph ph-receipt"></i> Transactions
+                        @if(Auth::user()->account_type === 'Agent')
+                        <a href="{{ route('user.finance.transactions.commissions') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.finance.transactions.commissions') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.finance.transactions.commissions') ? '' : 'color: var(--sidebar-muted);' }}">
+                            <i class="ph ph-trend-up"></i> Commissions
                         </a>
+                        @elseif(Auth::user()->account_type === 'Normal User')
+                        <a href="{{ route('user.finance.transactions.roi') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.finance.transactions.roi') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.finance.transactions.roi') ? '' : 'color: var(--sidebar-muted);' }}">
+                            <i class="ph ph-chart-line-up"></i> ROI Returns
+                        </a>
+                        @endif
+                        @if(Auth::user()->account_type === 'Agent')
                         <a href="{{ route('user.finance.withdrawals') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.finance.withdrawals') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.finance.withdrawals') ? '' : 'color: var(--sidebar-muted);' }}">
                             <i class="ph ph-money"></i> Withdrawals
                         </a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -428,13 +440,23 @@
                 search: '',
                 items: [
                     { title: 'Dashboard', url: '{{ route('user.dashboard') }}', category: 'General', icon: 'ph-squares-four' },
+                    @if(Auth::user()->account_type !== 'Agent')
                     { title: 'New Investment', url: '{{ route('user.investments.create') }}', category: 'Investments', icon: 'ph-trend-up' },
                     { title: 'My Investments', url: '{{ route('user.investments.active') }}', category: 'Investments', icon: 'ph-trend-up' },
                     { title: 'Closed Investments', url: '{{ route('user.investments.closed') }}', category: 'Investments', icon: 'ph-trend-up' },
+                    @endif
+                    @if(Auth::user()->account_type !== 'Normal User')
                     { title: 'Referrals', url: '{{ route('user.network.referrals') }}', category: 'Network', icon: 'ph-users' },
                     { title: 'Genealogy Tree', url: '{{ route('user.network.genealogy') }}', category: 'Network', icon: 'ph-tree-structure' },
-                    { title: 'Transactions', url: '{{ route('user.finance.transactions') }}', category: 'Finance', icon: 'ph-receipt' },
+                    @endif
+                    @if(Auth::user()->account_type === 'Agent')
+                    { title: 'Commissions', url: '{{ route('user.finance.transactions.commissions') }}', category: 'Finance', icon: 'ph-trend-up' },
+                    @elseif(Auth::user()->account_type === 'Normal User')
+                    { title: 'ROI Returns', url: '{{ route('user.finance.transactions.roi') }}', category: 'Finance', icon: 'ph-chart-line-up' },
+                    @endif
+                    @if(Auth::user()->account_type === 'Agent')
                     { title: 'Withdrawals', url: '{{ route('user.finance.withdrawals') }}', category: 'Finance', icon: 'ph-money' },
+                    @endif
                     { title: 'Profile Settings', url: '{{ route('user.settings.profile') }}', category: 'Settings', icon: 'ph-user' },
                     { title: 'Password Reset', url: '{{ route('user.settings.password') }}', category: 'Settings', icon: 'ph-key' },
                     { title: 'KYC Verification', url: '{{ route('user.verification.kyc') }}', category: 'Verification', icon: 'ph-shield-check' },

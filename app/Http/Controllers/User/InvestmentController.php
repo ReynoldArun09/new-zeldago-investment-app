@@ -33,7 +33,7 @@ class InvestmentController extends Controller
             'trx_id' => $request->trx_id,
             'amount' => $request->amount,
             'type' => 'manual',
-            'status' => 'pending',
+            'status' => Investment::STATUS_PENDING,
             'payment_proof' => $path,
         ]);
 
@@ -52,7 +52,7 @@ class InvestmentController extends Controller
     public function active()
     {
         $investments = Investment::where('user_id', Auth::id())
-            ->whereIn('status', ['pending', 'active'])
+            ->whereIn('status', [Investment::STATUS_PENDING, Investment::STATUS_ACTIVE])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
             
@@ -62,7 +62,7 @@ class InvestmentController extends Controller
     public function closed()
     {
         $investments = Investment::where('user_id', Auth::id())
-            ->whereIn('status', ['completed', 'closed', 'rejected'])
+            ->whereIn('status', [Investment::STATUS_COMPLETED, Investment::STATUS_CLOSED, Investment::STATUS_REJECTED])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
             
@@ -73,11 +73,11 @@ class InvestmentController extends Controller
     {
         $investment = Investment::where('user_id', Auth::id())->findOrFail($id);
 
-        if ($investment->status !== 'ACTIVE') {
+        if ($investment->status !== Investment::STATUS_ACTIVE) {
             return back()->with('error', 'Only active investments can be closed.');
         }
 
-        $investment->status = 'CLOSE_REQUEST';
+        $investment->status = Investment::STATUS_CLOSE_REQUEST;
         $investment->save();
 
         $admins = Admin::all();

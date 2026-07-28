@@ -82,6 +82,10 @@
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/60">
                                         Pending
                                     </span>
+                                @elseif($log->status === 'processing')
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200/60">
+                                        Processing
+                                    </span>
                                 @else
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-red-50 text-red-700 border border-red-200/60">
                                         Rejected
@@ -91,9 +95,12 @@
                             <td class="px-6 py-4 text-right">
                                 @if($log->status === 'pending')
                                     <div class="flex items-center justify-end gap-2">
-                                        <button type="button" onclick="openApproveModal({{ $log->id }}, '{{ $log->trx_id }}')" class="px-3 py-1.5 text-xs font-medium text-white bg-emerald-500 rounded-lg hover:bg-emerald-600 transition-colors">
-                                            Approve
-                                        </button>
+                                        <form action="{{ route('admin.roi.process', $log->id) }}" method="POST" class="m-0 p-0">
+                                            @csrf
+                                            <button type="submit" class="px-3 py-1.5 text-xs font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors">
+                                                Processing
+                                            </button>
+                                        </form>
                                         <button type="button" onclick="openRejectModal({{ $log->id }}, '{{ $log->trx_id }}')" class="px-3 py-1.5 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition-colors">
                                             Reject
                                         </button>

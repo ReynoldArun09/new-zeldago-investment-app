@@ -154,7 +154,7 @@
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
 
         {{-- Pending ROI Requests --}}
-        <div class="bg-white rounded-none shadow-sm flex flex-col">
+        <div class="bg-white rounded-none shadow-sm flex flex-col xl:col-span-2">
             <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                 <div class="flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" style="color: var(--theme-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -169,6 +169,8 @@
                     <thead>
                         <tr class="text-white" style="background-color: var(--theme-primary);">
                             <th class="text-left px-5 py-3 font-medium">User</th>
+                            <th class="text-left px-5 py-3 font-medium">Contact Info</th>
+                            <th class="text-left px-5 py-3 font-medium">Investment</th>
                             <th class="text-right px-5 py-3 font-medium">Amount</th>
                             <th class="text-right px-5 py-3 font-medium">Action</th>
                         </tr>
@@ -180,14 +182,27 @@
                                 <p class="font-medium text-gray-800">{{ $roi->user->name ?? 'N/A' }}</p>
                                 <p class="text-xs" style="color: var(--theme-primary);">{{ '@' . ($roi->user->username ?? '') }}</p>
                             </td>
+                            <td class="px-5 py-3">
+                                <p class="text-sm text-gray-600">{{ $roi->user->email ?? 'N/A' }}</p>
+                                @if(!empty($roi->user->phone))
+                                    <p class="text-xs text-gray-500">{{ $roi->user->phone }}</p>
+                                @endif
+                            </td>
+                            <td class="px-5 py-3">
+                                <p class="text-sm font-medium text-gray-700">#{{ $roi->investment_id ?? 'N/A' }}</p>
+                                <p class="text-xs text-gray-500">{{ $roi->created_at->format('M d, Y h:i A') }}</p>
+                            </td>
                             <td class="px-5 py-3 text-right font-semibold text-emerald-600">
                                 {{ format_currency($roi->amount) }}
                             </td>
                             <td class="px-5 py-3 text-right">
-                                <div class="flex items-center justify-end gap-2" x-data="{ openApprove: false, openReject: false }">
-                                    <button type="button" @click="openApprove = true" class="px-3 py-1 text-white bg-[#00A843] hover:bg-green-700 rounded text-[11px] font-medium transition-colors">
-                                        Approve
-                                    </button>
+                                <div class="flex items-center justify-end gap-2" x-data="{ openReject: false }">
+                                    <form action="{{ route('admin.roi.process', $roi->id) }}" method="POST" class="m-0 p-0">
+                                        @csrf
+                                        <button type="submit" class="px-3 py-1 text-white bg-blue-500 hover:bg-blue-600 rounded text-[11px] font-medium transition-colors">
+                                            Processing
+                                        </button>
+                                    </form>
                                     <button type="button" @click="openReject = true" class="px-3 py-1 text-white bg-[#E2000F] hover:bg-red-700 rounded text-[11px] font-medium transition-colors">
                                         Reject
                                     </button>
@@ -275,7 +290,68 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="3" class="px-5 py-8 text-center text-xs text-gray-400">No pending ROI requests</td>
+                            <td colspan="5" class="px-5 py-8 text-center text-xs text-gray-400">No pending ROI requests</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {{-- Recent Investments --}}
+        <div class="bg-white rounded-none shadow-sm flex flex-col">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                <div class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                    </svg>
+                    <h2 class="text-sm font-semibold text-gray-700">Recent Investments</h2>
+                </div>
+                <a href="{{ route('admin.investments.index') }}" class="text-xs text-indigo-600 hover:underline">View All</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-white" style="background-color: var(--theme-primary);">
+                            <th class="text-left px-5 py-3 font-medium">User</th>
+                            <th class="text-left px-5 py-3 font-medium">Trx ID</th>
+                            <th class="text-right px-5 py-3 font-medium">Amount</th>
+                            <th class="text-center px-5 py-3 font-medium">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        @forelse($recentInvestments as $inv)
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-5 py-3">
+                                <p class="font-medium text-gray-800">{{ $inv->user->name ?? 'N/A' }}</p>
+                                @if(!empty($inv->user->username))
+                                    <p class="text-xs" style="color: var(--theme-primary);">{{ '@' . $inv->user->username }}</p>
+                                @endif
+                            </td>
+                            <td class="px-5 py-3 font-mono text-xs text-gray-600">
+                                {{ $inv->trx_id ?? 'N/A' }}
+                            </td>
+                            <td class="px-5 py-3 text-right font-semibold text-indigo-600">
+                                {{ format_currency($inv->amount) }}
+                            </td>
+                            <td class="px-5 py-3 text-center">
+                                @php
+                                    $statusClass = match($inv->status) {
+                                        'COMPLETED' => 'bg-emerald-100 text-emerald-700',
+                                        'ACTIVE'    => 'bg-blue-100 text-blue-700',
+                                        'PENDING'   => 'bg-amber-100 text-amber-700',
+                                        'REJECTED'  => 'bg-red-100 text-red-700',
+                                        default     => 'bg-gray-100 text-gray-700',
+                                    };
+                                @endphp
+                                <span class="px-2 py-1 text-[10px] uppercase font-bold rounded-full {{ $statusClass }}">
+                                    {{ $inv->status }}
+                                </span>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="px-5 py-8 text-center text-xs text-gray-400">No recent investments</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -413,67 +489,6 @@
                         @empty
                         <tr>
                             <td colspan="3" class="px-5 py-8 text-center text-xs text-gray-400">No pending withdrawals</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        {{-- Recent Investments --}}
-        <div class="bg-white rounded-none shadow-sm flex flex-col xl:col-span-2">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                <div class="flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                    </svg>
-                    <h2 class="text-sm font-semibold text-gray-700">Recent Investments</h2>
-                </div>
-                <a href="{{ route('admin.investments.index') }}" class="text-xs text-indigo-600 hover:underline">View All</a>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="text-white" style="background-color: var(--theme-primary);">
-                            <th class="text-left px-5 py-3 font-medium">User</th>
-                            <th class="text-left px-5 py-3 font-medium">Trx ID</th>
-                            <th class="text-right px-5 py-3 font-medium">Amount</th>
-                            <th class="text-center px-5 py-3 font-medium">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-50">
-                        @forelse($recentInvestments as $inv)
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-5 py-3">
-                                <p class="font-medium text-gray-800">{{ $inv->user->name ?? 'N/A' }}</p>
-                                @if(!empty($inv->user->username))
-                                    <p class="text-xs" style="color: var(--theme-primary);">{{ '@' . $inv->user->username }}</p>
-                                @endif
-                            </td>
-                            <td class="px-5 py-3 font-mono text-xs text-gray-600">
-                                {{ $inv->trx_id ?? 'N/A' }}
-                            </td>
-                            <td class="px-5 py-3 text-right font-semibold text-indigo-600">
-                                {{ format_currency($inv->amount) }}
-                            </td>
-                            <td class="px-5 py-3 text-center">
-                                @php
-                                    $statusClass = match($inv->status) {
-                                        'COMPLETED' => 'bg-emerald-100 text-emerald-700',
-                                        'ACTIVE'    => 'bg-blue-100 text-blue-700',
-                                        'PENDING'   => 'bg-amber-100 text-amber-700',
-                                        'REJECTED'  => 'bg-red-100 text-red-700',
-                                        default     => 'bg-gray-100 text-gray-700',
-                                    };
-                                @endphp
-                                <span class="px-2 py-1 text-[10px] uppercase font-bold rounded-full {{ $statusClass }}">
-                                    {{ $inv->status }}
-                                </span>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="4" class="px-5 py-8 text-center text-xs text-gray-400">No recent investments</td>
                         </tr>
                         @endforelse
                     </tbody>

@@ -36,7 +36,6 @@
                     <tr class="text-white" style="background-color: var(--theme-primary);">
                         <th class="text-left px-5 py-3 font-medium">User</th>
                         <th class="text-left px-5 py-3 font-medium">Payout Method</th>
-                        <th class="text-left px-5 py-3 font-medium">Details</th>
                         <th class="text-right px-5 py-3 font-medium">Amount</th>
                         <th class="text-right px-5 py-3 font-medium">Action</th>
                     </tr>
@@ -50,9 +49,6 @@
                         </td>
                         <td class="px-5 py-3 font-medium text-gray-600">
                             {{ $withdrawal->payout_method }}
-                        </td>
-                        <td class="px-5 py-3 text-xs text-gray-500 max-w-xs truncate">
-                            {{ $withdrawal->payout_details }}
                         </td>
                         <td class="px-5 py-3 text-right font-bold text-red-600">
                             {{ format_currency($withdrawal->amount) }}

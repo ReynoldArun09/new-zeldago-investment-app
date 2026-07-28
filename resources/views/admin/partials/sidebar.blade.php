@@ -56,6 +56,16 @@
                                         if ($childPath === 'admin/users' && (request()->is('admin/users/investors') || request()->is('admin/users/agents'))) {
                                             $childActive = false;
                                         }
+
+                                        // Prevent 'All ROI' from being active when on 'pending' or 'processing'
+                                        if ($childPath === 'admin/roi' && (request()->is('admin/roi/pending') || request()->is('admin/roi/processing'))) {
+                                            $childActive = false;
+                                        }
+
+                                        // Prevent 'All Withdrawals' from being active when on 'pending'
+                                        if ($childPath === 'admin/withdrawals' && request()->is('admin/withdrawals/pending')) {
+                                            $childActive = false;
+                                        }
                                         
                                         if (request()->has('role')) {
                                             $childActive = false;

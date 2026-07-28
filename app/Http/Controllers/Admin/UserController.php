@@ -60,7 +60,7 @@ class UserController extends Controller
         $search = $request->query('search', '');
         $perPage = 20;
 
-        $query = User::with('sponsor')->where('account_type', 'Root Distributor')->orderBy('created_at', 'desc');
+        $query = User::with('sponsor')->where('account_type', 'Agent')->orderBy('created_at', 'desc');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -193,6 +193,20 @@ class UserController extends Controller
 
         $msg = $user->is_active ? 'User has been unbanned.' : 'User has been banned.';
         return back()->with('success', $msg);
+    }
+
+    public function becomeAgent($username)
+    {
+        $user = User::where('username', $username)->orWhere('id', $username)->firstOrFail();
+        
+        if ($user->account_type === 'Root Distributor') {
+            return back()->with('error', 'Root Distributors cannot be converted to Agents.');
+        }
+
+        $user->account_type = 'Agent';
+        $user->save();
+
+        return back()->with('success', 'User has been upgraded to Agent.');
     }
 
     public function notify(Request $request, $username)
