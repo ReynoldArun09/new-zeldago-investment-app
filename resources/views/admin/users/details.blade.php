@@ -29,7 +29,7 @@
         $cards = [
             ['label' => 'Balance',                  'value' => format_currency($stats['balance']),            'bg' => 'bg-sky-500',    'icon' => 'dollar'],
             ['label' => 'Total Investments',         'value' => $stats['totalInvestments'],                                     'bg' => 'bg-indigo-700', 'icon' => 'briefcase'],
-            ['label' => 'Total Contribution',        'value' => format_currency($stats['totalContribution']),  'bg' => 'bg-purple-600', 'icon' => 'arrow-down'],
+            ['label' => 'Total Investment Amount',   'value' => format_currency($stats['totalContribution']),  'bg' => 'bg-purple-600', 'icon' => 'arrow-down'],
             ['label' => 'Investment Close Requests', 'value' => $stats['closeRequests'],                                        'bg' => 'bg-red-700',    'icon' => 'hand'],
             ['label' => 'Completed Investments',     'value' => $stats['completedInvestments'],                                 'bg' => 'bg-green-600',  'icon' => 'check-circle'],
             ['label' => 'Deposits',                  'value' => format_currency($stats['deposits']),           'bg' => 'bg-teal-600',   'icon' => 'wallet'],
@@ -106,10 +106,10 @@
         </form>
     </div>
 
-    {{-- MLM Information --}}
+    {{-- Information --}}
     <div class="bg-white rounded-none shadow-sm p-5 sm:p-6">
         <h2 class="text-sm font-semibold text-gray-700 mb-5 border-b pb-2">
-            MLM Information
+            Information
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
