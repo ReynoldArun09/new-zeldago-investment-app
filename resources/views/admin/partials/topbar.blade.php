@@ -71,7 +71,7 @@
                 @endif
                 
                 <div class="border-t border-[#1e3a6e]/50 px-4 py-2.5">
-                    <a href="#" class="block w-full text-center text-sm text-[var(--theme-primary)] hover:opacity-80 font-medium">
+                    <a href="{{ route('admin.notifications.index') }}" class="block w-full text-center text-sm text-[var(--theme-primary)] hover:opacity-80 font-medium">
                         View all notifications
                     </a>
                 </div>

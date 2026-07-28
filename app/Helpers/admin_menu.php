@@ -117,6 +117,12 @@ function admin_sidebar_menu(): array
         ],
 
         [
+            'label'    => 'Notifications',
+            'icon'     => 'bell',
+            'href'     => '/admin/notifications',
+        ],
+
+        [
             'label'    => 'System Settings',
             'icon'     => 'settings',
             'children' => [

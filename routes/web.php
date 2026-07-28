@@ -131,6 +131,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('api/{key}', [\App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('api.update');
         });
 
+        Route::get('notifications', [\App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('notifications.index');
+        Route::post('notifications/{id}/mark-read', [\App\Http\Controllers\Admin\NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
         Route::post('notifications/mark-all-read', function () {
             Auth::guard('admin')->user()->unreadNotifications->markAsRead();
             return back();
