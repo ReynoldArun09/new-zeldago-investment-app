@@ -31,53 +31,49 @@
     </div>
 
     <!-- Stat Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <!-- Card 1 -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm shadow-indigo-100/50 border border-slate-50">
-            <div class="flex justify-between items-start mb-4">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Investment</h3>
-                <i class="ph ph-chart-line-up text-xl text-primary"></i>
+        <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden" style="background-color: #00c0ef;">
+            <div class="p-4 flex flex-col justify-center">
+                <p class="text-xs mb-1 font-medium opacity-90">Total Investment</p>
+                <p class="text-xl font-bold tracking-wide">{{ format_currency($total_investment) }}</p>
             </div>
-            <p class="text-2xl font-bold text-indigo-950 mb-1">{{ format_currency($total_investment) }}</p>
-            <p class="text-xs text-primary font-medium flex items-center gap-1">
-                <i class="ph ph-trend-up"></i> Invested Amount
-            </p>
+            <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0,0,0,0.1);">
+                <i class="ph ph-briefcase text-2xl opacity-90"></i>
+            </div>
         </div>
 
         <!-- Card 2 -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm shadow-indigo-100/50 border border-slate-50">
-            <div class="flex justify-between items-start mb-4">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total ROI</h3>
-                <i class="ph ph-chart-polar text-xl text-primary"></i>
+        <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden" style="background-color: #605ca8;">
+            <div class="p-4 flex flex-col justify-center">
+                <p class="text-xs mb-1 font-medium opacity-90">Total ROI</p>
+                <p class="text-xl font-bold tracking-wide">{{ format_currency($total_roi) }}</p>
             </div>
-            <p class="text-2xl font-bold text-indigo-950 mb-1">{{ format_currency($total_roi) }}</p>
-            <p class="text-xs text-primary font-medium flex items-center gap-1">
-                <i class="ph ph-check-circle"></i> Yields Received
-            </p>
+            <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0,0,0,0.1);">
+                <i class="ph ph-chart-line-up text-2xl opacity-90"></i>
+            </div>
         </div>
 
         <!-- Card 3 -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm shadow-indigo-100/50 border border-slate-50">
-            <div class="flex justify-between items-start mb-4">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Level Bonuses</h3>
-                <i class="ph ph-users-three text-xl text-primary"></i>
+        <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden" style="background-color: #00a65a;">
+            <div class="p-4 flex flex-col justify-center">
+                <p class="text-xs mb-1 font-medium opacity-90">Level Bonuses</p>
+                <p class="text-xl font-bold tracking-wide">{{ format_currency($total_commissions) }}</p>
             </div>
-            <p class="text-2xl font-bold text-indigo-950 mb-1">{{ format_currency($total_commissions) }}</p>
-            <p class="text-xs text-primary font-medium flex items-center gap-1">
-                <i class="ph ph-trend-up"></i> Total Commissions
-            </p>
+            <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0,0,0,0.1);">
+                <i class="ph ph-users-three text-2xl opacity-90"></i>
+            </div>
         </div>
 
         <!-- Card 4 -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm shadow-indigo-100/50 border border-slate-50">
-            <div class="flex justify-between items-start mb-4">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Balance</h3>
-                <i class="ph ph-wallet text-xl text-primary"></i>
+        <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden" style="background-color: #f39c12;">
+            <div class="p-4 flex flex-col justify-center">
+                <p class="text-xs mb-1 font-medium opacity-90">Total Balance</p>
+                <p class="text-xl font-bold tracking-wide">{{ format_currency($wallet_balance) }}</p>
             </div>
-            <p class="text-2xl font-bold text-indigo-950 mb-1">{{ format_currency($wallet_balance) }}</p>
-            <p class="text-xs text-primary font-medium flex items-center gap-1">
-                <i class="ph ph-wallet"></i> Wallet Available
-            </p>
+            <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0,0,0,0.1);">
+                <i class="ph ph-wallet text-2xl opacity-90"></i>
+            </div>
         </div>
     </div>
 
@@ -95,7 +91,7 @@
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            <tr class="text-white text-xs font-bold uppercase tracking-wider" style="background-color: var(--primary);">
                                 <th class="px-5 py-3 font-medium">Investment</th>
                                 <th class="px-5 py-3 font-medium">Date</th>
                                 <th class="px-5 py-3 font-medium text-right">Amount</th>
@@ -151,21 +147,37 @@
                 <p class="text-sm text-slate-400">No recent commissions</p>
             </div>
         @else
-            <div class="space-y-4">
-                @foreach($recent_commissions as $comm)
-                    <div class="flex items-center justify-between p-4 rounded-xl bg-slate-50/50 border border-slate-100">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0">
-                                <i class="ph ph-arrow-down-left text-lg"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-indigo-950">{{ $comm->description ?? 'Commission Received' }}</p>
-                                <p class="text-xs text-slate-500">{{ $comm->created_at->format('M d, Y h:i A') }}</p>
-                            </div>
-                        </div>
-                        <p class="text-sm font-bold text-green-600">+{{ format_currency($comm->amount) }}</p>
-                    </div>
-                @endforeach
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-white text-xs font-bold uppercase tracking-wider" style="background-color: var(--primary);">
+                            <th class="px-5 py-3 font-medium">Description</th>
+                            <th class="px-5 py-3 font-medium">Date</th>
+                            <th class="px-5 py-3 font-medium text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        @foreach($recent_commissions as $comm)
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="px-5 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0">
+                                            <i class="ph ph-arrow-down-left text-lg"></i>
+                                        </div>
+                                        <p class="text-sm font-bold text-indigo-950">{{ $comm->description ?? 'Commission Received' }}</p>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-4">
+                                    <p class="text-sm text-slate-600">{{ $comm->created_at->format('M d, Y') }}</p>
+                                    <p class="text-xs text-slate-400">{{ $comm->created_at->format('h:i A') }}</p>
+                                </td>
+                                <td class="px-5 py-4 text-right">
+                                    <p class="text-sm font-bold text-green-600">+{{ format_currency($comm->amount) }}</p>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         @endif
     </div>
