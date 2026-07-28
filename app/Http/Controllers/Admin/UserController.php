@@ -35,6 +35,46 @@ class UserController extends Controller
         return view('admin.users.index', compact('users', 'search'));
     }
 
+    public function investors(Request $request)
+    {
+        $search = $request->query('search', '');
+        $perPage = 20;
+
+        $query = User::with('sponsor')->where('account_type', 'Normal User')->orderBy('created_at', 'desc');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('username', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $users = $query->paginate($perPage)->withQueryString();
+
+        return view('admin.users.investors', compact('users', 'search'));
+    }
+
+    public function agents(Request $request)
+    {
+        $search = $request->query('search', '');
+        $perPage = 20;
+
+        $query = User::with('sponsor')->where('account_type', 'Root Distributor')->orderBy('created_at', 'desc');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('username', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $users = $query->paginate($perPage)->withQueryString();
+
+        return view('admin.users.agents', compact('users', 'search'));
+    }
+
     public function create()
     {
         return view('admin.users.create');

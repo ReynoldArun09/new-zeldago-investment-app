@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 
-@section('title', 'All Users')
+@section('title', 'All Agents')
 
 @section('content')
 <div class="min-h-full p-4 sm:p-6">
@@ -8,9 +8,8 @@
 
         {{-- Header --}}
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-gray-100">
-            <h1 class="text-base font-semibold text-gray-700">All Users</h1>
-            <div class="flex items-center gap-2 w-full sm:w-auto">
-                <form method="GET" action="{{ route('admin.users.index') }}" class="flex items-center gap-2 border border-gray-200 rounded-none px-3 py-1.5 w-full sm:w-64 focus-within:border-[var(--theme-primary)] transition-colors">
+            <h1 class="text-base font-semibold text-gray-700">All Agents</h1>
+                <form method="GET" action="{{ route('admin.users.agents') }}" class="flex items-center gap-2 border border-gray-200 rounded-none px-3 py-1.5 w-full sm:w-64 focus-within:border-[var(--theme-primary)] transition-colors">
                     <input
                         type="text"
                         name="search"
@@ -24,9 +23,6 @@
                         </svg>
                     </button>
                 </form>
-                <a href="{{ route('admin.users.create') }}" class="shrink-0 px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90 rounded-none whitespace-nowrap" style="background-color: var(--theme-primary);">
-                    + Add User
-                </a>
             </div>
         </div>
 
@@ -76,7 +72,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="text-center py-12 text-gray-400 text-sm">No users found</td>
+                        <td colspan="6" class="text-center py-12 text-gray-400 text-sm">No agents found</td>
                     </tr>
                     @endforelse
                 </tbody>
@@ -117,7 +113,6 @@
             </div>
         </div>
         @endif
-
     </div>
 </div>
 @endsection

@@ -94,6 +94,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // User Management Routes
         Route::get('users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+        Route::get('users/investors', [\App\Http\Controllers\Admin\UserController::class, 'investors'])->name('users.investors');
+        Route::get('users/agents', [\App\Http\Controllers\Admin\UserController::class, 'agents'])->name('users.agents');
         Route::get('users/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');
         Route::post('users', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
         Route::get('users/{username}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.details');

@@ -43,8 +43,24 @@
                         <div class="mt-0.5 ml-3 pl-4 border-l border-[#1e3a6e]/60 space-y-0.5 py-1">
                             @foreach($item['children'] as $child)
                                 @php
+                                    $childUrl = url($child['href']);
                                     $childPath = ltrim(parse_url($child['href'], PHP_URL_PATH) ?? $child['href'], '/');
-                                    $childActive = request()->path() === $childPath;
+                                    $childQuery = parse_url($child['href'], PHP_URL_QUERY);
+                                    
+                                    if ($childQuery) {
+                                        $childActive = request()->fullUrl() === $childUrl;
+                                    } else {
+                                        $childActive = request()->is($childPath) || request()->is($childPath . '/*');
+                                        
+                                        // Prevent 'All Users' from being active when on 'investors' or 'agents'
+                                        if ($childPath === 'admin/users' && (request()->is('admin/users/investors') || request()->is('admin/users/agents'))) {
+                                            $childActive = false;
+                                        }
+                                        
+                                        if (request()->has('role')) {
+                                            $childActive = false;
+                                        }
+                                    }
                                 @endphp
                                 <a href="{{ $child['href'] }}"
                                     class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs text-white/55 hover:text-white hover:bg-white/5 transition-all {{ $childActive ? '!text-white font-semibold' : '' }}"

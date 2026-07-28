@@ -57,6 +57,8 @@ function admin_sidebar_menu(): array
             'icon'     => 'users',
             'children' => [
                 ['label' => 'All Users',           'href' => '/admin/users',              'icon' => 'users'],
+                ['label' => 'All Investors',       'href' => '/admin/users/investors','icon' => 'user'],
+                ['label' => 'All Agents',          'href' => '/admin/users/agents',   'icon' => 'briefcase'],
             ],
         ],
 
