@@ -35,7 +35,8 @@
                         <th class="text-left px-5 py-3 font-medium">Contact</th>
                         <th class="text-left px-4 py-3 font-medium">User Info</th>
                         <th class="text-left px-5 py-3 font-medium">Joined At</th>
-                        <th class="text-right px-5 py-3 font-medium">Balance</th>
+                        <th class="text-right px-5 py-3 font-medium">ROI</th>
+                        <th class="text-right px-5 py-3 font-medium">Commission</th>
                         <th class="text-center px-5 py-3 font-medium">Action</th>
                     </tr>
                 </thead>
@@ -59,8 +60,23 @@
                             <p>{{ \Carbon\Carbon::parse($user->created_at)->format('M d, Y') }}</p>
                             <p class="text-gray-400">{{ \Carbon\Carbon::parse($user->created_at)->diffForHumans() }}</p>
                         </td>
-                        <td class="px-5 py-3.5 text-right text-sm font-semibold text-gray-700">
-                            {{ format_currency($user->wallet_balance ?? 0) }}
+                        @php
+                            $roiAmount = \App\Models\Transaction::where('user_id', $user->id)->where('type', 'ROI')->sum('amount');
+                            $commAmount = \App\Models\Transaction::where('user_id', $user->id)->where('type', 'COMMISSION')->sum('amount');
+                        @endphp
+                        <td class="px-5 py-3.5 text-right">
+                            @if($roiAmount > 0)
+                                <p class="text-sm font-semibold text-gray-700">{{ format_currency($roiAmount) }}</p>
+                            @else
+                                <p class="text-sm text-gray-400">—</p>
+                            @endif
+                        </td>
+                        <td class="px-5 py-3.5 text-right">
+                            @if($commAmount > 0)
+                                <p class="text-sm font-semibold text-gray-700">{{ format_currency($commAmount) }}</p>
+                            @else
+                                <p class="text-sm text-gray-400">—</p>
+                            @endif
                         </td>
                         <td class="px-5 py-3.5 text-center">
                             <a href="{{ route('admin.users.details', $user->username ?? $user->id) }}"
