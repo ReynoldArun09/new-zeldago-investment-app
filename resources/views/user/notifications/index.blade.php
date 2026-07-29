@@ -27,6 +27,15 @@
         </div>
     @endif
 
+    <div class="mb-6 flex gap-6 border-b border-gray-200">
+        <a href="{{ route('user.notifications.index', ['tab' => 'unread']) }}" class="pb-3 text-sm font-semibold transition-colors {{ $tab === 'unread' ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-gray-700' }}">
+            Unread
+        </a>
+        <a href="{{ route('user.notifications.index', ['tab' => 'history']) }}" class="pb-3 text-sm font-semibold transition-colors {{ $tab === 'history' ? 'text-primary border-b-2 border-primary' : 'text-gray-500 hover:text-gray-700' }}">
+            History
+        </a>
+    </div>
+
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <ul class="divide-y divide-gray-50">
             @forelse($notifications as $notification)

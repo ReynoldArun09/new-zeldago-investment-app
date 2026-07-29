@@ -8,10 +8,19 @@ use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $notifications = Auth::user()->notifications()->paginate(15);
-        return view('user.notifications.index', compact('notifications'));
+        $tab = $request->query('tab', 'unread');
+
+        if ($tab === 'history') {
+            $notifications = Auth::user()->readNotifications()->paginate(15);
+        } else {
+            $notifications = Auth::user()->unreadNotifications()->paginate(15);
+        }
+
+        $notifications->appends(['tab' => $tab]);
+
+        return view('user.notifications.index', compact('notifications', 'tab'));
     }
 
     public function markAsRead($id)
