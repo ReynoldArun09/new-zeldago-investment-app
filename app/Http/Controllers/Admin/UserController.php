@@ -160,14 +160,10 @@ class UserController extends Controller
     {
         $user = User::where('username', $username)->orWhere('id', $username)->firstOrFail();
 
-        $firstName = $request->input('firstName', '');
-        $lastName  = $request->input('lastName', '');
-        if ($firstName || $lastName) {
-            $user->name = trim("$firstName $lastName");
-        }
+        if ($request->filled('name')) $user->name = $request->name;
 
         if ($request->filled('email'))   $user->email   = $request->email;
-        if ($request->filled('mobile'))  $user->mobile  = $request->mobile;
+        if ($request->filled('phone'))   $user->phone   = $request->phone;
         if ($request->filled('address')) $user->address = $request->address;
         if ($request->filled('city'))    $user->city    = $request->city;
         if ($request->filled('state'))   $user->state   = $request->state;

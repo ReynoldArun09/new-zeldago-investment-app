@@ -21,8 +21,7 @@ class SettingsController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'phone' => 'required|string|max:20',
             'address' => 'nullable|string|max:255',
@@ -32,8 +31,7 @@ class SettingsController extends Controller
             'country' => 'required|string|max:100',
         ]);
 
-        $data = $request->only('first_name', 'last_name', 'email', 'phone', 'address', 'city', 'state', 'zip', 'country');
-        $data['name'] = $request->first_name . ' ' . $request->last_name;
+        $data = $request->only('name', 'email', 'phone', 'address', 'city', 'state', 'zip', 'country');
 
         $user->update($data);
 

@@ -320,15 +320,9 @@
             @csrf @method('PUT')
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                @php $nameParts = explode(' ', $user->name, 2); @endphp
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">First Name <span class="text-red-500">*</span></label>
-                    <input type="text" name="firstName" value="{{ $nameParts[0] ?? '' }}" required
-                        class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm text-gray-700 outline-none focus:border-[var(--theme-primary)] transition-colors">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">Last Name <span class="text-red-500">*</span></label>
-                    <input type="text" name="lastName" value="{{ $nameParts[1] ?? '' }}"
+                <div class="sm:col-span-2">
+                    <label class="block text-xs text-gray-500 mb-1">Full Name <span class="text-red-500">*</span></label>
+                    <input type="text" name="name" value="{{ $user->name ?? '' }}" required
                         class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm text-gray-700 outline-none focus:border-[var(--theme-primary)] transition-colors">
                 </div>
                 <div>
@@ -337,10 +331,10 @@
                         class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm text-gray-700 outline-none focus:border-[var(--theme-primary)] transition-colors">
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-500 mb-1">Mobile Number <span class="text-red-500">*</span></label>
+                    <label class="block text-xs text-gray-500 mb-1">Phone Number <span class="text-red-500">*</span></label>
                     <div class="flex items-center border border-gray-200 rounded-none overflow-hidden focus-within:border-[var(--theme-primary)] transition-colors">
                         <span class="px-3 py-2 text-sm text-gray-500 bg-gray-50 border-r border-gray-200">+</span>
-                        <input type="tel" name="mobile" value="{{ ltrim($user->mobile ?? '', '+') }}"
+                        <input type="tel" name="phone" value="{{ ltrim($user->phone ?? '', '+') }}"
                             class="flex-1 px-3 py-2 text-sm text-gray-700 outline-none bg-transparent">
                     </div>
                 </div>

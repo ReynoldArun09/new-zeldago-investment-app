@@ -41,18 +41,11 @@
             @csrf
 
             <div class="space-y-6">
-                <!-- First & Last Name -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="first_name" class="block text-sm font-medium text-gray-600 mb-1">First Name <span class="text-red-500">*</span></label>
-                        <input type="text" name="first_name" id="first_name" value="{{ old('first_name', $user->first_name) }}" required
-                            class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
-                    </div>
-                    <div>
-                        <label for="last_name" class="block text-sm font-medium text-gray-600 mb-1">Last Name <span class="text-red-500">*</span></label>
-                        <input type="text" name="last_name" id="last_name" value="{{ old('last_name', $user->last_name) }}" required
-                            class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
-                    </div>
+                <!-- Full Name -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-600 mb-1">Full Name <span class="text-red-500">*</span></label>
+                    <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required
+                        class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
                 </div>
 
                 <!-- Email & Mobile Number -->
