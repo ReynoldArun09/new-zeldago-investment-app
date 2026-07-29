@@ -40,6 +40,7 @@
 
     <!-- Stat Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        @if(Auth::user()->account_type !== 'Agent')
         <!-- Card 1 -->
         <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden" style="background-color: #00c0ef;">
             <div class="p-4 flex flex-col justify-center">
@@ -61,7 +62,9 @@
                 <i class="ph ph-chart-line-up text-2xl opacity-90"></i>
             </div>
         </div>
+        @endif
 
+        @if(Auth::user()->account_type === 'Agent')
         <!-- Card 3 -->
         <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden" style="background-color: #00a65a;">
             <div class="p-4 flex flex-col justify-center">
@@ -72,6 +75,7 @@
                 <i class="ph ph-users-three text-2xl opacity-90"></i>
             </div>
         </div>
+        @endif
 
         <!-- Card 4 -->
         <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden" style="background-color: #f39c12;">
@@ -86,6 +90,7 @@
     </div>
 
     <!-- ROI Returns Area -->
+    @if(Auth::user()->account_type !== 'Agent')
     <div class="mb-8">
         <div class="bg-white rounded-2xl p-6 shadow-sm shadow-indigo-100/50 border border-slate-50 flex flex-col">
             <div class="flex justify-between items-center mb-6">
@@ -143,8 +148,11 @@
             @endif
         </div>
     </div>
+    @endif
+
 
     <!-- Recent Commissions -->
+    @if(Auth::user()->account_type === 'Agent')
     <div class="bg-white rounded-2xl p-6 shadow-sm shadow-indigo-100/50 border border-slate-50 flex flex-col">
         <div class="flex justify-between items-center mb-6">
             <h3 class="text-sm font-bold text-indigo-950">Recent Commissions</h3>
@@ -189,6 +197,7 @@
             </div>
         @endif
     </div>
+    @endif
 
     @if(Auth::user()->account_type === 'Agent')
     <!-- Add Investor Modal -->
