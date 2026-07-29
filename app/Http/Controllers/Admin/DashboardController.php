@@ -11,9 +11,10 @@ class DashboardController extends Controller
     public function index()
     {
         // Members
-        $totalMembers     = User::where('role', 'INVESTOR')->count();
-        $activeMembers    = User::where('role', 'INVESTOR')->where('is_active', true)->count();
-        $newRegistrations = User::whereIn('role', ['INVESTOR', 'AGENT'])
+        $totalInvestors   = User::whereIn('role', ['INVESTOR', 'NORMAL'])->count();
+        $totalAgents      = User::where('role', 'AGENT')->count();
+        $activeMembers    = User::whereIn('role', ['INVESTOR', 'NORMAL', 'AGENT'])->where('is_active', true)->count();
+        $newRegistrations = User::whereIn('role', ['INVESTOR', 'AGENT', 'NORMAL'])
             ->where('created_at', '>=', now()->subDays(7))
             ->count();
 
@@ -57,11 +58,18 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // Payouts
+        $totalRoiPaid = \App\Models\Transaction::where('type', 'ROI')->sum('amount') ?? 0;
+        $totalCommissionPaid = \App\Models\Transaction::where('type', 'COMMISSION')->sum('amount') ?? 0;
+
         $stats = [
-            'totalMembers'        => $totalMembers,
+            'totalInvestors'      => $totalInvestors,
+            'totalAgents'         => $totalAgents,
             'activeMembers'       => $activeMembers,
             'newRegistrations'    => $newRegistrations,
             'totalBusiness'       => $totalBusiness,
+            'totalRoiPaid'        => $totalRoiPaid,
+            'totalCommissionPaid' => $totalCommissionPaid,
             'totalIncomePaid'     => 0,
             'pendingWithdrawals'  => 0,
             'totalWithdrawn'      => 0,
