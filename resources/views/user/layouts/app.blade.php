@@ -9,6 +9,8 @@
     // Add currency
     $currency = get_setting('currency_symbol') ?? 'Rs.';
 
+    $branding = get_setting('logo_favicon') ?? [];
+
     // Contrast text function
     function getContrastColor($hexcolor) {
         if(strlen($hexcolor) < 6) return '#1e293b';
@@ -27,6 +29,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard') - {{ $appName }}</title>
+    @if(!empty($branding['favicon']))
+        <link rel="icon" type="image/x-icon" href="{{ $branding['favicon'] }}">
+    @endif
     
     <!-- Alpine.js -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -94,9 +99,13 @@
         <!-- Logo -->
         <div class="h-16 flex items-center justify-between px-6 border-b border-indigo-100/10 shrink-0">
             <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-200/50">
-                    {{ substr($appName, 0, 1) }}
-                </div>
+                @if(!empty($branding['logo']))
+                    <img src="{{ $branding['logo'] }}" alt="{{ $appName }}" class="w-8 h-8 rounded object-contain">
+                @else
+                    <div class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-200/50">
+                        {{ substr($appName, 0, 1) }}
+                    </div>
+                @endif
                 <span class="font-bold text-lg tracking-tight" style="color: var(--sidebar-text);">{{ $appName }}</span>
             </div>
             <button onclick="closeSidebar()" class="lg:hidden text-slate-400 hover:text-slate-600 transition-colors p-1">
