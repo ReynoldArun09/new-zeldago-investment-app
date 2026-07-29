@@ -21,14 +21,21 @@ class SettingsController extends Controller
         $user = Auth::user();
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'phone' => 'nullable|string|max:20',
-            'country' => 'nullable|string|max:100',
+            'phone' => 'required|string|max:20',
             'address' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:100',
+            'state' => 'nullable|string|max:100',
+            'zip' => 'nullable|string|max:20',
+            'country' => 'required|string|max:100',
         ]);
 
-        $user->update($request->only('name', 'email', 'phone', 'country', 'address'));
+        $data = $request->only('first_name', 'last_name', 'email', 'phone', 'address', 'city', 'state', 'zip', 'country');
+        $data['name'] = $request->first_name . ' ' . $request->last_name;
+
+        $user->update($data);
 
         return back()->with('success', 'Profile updated successfully.');
     }

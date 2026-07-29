@@ -36,39 +36,84 @@
         </div>
     @endif
 
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <form action="{{ route('user.settings.profile.update') }}" method="POST" class="p-6 sm:p-8 space-y-6">
+    <div>
+        <form action="{{ route('user.settings.profile.update') }}" method="POST" class="space-y-6">
             @csrf
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                    <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required
-                        class="block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50 transition-colors">
+            <div class="space-y-6">
+                <!-- First & Last Name -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="first_name" class="block text-sm font-medium text-gray-600 mb-1">First Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="first_name" id="first_name" value="{{ old('first_name', $user->first_name) }}" required
+                            class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="last_name" class="block text-sm font-medium text-gray-600 mb-1">Last Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="last_name" id="last_name" value="{{ old('last_name', $user->last_name) }}" required
+                            class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                    </div>
                 </div>
 
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                    <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required
-                        class="block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50 transition-colors">
+                <!-- Email & Mobile Number -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-600 mb-1">Email <span class="text-red-500">*</span></label>
+                        <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required
+                            class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-600 mb-1">Mobile Number <span class="text-red-500">*</span></label>
+                        <div class="flex">
+                            <span class="inline-flex items-center px-3 rounded-l-sm border border-r-0 border-gray-200 bg-gray-50 text-gray-500 sm:text-sm">
+                                +
+                            </span>
+                            <input type="text" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" required
+                                class="flex-1 block w-full px-3 py-2 bg-white border border-gray-200 rounded-none rounded-r-sm focus:ring-primary focus:border-primary sm:text-sm">
+                        </div>
+                    </div>
                 </div>
 
+                <!-- Address -->
                 <div>
-                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                    <input type="text" name="phone" id="phone" value="{{ old('phone', $user->phone) }}"
-                        class="block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50 transition-colors">
-                </div>
-
-                <div>
-                    <label for="country" class="block text-sm font-medium text-gray-700 mb-2">Country</label>
-                    <input type="text" name="country" id="country" value="{{ old('country', $user->country) }}"
-                        class="block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50 transition-colors">
-                </div>
-
-                <div class="md:col-span-2">
-                    <label for="address" class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                    <label for="address" class="block text-sm font-medium text-gray-600 mb-1">Address</label>
                     <input type="text" name="address" id="address" value="{{ old('address', $user->address) }}"
-                        class="block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50 transition-colors">
+                        class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                </div>
+
+                <!-- City & State -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="city" class="block text-sm font-medium text-gray-600 mb-1">City</label>
+                        <input type="text" name="city" id="city" value="{{ old('city', $user->city) }}"
+                            class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="state" class="block text-sm font-medium text-gray-600 mb-1">State</label>
+                        <input type="text" name="state" id="state" value="{{ old('state', $user->state) }}"
+                            class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                    </div>
+                </div>
+
+                <!-- Zip & Country -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="zip" class="block text-sm font-medium text-gray-600 mb-1">Zip / Postal</label>
+                        <input type="text" name="zip" id="zip" value="{{ old('zip', $user->zip) }}"
+                            class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="country" class="block text-sm font-medium text-gray-600 mb-1">Country <span class="text-red-500">*</span></label>
+                        <select name="country" id="country" required class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                            <option value="">Select country</option>
+                            <option value="India" {{ old('country', $user->country) == 'India' ? 'selected' : '' }}>India</option>
+                            <option value="United States" {{ old('country', $user->country) == 'United States' ? 'selected' : '' }}>United States</option>
+                            <option value="United Kingdom" {{ old('country', $user->country) == 'United Kingdom' ? 'selected' : '' }}>United Kingdom</option>
+                            <option value="Australia" {{ old('country', $user->country) == 'Australia' ? 'selected' : '' }}>Australia</option>
+                            <option value="Canada" {{ old('country', $user->country) == 'Canada' ? 'selected' : '' }}>Canada</option>
+                            <!-- Add more countries if needed -->
+                        </select>
+                    </div>
                 </div>
             </div>
 

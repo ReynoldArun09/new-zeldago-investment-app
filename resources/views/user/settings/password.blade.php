@@ -36,27 +36,27 @@
         </div>
     @endif
 
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <form action="{{ route('user.settings.password.update') }}" method="POST" class="p-6 sm:p-8 space-y-6">
+    <div>
+        <form action="{{ route('user.settings.password.update') }}" method="POST" class="space-y-6">
             @csrf
 
             <div>
-                <label for="current_password" class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                <label for="current_password" class="block text-sm font-medium text-gray-600 mb-1">Current Password <span class="text-red-500">*</span></label>
                 <input type="password" name="current_password" id="current_password" required
-                    class="block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50 transition-colors">
+                    class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                    <label for="password" class="block text-sm font-medium text-gray-600 mb-1">New Password <span class="text-red-500">*</span></label>
                     <input type="password" name="password" id="password" required
-                        class="block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50 transition-colors">
+                        class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
                 </div>
 
                 <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                    <label for="password_confirmation" class="block text-sm font-medium text-gray-600 mb-1">Confirm New Password <span class="text-red-500">*</span></label>
                     <input type="password" name="password_confirmation" id="password_confirmation" required
-                        class="block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50 transition-colors">
+                        class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
                 </div>
             </div>
 

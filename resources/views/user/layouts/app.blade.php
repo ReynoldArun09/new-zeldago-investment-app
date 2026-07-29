@@ -1,8 +1,8 @@
 @php
     $theme = get_setting('theme_appearance');
     $primaryColor = $theme['primaryColor'] ?? '#8b5cf6';
-    $sidebarColor = $theme['sidebarColor'] ?? '#e9e9f9'; // Lighter color as per UI reference
-    $bgColor = $theme['bgColor'] ?? '#f3f4f9';
+    $sidebarColor = $theme['sidebarColor'] ?? '#ffffff'; 
+    $bgColor = $theme['bgColor'] ?? '#ffffff';
     $fontFamily = $theme['fontFamily'] ?? 'Inter, sans-serif';
     $appName = $theme['appName'] ?? 'One Planet';
     
