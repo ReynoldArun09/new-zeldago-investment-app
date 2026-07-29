@@ -73,7 +73,7 @@ function admin_sidebar_menu(): array
         ],
 
         [
-            'label'    => 'Withdrawal Management',
+            'label'    => 'Agent Withdrawal',
             'icon'     => 'landmark',
             'children' => [
                 ['label' => 'All Withdrawals',      'href' => '/admin/withdrawals',                  'icon' => 'list'],
