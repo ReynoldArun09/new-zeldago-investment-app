@@ -204,28 +204,10 @@
                 </div>
             </div>
 
-            <!-- Verification Submenu -->
-            <div x-data="{ open: {{ request()->routeIs('user.verification.*') ? 'true' : 'false' }} }">
-                <button @click="open = !open" class="sidebar-link w-full flex justify-between items-center outline-none {{ request()->routeIs('user.verification.*') ? 'active' : '' }}">
-                    <div class="flex items-center gap-3">
-                        <i class="ph ph-shield-check"></i> Verification
-                    </div>
-                    <i class="ph ph-caret-down text-xs transition-transform duration-200" :class="{'rotate-180': open}"></i>
-                </button>
-                <div x-show="open" x-transition.opacity style="display: {{ request()->routeIs('user.verification.*') ? 'block' : 'none' }};" class="pl-[33px] py-1">
-                    <div class="border-l border-indigo-200/20 space-y-1 py-1">
-                        <a href="{{ route('user.verification.kyc') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.verification.kyc') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.verification.kyc') ? '' : 'color: var(--sidebar-muted);' }}">
-                            <i class="ph ph-circle text-[8px]"></i> KYC Verification
-                        </a>
-                        <a href="{{ route('user.verification.nominee') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.verification.nominee') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.verification.nominee') ? '' : 'color: var(--sidebar-muted);' }}">
-                            <i class="ph ph-circle text-[8px]"></i> Nominee Verification
-                        </a>
-                        <a href="{{ route('user.verification.bank') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.verification.bank') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.verification.bank') ? '' : 'color: var(--sidebar-muted);' }}">
-                            <i class="ph ph-circle text-[8px]"></i> Bank Verification
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <!-- Verification Menu -->
+            <a href="{{ route('user.verification.kyc') }}" class="sidebar-link {{ request()->routeIs('user.verification.*') ? 'active' : '' }}" style="{{ request()->routeIs('user.verification.*') ? '' : 'color: var(--sidebar-text);' }}">
+                <i class="ph ph-shield-check"></i> Verification
+            </a>
             
             <a href="{{ route('user.support.index') }}" class="sidebar-link {{ request()->routeIs('user.support.*') ? 'active' : '' }}" style="{{ request()->routeIs('user.support.*') ? '' : 'color: var(--sidebar-text);' }}">
                 <i class="ph ph-headset"></i> Support Tickets

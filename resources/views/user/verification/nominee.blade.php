@@ -4,9 +4,23 @@
 
 @section('content')
 <div class="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
-    <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-900">Nominee Details</h1>
-        <p class="text-gray-600 mt-1">Provide your beneficiary details for your account investments.</p>
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Verification</h1>
+            <p class="text-gray-600 mt-1">Complete your verification to unlock all platform features.</p>
+        </div>
+    </div>
+
+    <div class="mb-6 flex flex-wrap gap-2">
+        <a href="{{ route('user.verification.kyc') }}" class="px-6 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity" style="background-color: #4ade80;">
+            View KYC
+        </a>
+        <a href="{{ route('user.verification.nominee') }}" class="px-6 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity" style="background-color: #ef4444;">
+            View Nominee
+        </a>
+        <a href="{{ route('user.verification.bank') }}" class="px-6 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity" style="background-color: #848b98;">
+            View Bank Details
+        </a>
     </div>
 
     @if (session('success'))
