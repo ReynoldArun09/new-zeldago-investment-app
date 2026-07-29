@@ -323,10 +323,10 @@
                     </button>
                     
                     <div x-show="open" x-transition.opacity style="display: none;" class="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-xl shadow-indigo-200/50 border border-indigo-50 py-1 z-50">
-                        <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 hover:bg-indigo-50 hover:text-primary transition-colors">
+                        <a href="{{ route('user.settings.profile') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 hover:bg-indigo-50 hover:text-primary transition-colors">
                             <i class="ph ph-user-circle text-lg"></i> Profile Setting
                         </a>
-                        <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 hover:bg-indigo-50 hover:text-primary transition-colors">
+                        <a href="{{ route('user.settings.password') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 hover:bg-indigo-50 hover:text-primary transition-colors">
                             <i class="ph ph-key text-lg"></i> Change Password
                         </a>
                         <div class="h-px bg-slate-100 my-1"></div>
