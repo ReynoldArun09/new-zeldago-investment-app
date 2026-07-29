@@ -102,4 +102,30 @@ class VerificationController extends Controller
 
         return back()->with('success', 'Nominee status updated successfully.');
     }
+
+    // Bank Details Management
+    public function bankUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:approved,rejected,APPROVED,REJECTED',
+            'admin_message' => 'nullable|string'
+        ]);
+
+        $status = strtoupper($request->status);
+        $bank = \App\Models\BankDetail::with('user')->findOrFail($id);
+        $bank->status = $status;
+        $bank->rejection_reason = $request->admin_message;
+        $bank->save();
+
+        // Notify user
+        $title = 'Bank Details ' . ucfirst(strtolower($bank->status));
+        $message = 'Your Bank Details were ' . strtolower($bank->status) . '.';
+        if ($bank->rejection_reason) {
+            $message .= ' Reason: ' . $bank->rejection_reason;
+        }
+
+        $bank->user->notify(new \App\Notifications\GenericNotification($title, $message, $bank->status === 'APPROVED' ? 'ph-shield-check' : 'ph-warning-circle'));
+
+        return back()->with('success', 'Bank details status updated successfully.');
+    }
 }

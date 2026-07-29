@@ -12,7 +12,7 @@ use Illuminate\Notifications\Notifiable;
 
 use Illuminate\Support\Str;
 
-#[Fillable(['sponsor_id', 'referral_code', 'account_type', 'name', 'username', 'email', 'password'])]
+#[Fillable(['sponsor_id', 'referral_code', 'account_type', 'name', 'username', 'email', 'phone', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -55,6 +55,21 @@ class User extends Authenticatable
     public function tickets()
     {
         return $this->hasMany(Ticket::class);
+    }
+
+    public function bankDetail()
+    {
+        return $this->hasOne(BankDetail::class);
+    }
+
+    public function kyc()
+    {
+        return $this->hasOne(Kyc::class);
+    }
+
+    public function nominee()
+    {
+        return $this->hasOne(Nominee::class);
     }
 
     protected static function boot()

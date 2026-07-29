@@ -220,6 +220,9 @@
                         <a href="{{ route('user.verification.nominee') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.verification.nominee') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.verification.nominee') ? '' : 'color: var(--sidebar-muted);' }}">
                             <i class="ph ph-circle text-[8px]"></i> Nominee Verification
                         </a>
+                        <a href="{{ route('user.verification.bank') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.verification.bank') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.verification.bank') ? '' : 'color: var(--sidebar-muted);' }}">
+                            <i class="ph ph-circle text-[8px]"></i> Bank Verification
+                        </a>
                     </div>
                 </div>
             </div>
@@ -461,6 +464,7 @@
                     { title: 'Password Reset', url: '{{ route('user.settings.password') }}', category: 'Settings', icon: 'ph-key' },
                     { title: 'KYC Verification', url: '{{ route('user.verification.kyc') }}', category: 'Verification', icon: 'ph-shield-check' },
                     { title: 'Nominee Verification', url: '{{ route('user.verification.nominee') }}', category: 'Verification', icon: 'ph-users' },
+                    { title: 'Bank Verification', url: '{{ route('user.verification.bank') }}', category: 'Verification', icon: 'ph-bank' },
                     { title: 'Support Tickets', url: '{{ route('user.support.index') }}', category: 'Support', icon: 'ph-headset' },
                     { title: 'Notifications', url: '{{ route('user.notifications.index') }}', category: 'General', icon: 'ph-bell' },
                 ],

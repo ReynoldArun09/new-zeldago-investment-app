@@ -50,6 +50,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/kyc', [\App\Http\Controllers\User\VerificationController::class, 'submitKyc'])->name('kyc.submit');
         Route::get('/nominee', [\App\Http\Controllers\User\VerificationController::class, 'nominee'])->name('nominee');
         Route::post('/nominee', [\App\Http\Controllers\User\VerificationController::class, 'submitNominee'])->name('nominee.submit');
+        Route::get('/bank', [\App\Http\Controllers\User\VerificationController::class, 'bank'])->name('bank');
+        Route::post('/bank', [\App\Http\Controllers\User\VerificationController::class, 'bankStore'])->name('bank.store');
     });
 
     // User Notifications
@@ -99,6 +101,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('users', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
         Route::get('users/{username}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.details');
         Route::put('users/{username}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
+        Route::put('users/{username}/password', [\App\Http\Controllers\Admin\UserController::class, 'updatePassword'])->name('users.updatePassword');
         Route::put('users/{username}/ban', [\App\Http\Controllers\Admin\UserController::class, 'ban'])->name('users.ban');
         Route::post('users/{username}/notify', [\App\Http\Controllers\Admin\UserController::class, 'notify'])->name('users.notification');
         Route::post('users/{username}/impersonate', [\App\Http\Controllers\Admin\UserController::class, 'impersonate'])->name('users.impersonate');
@@ -201,6 +204,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('nominee/review/{id}', [\App\Http\Controllers\Admin\VerificationController::class, 'nomineeReview'])->name('nominee.review');
             Route::get('nominee/{status?}', [\App\Http\Controllers\Admin\VerificationController::class, 'nomineeList'])->name('nominee');
             Route::post('nominee/{id}/status', [\App\Http\Controllers\Admin\VerificationController::class, 'nomineeUpdate'])->name('nominee.status');
+
+            Route::post('bank/{id}/status', [\App\Http\Controllers\Admin\VerificationController::class, 'bankUpdate'])->name('bank.status');
         });
     });
 });

@@ -42,11 +42,11 @@ function admin_sidebar_menu(): array
 
         [
             'label'    => 'Investments',
-            'icon'     => 'chart-line-up',
+            'icon'     => 'trending-up',
             'children' => [
                 ['label' => 'All Investments',       'href' => '/admin/investments',               'icon' => 'list'],
                 ['label' => 'Active Investments',    'href' => '/admin/investments/active',        'icon' => 'check-circle'],
-                ['label' => 'Completed Investments', 'href' => '/admin/investments/completed',     'icon' => 'check-square-offset'],
+                ['label' => 'Completed Investments', 'href' => '/admin/investments/completed',     'icon' => 'check-square'],
                 ['label' => 'Closed Investments',    'href' => '/admin/investments/closed',        'icon' => 'x-circle'],
                 ['label' => 'Close Requests',        'href' => '/admin/investments/close-requests','icon' => 'clock'],
             ],
@@ -68,13 +68,13 @@ function admin_sidebar_menu(): array
             'children' => [
                 ['label' => 'All ROI',             'href' => '/admin/roi',                           'icon' => 'list'],
                 ['label' => 'Pending Requests',    'href' => '/admin/roi/pending',                   'icon' => 'clock'],
-                ['label' => 'Processing Requests', 'href' => '/admin/roi/processing',                'icon' => 'spinner'],
+                ['label' => 'Processing Requests', 'href' => '/admin/roi/processing',                'icon' => 'settings'],
             ],
         ],
 
         [
             'label'    => 'Withdrawal Management',
-            'icon'     => 'money',
+            'icon'     => 'landmark',
             'children' => [
                 ['label' => 'All Withdrawals',      'href' => '/admin/withdrawals',                  'icon' => 'list'],
                 ['label' => 'Pending Requests',     'href' => '/admin/withdrawals/pending',          'icon' => 'clock'],
@@ -94,7 +94,7 @@ function admin_sidebar_menu(): array
 
         [
             'label'    => 'Nominee Management',
-            'icon'     => 'shield-check',
+            'icon'     => 'user-plus',
             'children' => [
                 ['label' => 'All Nominee',         'href' => '/admin/verification/nominee',          'icon' => 'list'],
                 ['label' => 'Pending Nominee',     'href' => '/admin/verification/nominee/pending',  'icon' => 'clock'],
@@ -105,18 +105,18 @@ function admin_sidebar_menu(): array
 
         [
             'label'    => 'Reports',
-            'icon'     => 'chart-pie-slice',
+            'icon'     => 'pie-chart',
             'children' => [
-                ['label' => 'Investment Report',   'href' => '/admin/reports/investment',            'icon' => 'trend-up'],
+                ['label' => 'Investment Report',   'href' => '/admin/reports/investment',            'icon' => 'trending-up'],
                 ['label' => 'ROI Report',          'href' => '/admin/reports/roi',                   'icon' => 'percent'],
                 ['label' => 'Commissions Report',  'href' => '/admin/reports/commissions',           'icon' => 'coins'],
-                ['label' => 'Withdrawals Report',  'href' => '/admin/reports/withdrawals',           'icon' => 'bank'],
+                ['label' => 'Withdrawals Report',  'href' => '/admin/reports/withdrawals',           'icon' => 'landmark'],
             ],
         ],
 
         [
             'label'    => 'Support Tickets',
-            'icon'     => 'headset',
+            'icon'     => 'mail',
             'children' => [
                 ['label' => 'All Tickets',         'href' => '/admin/support',                       'icon' => 'list'],
             ],
@@ -124,7 +124,7 @@ function admin_sidebar_menu(): array
 
         [
             'label'    => 'Commission Log',
-            'icon'     => 'list-dashes',
+            'icon'     => 'coins',
             'href'     => '/admin/commission-log',
         ],
 
@@ -138,7 +138,7 @@ function admin_sidebar_menu(): array
             'label'    => 'System Settings',
             'icon'     => 'settings',
             'children' => [
-                ['label' => 'Admin Settings',      'href' => '/admin/settings/admin',      'icon' => 'shield-check'],
+                ['label' => 'Admin Settings',      'href' => '/admin/settings/admin',      'icon' => 'wrench'],
             ],
         ],
     ];

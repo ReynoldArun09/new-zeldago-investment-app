@@ -12,7 +12,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
         <div>
             <div class="flex items-center gap-3 mb-1">
-                <h1 class="text-2xl font-bold text-indigo-950">Dashboard</h1>
+                <h1 class="text-2xl font-bold text-indigo-950">{{ Auth::user()->account_type === 'Agent' ? 'Agent' : 'Investor' }} Dashboard</h1>
                 @if(Auth::user()->kyc_status === 'VERIFIED')
                     <span class="text-[10px] font-bold text-green-600 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full flex items-center gap-1">
                         <i class="ph ph-check-circle"></i> Verified
@@ -75,7 +75,6 @@
                 <i class="ph ph-users-three text-2xl opacity-90"></i>
             </div>
         </div>
-        @endif
 
         <!-- Card 4 -->
         <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden" style="background-color: #f39c12;">
@@ -87,6 +86,7 @@
                 <i class="ph ph-wallet text-2xl opacity-90"></i>
             </div>
         </div>
+        @endif
     </div>
 
     <!-- ROI Returns Area -->

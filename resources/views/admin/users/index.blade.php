@@ -52,19 +52,29 @@
                         </td>
                         <td class="px-5 py-3.5 text-xs text-gray-400 space-y-0.5">
                             <p>{{ $user->email }}</p>
-                            <p>{{ $user->mobile ?? '—' }}</p>
+                            <p>{{ $user->phone ?? '—' }}</p>
                         </td>
                         <td class="px-4 py-3.5 text-xs space-y-0.5">
                             <p><span class="font-medium text-gray-600">Type:</span> <span class="{{ $user->account_type == 'Root Distributor' ? 'text-purple-600 font-semibold' : 'text-gray-500' }}">{{ $user->account_type }}</span></p>
                             <p><span class="font-medium text-gray-600">Code:</span> {{ $user->referral_code ?? '—' }}</p>
-                            <p><span class="font-medium text-gray-600">Sponsor:</span> {!! $user->sponsor ? '<a href="'.route('admin.users.details', $user->sponsor->username ?? $user->sponsor->id).'" class="hover:underline text-blue-600">@'.$user->sponsor->username.'</a>' : '<span class="text-gray-400">None</span>' !!}</p>
+                            <p><span class="font-medium text-gray-600">Sponsor:</span> {!! $user->sponsor ? $user->sponsor->name . ' (<a href="'.route('admin.users.details', $user->sponsor->username ?? $user->sponsor->id).'" class="hover:underline text-blue-600">@'.$user->sponsor->username.'</a>)' : '<span class="text-gray-400">None</span>' !!}</p>
                         </td>
                         <td class="px-5 py-3.5 text-xs text-gray-600 whitespace-nowrap">
                             <p>{{ \Carbon\Carbon::parse($user->created_at)->format('M d, Y') }}</p>
                             <p class="text-gray-400">{{ \Carbon\Carbon::parse($user->created_at)->diffForHumans() }}</p>
                         </td>
-                        <td class="px-5 py-3.5 text-right text-sm font-semibold text-gray-700">
-                            {{ format_currency($user->wallet_balance ?? 0) }}
+                        <td class="px-5 py-3.5 text-right">
+                            <p class="text-sm font-semibold text-gray-700">{{ format_currency($user->wallet_balance ?? 0) }}</p>
+                            @php
+                                $roiAmount = \App\Models\Transaction::where('user_id', $user->id)->where('type', 'ROI')->sum('amount');
+                                $commAmount = \App\Models\Transaction::where('user_id', $user->id)->where('type', 'COMMISSION')->sum('amount');
+                            @endphp
+                            @if($roiAmount > 0)
+                                <p class="text-[10px] text-green-600 font-medium mt-0.5">ROI: +{{ format_currency($roiAmount) }}</p>
+                            @endif
+                            @if($commAmount > 0)
+                                <p class="text-[10px] text-green-600 font-medium mt-0.5">Comm: +{{ format_currency($commAmount) }}</p>
+                            @endif
                         </td>
                         <td class="px-5 py-3.5 text-center">
                             <a href="{{ route('admin.users.details', $user->username ?? $user->id) }}"

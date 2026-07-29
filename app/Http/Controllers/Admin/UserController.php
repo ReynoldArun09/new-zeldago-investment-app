@@ -86,6 +86,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'required|string|max:20',
             'password' => 'required|string|min:8',
             'account_type' => 'required|in:Root Distributor,Normal User',
         ]);
@@ -114,6 +115,7 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->username = $request->username;
         $user->email = $request->email;
+        $user->phone = $request->phone;
         $user->password = Hash::make($request->password);
         $user->account_type = $request->account_type;
         $user->sponsor_id = $sponsor_id;
@@ -127,12 +129,12 @@ class UserController extends Controller
         $user = User::with(['sponsor', 'directReferrals'])->where('username', $identifier)->orWhere('id', $identifier)->firstOrFail();
 
         $stats = [
-            'balance'              => $user->wallet_balance ?? 0,
+            'roiReturns'           => \App\Models\Transaction::where('user_id', $user->id)->where('type', 'ROI')->sum('amount'),
+            'myCommissions'        => \App\Models\Transaction::where('user_id', $user->id)->where('type', 'COMMISSION')->sum('amount'),
             'totalInvestments'     => 0,
             'totalContribution'    => 0,
             'closeRequests'        => 0,
             'completedInvestments' => 0,
-            'deposits'             => 0,
             'withdrawals'          => 0,
             'transactions'         => 0,
         ];
@@ -183,6 +185,19 @@ class UserController extends Controller
         $user->save();
 
         return back()->with('success', 'User profile updated successfully.');
+    }
+
+    public function updatePassword(Request $request, $username)
+    {
+        $request->validate([
+            'password' => 'required|min:8|confirmed'
+        ]);
+
+        $user = User::where('username', $username)->orWhere('id', $username)->firstOrFail();
+        $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
+        $user->save();
+
+        return back()->with('success', 'User password updated successfully.');
     }
 
     public function ban($username)

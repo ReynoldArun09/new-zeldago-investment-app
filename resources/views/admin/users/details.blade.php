@@ -27,12 +27,12 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         @php
         $cards = [
-            ['label' => 'Balance',                  'value' => format_currency($stats['balance']),            'bg' => 'bg-sky-500',    'icon' => 'dollar'],
+            ['label' => 'Total Invest',              'value' => format_currency($stats['totalContribution']),  'bg' => 'bg-purple-600', 'icon' => 'arrow-down'],
+            ['label' => 'ROI Returns',              'value' => format_currency($stats['roiReturns']),         'bg' => 'bg-sky-500',    'icon' => 'dollar'],
             ['label' => 'Total Investments',         'value' => $stats['totalInvestments'],                                     'bg' => 'bg-indigo-700', 'icon' => 'briefcase'],
-            ['label' => 'Total Investment Amount',   'value' => format_currency($stats['totalContribution']),  'bg' => 'bg-purple-600', 'icon' => 'arrow-down'],
             ['label' => 'Investment Close Requests', 'value' => $stats['closeRequests'],                                        'bg' => 'bg-red-700',    'icon' => 'hand'],
             ['label' => 'Completed Investments',     'value' => $stats['completedInvestments'],                                 'bg' => 'bg-green-600',  'icon' => 'check-circle'],
-            ['label' => 'Deposits',                  'value' => format_currency($stats['deposits']),           'bg' => 'bg-teal-600',   'icon' => 'wallet'],
+            ['label' => 'My Commissions',            'value' => format_currency($stats['myCommissions']),      'bg' => 'bg-teal-600',   'icon' => 'wallet'],
             ['label' => 'Withdrawals',               'value' => format_currency($stats['withdrawals']),        'bg' => 'bg-yellow-600', 'icon' => 'landmark'],
             ['label' => 'Transactions',              'value' => $stats['transactions'],                                         'bg' => 'bg-cyan-600',   'icon' => 'arrows'],
         ];
@@ -106,14 +106,42 @@
         </form>
         {{-- Become Agent --}}
         @if($user->account_type !== 'Agent' && $user->account_type !== 'Root Distributor')
-            <form method="POST" action="{{ route('admin.users.become-agent', $user->username ?? $user->id) }}">
-                @csrf @method('PUT')
-                <button type="submit"
+            <div x-data="{ showAgentModal: false }">
+                <button type="button" @click="showAgentModal = true"
                     class="flex items-center gap-1.5 text-sm font-medium text-white px-4 py-2 rounded-none transition-colors bg-blue-500 hover:bg-blue-600 opacity-80">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                     Become Agent
                 </button>
-            </form>
+
+                <div x-show="showAgentModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" style="display: none;">
+                    <div @click.outside="showAgentModal = false" class="bg-white rounded-none shadow-2xl w-full max-w-md mx-4 overflow-hidden transform transition-all border border-gray-200">
+                        <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-blue-50/50">
+                            <h3 class="text-base font-semibold text-blue-900 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                Confirm Action
+                            </h3>
+                            <button type="button" @click="showAgentModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                        <div class="px-5 py-6 text-gray-600 text-sm">
+                            <p>Are you sure you want to upgrade <strong>{{ $user->username }}</strong> to an Agent?</p>
+                            <p class="mt-2 text-xs text-gray-500">This action will grant them agent privileges and they will start earning commissions from their referrals.</p>
+                        </div>
+                        <div class="px-5 py-4 bg-gray-50/50 border-t border-gray-100 flex justify-end gap-2">
+                            <button type="button" @click="showAgentModal = false" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-none shadow-sm hover:bg-gray-50 transition-colors">
+                                Cancel
+                            </button>
+                            <form method="POST" action="{{ route('admin.users.become-agent', $user->username ?? $user->id) }}">
+                                @csrf @method('PUT')
+                                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-500 border border-transparent rounded-none shadow-sm hover:bg-blue-600 transition-colors">
+                                    Yes, Make Agent
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         @endif
     </div>
 
@@ -158,10 +186,135 @@
     </div>
 
     {{-- Profile Info Form --}}
-    <div class="bg-white rounded-none shadow-sm p-5 sm:p-6">
-        <h2 class="text-sm font-semibold text-gray-700 mb-5">
-            Information of {{ $user->name }}
-        </h2>
+    <div class="bg-white rounded-none shadow-sm p-5 sm:p-6" x-data="{ activeDetail: null }">
+        <div class="flex items-center gap-4 mb-5">
+            <h2 class="text-sm font-semibold text-gray-700 whitespace-nowrap">
+                Details of {{ $user->name }}
+            </h2>
+            <div class="flex flex-wrap items-center gap-2">
+                <button type="button" @click="activeDetail = activeDetail === 'kyc' ? null : 'kyc'" 
+                    class="text-sm font-medium text-white px-4 py-2 rounded-none transition-colors bg-green-500 hover:bg-green-600 opacity-80">
+                    View KYC
+                </button>
+                <button type="button" @click="activeDetail = activeDetail === 'nominee' ? null : 'nominee'" 
+                    class="text-sm font-medium text-white px-4 py-2 rounded-none transition-colors bg-red-500 hover:bg-red-600 opacity-80">
+                    View Nominee
+                </button>
+                <button type="button" @click="activeDetail = activeDetail === 'bank' ? null : 'bank'" 
+                    class="text-sm font-medium text-white px-4 py-2 rounded-none transition-colors bg-gray-500 hover:bg-gray-600 opacity-80">
+                    View Bank Details
+                </button>
+            </div>
+        </div>
+
+        {{-- Details Dropdowns --}}
+        <div x-show="activeDetail === 'kyc'" style="display: none;" class="mb-6 p-4 border border-gray-100 bg-gray-50 text-sm">
+            @if($user->kyc)
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div><span class="text-gray-500">Document Type:</span> <span class="font-medium">{{ $user->kyc->document_type }}</span></div>
+                    <div><span class="text-gray-500">Document Number:</span> <span class="font-medium">{{ $user->kyc->document_number }}</span></div>
+                    <div><span class="text-gray-500">Country:</span> <span class="font-medium">{{ $user->kyc->country }}</span></div>
+                    <div class="sm:col-span-2"><span class="text-gray-500">Address:</span> <span class="font-medium">{{ $user->kyc->address }}</span></div>
+                    <div class="sm:col-span-2 flex gap-4 mt-2">
+                        <a href="{{ Storage::url($user->kyc->document_front_proof) }}" target="_blank" class="text-blue-600 hover:underline">View Front Proof</a>
+                        <a href="{{ Storage::url($user->kyc->document_back_proof) }}" target="_blank" class="text-blue-600 hover:underline">View Back Proof</a>
+                    </div>
+                    @if(strtolower($user->kyc->status) !== 'approved')
+                    <div class="sm:col-span-2 flex gap-2 mt-4 border-t pt-4">
+                        <form action="{{ route('admin.verification.kyc.status', $user->kyc->id) }}" method="POST" class="inline">
+                            @csrf
+                            <input type="hidden" name="status" value="approved">
+                            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1.5 text-sm font-medium transition-colors">Approve KYC</button>
+                        </form>
+                        <form action="{{ route('admin.verification.kyc.status', $user->kyc->id) }}" method="POST" class="inline">
+                            @csrf
+                            <input type="hidden" name="status" value="rejected">
+                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 text-sm font-medium transition-colors">Reject KYC</button>
+                        </form>
+                    </div>
+                    @else
+                    <div class="sm:col-span-2 mt-4 border-t pt-4 text-sm">
+                        <span class="text-gray-500">Status:</span> <span class="font-bold text-green-600 uppercase">{{ $user->kyc->status }}</span>
+                    </div>
+                    @endif
+                </div>
+            @else
+                <p class="text-gray-500 italic">User has not added KYC details.</p>
+            @endif
+        </div>
+        
+        <div x-show="activeDetail === 'nominee'" style="display: none;" class="mb-6 p-4 border border-gray-100 bg-gray-50 text-sm">
+            @if($user->nominee)
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div><span class="text-gray-500">Full Name:</span> <span class="font-medium">{{ $user->nominee->full_name }}</span></div>
+                    <div><span class="text-gray-500">Relation:</span> <span class="font-medium">{{ $user->nominee->relation }}</span></div>
+                    <div><span class="text-gray-500">Date of Birth:</span> <span class="font-medium">{{ $user->nominee->date_of_birth }}</span></div>
+                    <div><span class="text-gray-500">Identity Proof Type:</span> <span class="font-medium">{{ $user->nominee->identity_proof_type }}</span></div>
+                    <div><span class="text-gray-500">Identity Proof Number:</span> <span class="font-medium">{{ $user->nominee->identity_proof_number }}</span></div>
+                    <div class="sm:col-span-2 mt-2">
+                        <a href="{{ Storage::url($user->nominee->identity_proof_document) }}" target="_blank" class="text-blue-600 hover:underline">View Identity Document</a>
+                    </div>
+                    @if(strtolower($user->nominee->status) !== 'approved')
+                    <div class="sm:col-span-2 flex gap-2 mt-4 border-t pt-4">
+                        <form action="{{ route('admin.verification.nominee.status', $user->nominee->id) }}" method="POST" class="inline">
+                            @csrf
+                            <input type="hidden" name="status" value="approved">
+                            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1.5 text-sm font-medium transition-colors">Approve Nominee</button>
+                        </form>
+                        <form action="{{ route('admin.verification.nominee.status', $user->nominee->id) }}" method="POST" class="inline">
+                            @csrf
+                            <input type="hidden" name="status" value="rejected">
+                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 text-sm font-medium transition-colors">Reject Nominee</button>
+                        </form>
+                    </div>
+                    @else
+                    <div class="sm:col-span-2 mt-4 border-t pt-4 text-sm">
+                        <span class="text-gray-500">Status:</span> <span class="font-bold text-green-600 uppercase">{{ $user->nominee->status }}</span>
+                    </div>
+                    @endif
+                </div>
+            @else
+                <p class="text-gray-500 italic">User has not added Nominee details.</p>
+            @endif
+        </div>
+
+        <div x-show="activeDetail === 'bank'" style="display: none;" class="mb-6 p-4 border border-gray-100 bg-gray-50 text-sm">
+            @if($user->bankDetail)
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div><span class="text-gray-500">Account Name:</span> <span class="font-medium">{{ $user->bankDetail->name }}</span></div>
+                    <div><span class="text-gray-500">Bank Name:</span> <span class="font-medium">{{ $user->bankDetail->bank_name }}</span></div>
+                    <div><span class="text-gray-500">Account Number:</span> <span class="font-medium">{{ $user->bankDetail->account_number }}</span></div>
+                    <div><span class="text-gray-500">IFSC Code:</span> <span class="font-medium">{{ $user->bankDetail->ifsc_code }}</span></div>
+                    <div><span class="text-gray-500">UPI ID:</span> <span class="font-medium">{{ $user->bankDetail->upi_id ?? 'N/A' }}</span></div>
+                    <div><span class="text-gray-500">UPI Number:</span> <span class="font-medium">{{ $user->bankDetail->upi_number ?? 'N/A' }}</span></div>
+                    @if($user->bankDetail->proof_image)
+                    <div class="sm:col-span-2 mt-2">
+                        <a href="{{ Storage::url($user->bankDetail->proof_image) }}" target="_blank" class="text-blue-600 hover:underline">View Bank Proof</a>
+                    </div>
+                    @endif
+                    @if(strtolower($user->bankDetail->status) !== 'approved')
+                    <div class="sm:col-span-2 flex gap-2 mt-4 border-t pt-4">
+                        <form action="{{ route('admin.verification.bank.status', $user->bankDetail->id) }}" method="POST" class="inline">
+                            @csrf
+                            <input type="hidden" name="status" value="approved">
+                            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-1.5 text-sm font-medium transition-colors">Approve Bank Details</button>
+                        </form>
+                        <form action="{{ route('admin.verification.bank.status', $user->bankDetail->id) }}" method="POST" class="inline">
+                            @csrf
+                            <input type="hidden" name="status" value="rejected">
+                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 text-sm font-medium transition-colors">Reject Bank Details</button>
+                        </form>
+                    </div>
+                    @else
+                    <div class="sm:col-span-2 mt-4 border-t pt-4 text-sm">
+                        <span class="text-gray-500">Status:</span> <span class="font-bold text-green-600 uppercase">{{ $user->bankDetail->status }}</span>
+                    </div>
+                    @endif
+                </div>
+            @else
+                <p class="text-gray-500 italic">User has not added Bank details.</p>
+            @endif
+        </div>
 
         <form method="POST" action="{{ route('admin.users.update', $user->username ?? $user->id) }}">
             @csrf @method('PUT')
@@ -277,6 +430,35 @@
                 class="mt-5 w-full text-white text-sm font-medium py-2.5 rounded-none transition-colors hover:opacity-90"
                 style="background-color: var(--theme-primary);">
                 Submit
+            </button>
+        </form>
+    </div>
+
+    {{-- Update Password Form --}}
+    <div class="bg-white rounded-none shadow-sm p-5 sm:p-6 mt-6">
+        <h2 class="text-sm font-semibold text-gray-700 mb-5">
+            Change Password
+        </h2>
+        <form method="POST" action="{{ route('admin.users.updatePassword', $user->username ?? $user->id) }}">
+            @csrf @method('PUT')
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">New Password <span class="text-red-500">*</span></label>
+                    <input type="password" name="password" required minlength="8"
+                        class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm text-gray-700 outline-none focus:border-[var(--theme-primary)] transition-colors">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1">Confirm Password <span class="text-red-500">*</span></label>
+                    <input type="password" name="password_confirmation" required minlength="8"
+                        class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm text-gray-700 outline-none focus:border-[var(--theme-primary)] transition-colors">
+                </div>
+            </div>
+
+            <button type="submit"
+                class="mt-5 text-white text-sm font-medium py-2 px-6 rounded-none transition-colors hover:opacity-90"
+                style="background-color: var(--theme-primary);">
+                Update Password
             </button>
         </form>
     </div>

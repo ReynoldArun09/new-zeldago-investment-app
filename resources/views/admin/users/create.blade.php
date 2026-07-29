@@ -53,6 +53,11 @@
                         class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm text-gray-700 outline-none focus:border-[var(--theme-primary)] transition-colors">
                 </div>
                 <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-1">Phone Number <span class="text-red-500">*</span></label>
+                    <input type="text" name="phone" value="{{ old('phone') }}" required
+                        class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm text-gray-700 outline-none focus:border-[var(--theme-primary)] transition-colors">
+                </div>
+                <div>
                     <label class="block text-sm font-medium text-gray-600 mb-1">Password <span class="text-red-500">*</span></label>
                     <input type="password" name="password" required minlength="8"
                         class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm text-gray-700 outline-none focus:border-[var(--theme-primary)] transition-colors">

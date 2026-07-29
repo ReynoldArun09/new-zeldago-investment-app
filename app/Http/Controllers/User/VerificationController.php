@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use App\Models\Kyc;
 use App\Models\Nominee;
+use App\Models\BankDetail;
 use App\Models\Admin;
 use App\Notifications\GenericNotification;
 
@@ -95,5 +96,58 @@ class VerificationController extends Controller
         }
 
         return back()->with('success', 'Nominee details submitted successfully. Waiting for admin approval.');
+    }
+
+    // Bank Details Methods
+    public function bank()
+    {
+        $bankDetail = BankDetail::where('user_id', Auth::id())->first();
+        return view('user.verification.bank', compact('bankDetail'));
+    }
+
+    public function bankStore(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'bank_name' => 'required|string|max:255',
+            'account_number' => 'required|string|max:255',
+            'ifsc_code' => 'required|string|max:255',
+            'upi_id' => 'nullable|string|max:255',
+            'upi_number' => 'nullable|string|max:255',
+            'proof_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $bankDetail = BankDetail::where('user_id', Auth::id())->first();
+        
+        $proofPath = $bankDetail ? $bankDetail->proof_image : null;
+        if ($request->hasFile('proof_image')) {
+            $proofPath = $request->file('proof_image')->store('bank_proofs', 'public');
+        }
+
+        BankDetail::updateOrCreate(
+            ['user_id' => Auth::id()],
+            [
+                'name' => $request->name,
+                'bank_name' => $request->bank_name,
+                'account_number' => $request->account_number,
+                'ifsc_code' => $request->ifsc_code,
+                'upi_id' => $request->upi_id,
+                'upi_number' => $request->upi_number,
+                'proof_image' => $proofPath,
+                'status' => 'PENDING',
+                'rejection_reason' => null
+            ]
+        );
+
+        $admins = Admin::all();
+        if ($admins->count() > 0) {
+            Notification::send($admins, new GenericNotification(
+                'New Bank Details Submission',
+                Auth::user()->username . ' submitted their bank details for review.',
+                'ph-bank'
+            ));
+        }
+
+        return back()->with('success', 'Bank details saved successfully. Waiting for admin verification.');
     }
 }
