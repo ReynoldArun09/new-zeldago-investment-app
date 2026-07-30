@@ -10,10 +10,7 @@
             <h1 class="text-2xl font-bold text-gray-900">My Investments</h1>
             <p class="text-gray-600 mt-1">View your pending and active investments.</p>
         </div>
-        <a href="{{ route('user.investments.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl font-medium shadow-sm hover:opacity-90 transition-opacity">
-            <i class="ph ph-plus"></i>
-            New Investment
-        </a>
+
     </div>
 
     @if (session('success'))
@@ -93,7 +90,6 @@
                                 <div class="flex flex-col items-center justify-center">
                                     <i class="ph ph-folder-open text-4xl text-gray-300 mb-3"></i>
                                     <p class="font-medium text-gray-600">No active investments found.</p>
-                                    <p class="text-xs mt-1">Start by creating a new investment request.</p>
                                 </div>
                             </td>
                         </tr>

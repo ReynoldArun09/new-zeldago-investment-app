@@ -37,6 +37,7 @@
                     <tr class="text-white" style="background-color: var(--theme-primary);">
                         <th class="text-left px-5 py-3 font-medium">User</th>
                         <th class="text-left px-5 py-3 font-medium">Contact</th>
+                        <th class="text-left px-5 py-3 font-medium">City</th>
                         <th class="text-left px-4 py-3 font-medium">User Info</th>
                         <th class="text-left px-5 py-3 font-medium">Joined At</th>
                         <th class="text-right px-5 py-3 font-medium">ROI</th>
@@ -51,9 +52,12 @@
                             <p class="font-semibold text-gray-800 text-sm">{{ $user->name }}</p>
                             <p class="text-xs" style="color: var(--theme-primary);">{{ '@' . ($user->username ?? $user->id) }}</p>
                         </td>
-                        <td class="px-5 py-3.5 text-xs text-gray-400 space-y-0.5">
+                        <td class="px-5 py-3.5 text-xs text-gray-900 space-y-0.5">
                             <p>{{ $user->email }}</p>
                             <p>{{ $user->phone ?? '—' }}</p>
+                        </td>
+                        <td class="px-5 py-3.5 text-xs text-gray-800">
+                            {{ $user->city ?? '—' }}
                         </td>
                         <td class="px-4 py-3.5 text-xs space-y-0.5">
                             <p><span class="font-medium text-gray-600">Type:</span> <span class="{{ $user->account_type == 'Root Distributor' ? 'text-purple-600 font-semibold' : 'text-gray-500' }}">{{ $user->account_type }}</span></p>
@@ -83,16 +87,28 @@
                             @endif
                         </td>
                         <td class="px-5 py-3.5 text-center">
-                            <a href="{{ route('admin.users.details', $user->username ?? $user->id) }}"
-                               class="inline-flex items-center gap-1 text-xs font-medium border rounded-none px-3 py-1.5 hover:opacity-80 transition-opacity"
-                               style="color: var(--theme-primary); border-color: var(--theme-primary);">
-                                Details
-                            </a>
+                            <div class="flex items-center justify-center gap-2">
+                                <a href="{{ route('admin.users.details', $user->username ?? $user->id) }}"
+                                   class="inline-flex items-center gap-1 text-xs font-medium border rounded-none px-3 py-1.5 hover:opacity-80 transition-opacity"
+                                   style="color: var(--theme-primary); border-color: var(--theme-primary);">
+                                    Details
+                                </a>
+                                <form method="POST" target="_blank" action="{{ route('admin.users.impersonate', $user->username ?? $user->id) }}">
+                                    @csrf
+                                    <button type="submit" title="Login as User"
+                                        class="inline-flex items-center gap-1 text-xs font-medium border rounded-none px-3 py-1.5 hover:opacity-80 transition-opacity text-green-600 border-green-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                                        </svg>
+                                        Login
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="text-center py-12 text-gray-400 text-sm">No users found</td>
+                        <td colspan="7" class="text-center py-12 text-gray-400 text-sm">No users found</td>
                     </tr>
                     @endforelse
                 </tbody>

@@ -157,48 +157,9 @@ class RoiController extends Controller
             'reference_id' => $roiLog->trx_id,
         ]);
 
-        // Distribute MLM Commission based on ROI Amount
-        $this->distributeRoiCommission($user, $roiAmount, $roiLog);
-
         return redirect()->back()->with('success', 'ROI approved and credited to user.');
     }
 
-    private function distributeRoiCommission($user, $roiAmount, $roiLog)
-    {
-        $commissionSetting = \App\Models\CommissionSetting::first();
-        if (!$commissionSetting) return;
-        
-        $levels = $commissionSetting->commissions ?? [];
-        
-        $currentSponsorId = $user->sponsor_id;
-        $level = 1;
-        
-        while ($currentSponsorId && $level <= $commissionSetting->level_count) {
-            $sponsor = \App\Models\User::find($currentSponsorId);
-            if (!$sponsor) break;
-            
-            $percentage = $levels[$level] ?? 0;
-            if ($percentage > 0) {
-                $commissionAmount = ($roiAmount * $percentage) / 100;
-                
-                $sponsor->wallet_balance = ($sponsor->wallet_balance ?? 0) + $commissionAmount;
-                $sponsor->save();
-                
-                \App\Models\Transaction::create([
-                    'trx_id' => 'TRX-' . strtoupper(\Illuminate\Support\Str::random(10)),
-                    'user_id' => $sponsor->id,
-                    'amount' => $commissionAmount,
-                    'type' => 'COMMISSION',
-                    'description' => 'ROI Commission from Level ' . $level,
-                    'reference_id' => $roiLog->trx_id,
-                    'status' => 'COMPLETED',
-                ]);
-            }
-            
-            $currentSponsorId = $sponsor->sponsor_id;
-            $level++;
-        }
-    }
 
     /**
      * Reject a pending ROI request
