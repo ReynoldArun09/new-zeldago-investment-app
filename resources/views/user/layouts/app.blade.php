@@ -214,16 +214,16 @@
             </div>
 
             <!-- Verification Menu -->
-            <a href="{{ route('user.verification.kyc') }}" class="sidebar-link {{ request()->routeIs('user.verification.*') ? 'active' : '' }}" style="{{ request()->routeIs('user.verification.*') ? '' : 'color: var(--sidebar-text);' }}">
+            <a href="{{ route('user.verification.kyc') }}" class="sidebar-link {{ request()->routeIs('user.verification.*') ? 'active' : '' }}">
                 <i class="ph ph-shield-check"></i> Verification
             </a>
             
-            <a href="{{ route('user.support.index') }}" class="sidebar-link {{ request()->routeIs('user.support.*') ? 'active' : '' }}" style="{{ request()->routeIs('user.support.*') ? '' : 'color: var(--sidebar-text);' }}">
+            <a href="{{ route('user.support.index') }}" class="sidebar-link {{ request()->routeIs('user.support.*') ? 'active' : '' }}">
                 <i class="ph ph-headset"></i> Support Tickets
             </a>
 
 
-            <a href="{{ route('user.notifications.index') }}" class="sidebar-link {{ request()->routeIs('user.notifications.*') ? 'active text-red-500' : '' }}" style="{{ request()->routeIs('user.notifications.*') ? '' : 'color: var(--sidebar-text);' }}">
+            <a href="{{ route('user.notifications.index') }}" class="sidebar-link {{ request()->routeIs('user.notifications.*') ? 'active text-red-500' : '' }}">
                 <i class="ph ph-bell {{ request()->routeIs('user.notifications.*') ? 'text-red-500' : '' }}"></i> Notifications
                 @if(auth()->user()->unreadNotifications->count() > 0)
                     <span class="ml-auto bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">{{ auth()->user()->unreadNotifications->count() }}</span>
@@ -242,8 +242,12 @@
         <div class="p-4 border-t border-indigo-100/50">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-primary font-bold shadow-inner">
-                        {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-primary font-bold shadow-inner overflow-hidden">
+                        @if(auth()->user()->profile_image)
+                            <img src="{{ Storage::url(auth()->user()->profile_image) }}" alt="Profile" class="w-full h-full object-cover">
+                        @else
+                            {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                        @endif
                     </div>
                     <div class="overflow-hidden">
                         <p class="text-sm font-bold truncate" style="color: var(--sidebar-text);">{{ auth()->user()->name }}</p>
@@ -323,8 +327,12 @@
                 <!-- Profile Dropdown -->
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" @click.away="open = false" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                        <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-primary font-semibold text-xs shadow-inner">
-                            {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                        <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-primary font-semibold text-xs shadow-inner overflow-hidden">
+                            @if(auth()->user()->profile_image)
+                                <img src="{{ Storage::url(auth()->user()->profile_image) }}" alt="Profile" class="w-full h-full object-cover">
+                            @else
+                                {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                            @endif
                         </div>
                         <div class="text-left hidden sm:block">
                             <p class="text-xs font-bold text-indigo-950">{{ auth()->user()->name }}</p>

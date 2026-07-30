@@ -12,7 +12,7 @@ use Illuminate\Notifications\Notifiable;
 
 use Illuminate\Support\Str;
 
-#[Fillable(['sponsor_id', 'referral_code', 'account_type', 'name', 'first_name', 'last_name', 'address', 'city', 'state', 'zip', 'country', 'username', 'email', 'phone', 'password'])]
+#[Fillable(['sponsor_id', 'referral_code', 'account_type', 'name', 'first_name', 'last_name', 'address', 'city', 'state', 'zip', 'country', 'username', 'email', 'phone', 'password', 'profile_image'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {

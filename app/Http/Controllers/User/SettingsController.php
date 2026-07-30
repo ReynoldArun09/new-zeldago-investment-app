@@ -29,9 +29,18 @@ class SettingsController extends Controller
             'state' => 'nullable|string|max:100',
             'zip' => 'nullable|string|max:20',
             'country' => 'required|string|max:100',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $data = $request->only('name', 'email', 'phone', 'address', 'city', 'state', 'zip', 'country');
+
+        if ($request->hasFile('profile_image')) {
+            if ($user->profile_image && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->profile_image)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->profile_image);
+            }
+            $path = $request->file('profile_image')->store('profiles', 'public');
+            $data['profile_image'] = $path;
+        }
 
         $user->update($data);
 

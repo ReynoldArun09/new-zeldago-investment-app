@@ -41,9 +41,14 @@
 <body class="min-h-screen flex items-center justify-center bg-gray-50 relative overflow-hidden p-4 sm:p-8">
     <div class="w-full max-w-md relative z-10 my-auto py-8">
         <div class="mb-8 text-center">
-            <div class="w-16 h-16 rounded-2xl text-white flex items-center justify-center font-bold text-3xl mx-auto mb-6 shadow-lg" style="background-color: var(--primary);">
-                {{ substr($theme['appName'] ?? 'O', 0, 1) }}
-            </div>
+            @php $branding = get_setting('logo_favicon') ?? []; @endphp
+            @if(!empty($branding['logo']))
+                <img src="{{ $branding['logo'] }}" alt="{{ $theme['appName'] ?? 'App Logo' }}" class="w-24 h-24 rounded-2xl mx-auto mb-6 object-contain shadow-sm">
+            @else
+                <div class="w-16 h-16 rounded-2xl text-white flex items-center justify-center font-bold text-3xl mx-auto mb-6 shadow-lg" style="background-color: var(--primary);">
+                    {{ substr($theme['appName'] ?? 'O', 0, 1) }}
+                </div>
+            @endif
             <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
             <p class="text-gray-500">Sign in to continue</p>
         </div>

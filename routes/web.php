@@ -1,5 +1,15 @@
 <?php
 
+Route::get('/run-migrations', function () {
+    if (!\Illuminate\Support\Facades\Schema::hasColumn('users', 'profile_image')) {
+        \Illuminate\Support\Facades\Schema::table('users', function (\Illuminate\Database\Schema\Blueprint $table) {
+            $table->string('profile_image')->nullable()->after('email');
+        });
+        return 'Profile Image column added successfully!';
+    }
+    
+    return 'Profile Image column already exists!';
+});
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController as UserAuthController;

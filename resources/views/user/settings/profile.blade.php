@@ -5,8 +5,40 @@
 @section('content')
 <div class="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
     <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-900">Profile Settings</h1>
+        <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">Profile Settings</h1>
         <p class="text-gray-600 mt-1">Update your personal information and contact details.</p>
+        
+        <div class="flex flex-wrap items-center gap-3 mt-4">
+            @if(optional($user->kyc)->status === 'APPROVED' || $user->kyc_status === 'APPROVED')
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                    <i class="ph ph-check-circle mr-1 text-sm"></i> KYC Verified
+                </span>
+            @else
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+                    <i class="ph ph-x-circle mr-1 text-sm"></i> KYC Not Verified
+                </span>
+            @endif
+
+            @if(optional($user->nominee)->status === 'APPROVED')
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                    <i class="ph ph-check-circle mr-1 text-sm"></i> Nominee Verified
+                </span>
+            @else
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+                    <i class="ph ph-x-circle mr-1 text-sm"></i> Nominee Not Verified
+                </span>
+            @endif
+
+            @if(optional($user->bankDetail)->status === 'APPROVED')
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                    <i class="ph ph-check-circle mr-1 text-sm"></i> Bank Verified
+                </span>
+            @else
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+                    <i class="ph ph-x-circle mr-1 text-sm"></i> Bank Not Verified
+                </span>
+            @endif
+        </div>
     </div>
 
     @if (session('success'))
@@ -37,10 +69,25 @@
     @endif
 
     <div>
-        <form action="{{ route('user.settings.profile.update') }}" method="POST" class="space-y-6">
+        <form action="{{ route('user.settings.profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             <div class="space-y-6">
+                <!-- Profile Image -->
+                <div class="flex items-center gap-6">
+                    <div class="w-20 h-20 rounded-full overflow-hidden bg-gray-100 border border-gray-200 shrink-0 shadow-sm flex items-center justify-center">
+                        @if($user->profile_image)
+                            <img src="{{ Storage::url($user->profile_image) }}" alt="Profile Image" class="w-full h-full object-cover">
+                        @else
+                            <i class="ph ph-user text-3xl text-gray-400"></i>
+                        @endif
+                    </div>
+                    <div>
+                        <label for="profile_image" class="block text-sm font-medium text-gray-700 mb-1">Profile Photo</label>
+                        <input type="file" name="profile_image" id="profile_image" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:opacity-90">
+                        <p class="text-xs text-gray-500 mt-1">JPG, JPEG, PNG or GIF (Max 2MB)</p>
+                    </div>
+                </div>
                 <!-- Full Name -->
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-600 mb-1">Full Name <span class="text-red-500">*</span></label>
