@@ -24,8 +24,6 @@ Route::middleware('auth')->group(function () {
     
     // User Investments
     Route::prefix('investments')->name('user.investments.')->group(function () {
-        Route::get('/new', [\App\Http\Controllers\User\InvestmentController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\User\InvestmentController::class, 'store'])->name('store');
         Route::get('/active', [\App\Http\Controllers\User\InvestmentController::class, 'active'])->name('active');
         Route::get('/closed', [\App\Http\Controllers\User\InvestmentController::class, 'closed'])->name('closed');
         Route::post('/{id}/close', [\App\Http\Controllers\User\InvestmentController::class, 'closeRequest'])->name('close');
@@ -60,11 +58,9 @@ Route::middleware('auth')->group(function () {
     // User Verification
     Route::prefix('verification')->name('user.verification.')->group(function () {
         Route::get('/kyc', [\App\Http\Controllers\User\VerificationController::class, 'kyc'])->name('kyc');
-        Route::post('/kyc', [\App\Http\Controllers\User\VerificationController::class, 'submitKyc'])->name('kyc.submit');
         Route::get('/nominee', [\App\Http\Controllers\User\VerificationController::class, 'nominee'])->name('nominee');
-        Route::post('/nominee', [\App\Http\Controllers\User\VerificationController::class, 'submitNominee'])->name('nominee.submit');
         Route::get('/bank', [\App\Http\Controllers\User\VerificationController::class, 'bank'])->name('bank');
-        Route::post('/bank', [\App\Http\Controllers\User\VerificationController::class, 'bankStore'])->name('bank.store');
+        Route::post('/bank/confirm', [\App\Http\Controllers\User\VerificationController::class, 'confirmBank'])->name('bank.confirm');
     });
 
     // User Notifications
@@ -113,6 +109,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('users/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');
         Route::post('users', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
         Route::get('users/{username}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.details');
+        Route::post('users/{username}/investment', [\App\Http\Controllers\Admin\UserController::class, 'storeInvestment'])->name('users.investment.store');
+        Route::post('users/{username}/kyc', [\App\Http\Controllers\Admin\UserController::class, 'storeKyc'])->name('users.kyc.store');
+        Route::post('users/{username}/nominee', [\App\Http\Controllers\Admin\UserController::class, 'storeNominee'])->name('users.nominee.store');
+        Route::post('users/{username}/bank', [\App\Http\Controllers\Admin\UserController::class, 'storeBank'])->name('users.bank.store');
         Route::put('users/{username}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
         Route::put('users/{username}/password', [\App\Http\Controllers\Admin\UserController::class, 'updatePassword'])->name('users.updatePassword');
         Route::put('users/{username}/ban', [\App\Http\Controllers\Admin\UserController::class, 'ban'])->name('users.ban');

@@ -130,9 +130,7 @@
                 </button>
                 <div x-show="open" x-transition.opacity style="display: none;" class="pl-[33px] py-1">
                     <div class="border-l border-indigo-200/20 space-y-1 py-1">
-                        <a href="{{ route('user.investments.create') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.investments.create') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.investments.create') ? '' : 'color: var(--sidebar-muted);' }}">
-                            <i class="ph ph-circle text-[8px]"></i> New Investment
-                        </a>
+
                         <a href="{{ route('user.investments.active') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.investments.active') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.investments.active') ? '' : 'color: var(--sidebar-muted);' }}">
                             <i class="ph ph-circle text-[8px]"></i> My Investments
                         </a>
@@ -443,7 +441,7 @@
                 items: [
                     { title: 'Dashboard', url: '{{ route('user.dashboard') }}', category: 'General', icon: 'ph-squares-four' },
                     @if(Auth::user()->account_type !== 'Agent')
-                    { title: 'New Investment', url: '{{ route('user.investments.create') }}', category: 'Investments', icon: 'ph-trend-up' },
+
                     { title: 'My Investments', url: '{{ route('user.investments.active') }}', category: 'Investments', icon: 'ph-trend-up' },
                     { title: 'Closed Investments', url: '{{ route('user.investments.closed') }}', category: 'Investments', icon: 'ph-trend-up' },
                     @endif

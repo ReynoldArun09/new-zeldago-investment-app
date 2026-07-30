@@ -11,6 +11,7 @@
     <!-- Page Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
         <div>
+            <p class="text-4xl font-bold text-slate-700 mb-2">Welcome, <span class="text-indigo-600">{{ Auth::user()->name }}</span>!</p>
             <div class="flex items-center gap-3 mb-1">
                 <h1 class="text-2xl font-bold text-indigo-950">{{ Auth::user()->account_type === 'Agent' ? 'Agent' : 'Investor' }} Dashboard</h1>
                 @if(Auth::user()->kyc_status === 'VERIFIED')
@@ -28,11 +29,11 @@
         
         <div class="flex items-center gap-2">
             @if(Auth::user()->account_type === 'Agent')
-            <button @click="showAddInvestorModal = true" class="bg-primary hover:opacity-90 text-white text-sm font-semibold py-2.5 px-4 rounded-xl transition-colors border border-primary shadow-sm flex items-center gap-2">
+            <button @click="showAddInvestorModal = true" class="bg-primary hover:opacity-90 text-white text-sm font-semibold py-2.5 px-4 rounded-none transition-colors border border-primary shadow-sm flex items-center gap-2">
                 <i class="ph ph-user-plus"></i> Add Investor
             </button>
             @endif
-            <a href="{{ route('user.statements.download') }}" class="bg-indigo-100/50 hover:bg-indigo-100 text-primary text-sm font-semibold py-2.5 px-4 rounded-xl transition-colors border border-indigo-100 shadow-sm flex items-center gap-2">
+            <a href="{{ route('user.statements.download') }}" class="bg-indigo-100/50 hover:bg-indigo-100 text-primary text-sm font-semibold py-2.5 px-4 rounded-none transition-colors border border-indigo-100 shadow-sm flex items-center gap-2">
                 Download Statements
             </a>
         </div>

@@ -52,12 +52,48 @@
 
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         @if($bankDetail && $bankDetail->status === 'PENDING')
-            <div class="p-8 text-center">
-                <div class="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-100">
-                    <i class="ph ph-hourglass-high text-3xl text-amber-500"></i>
+            <div class="p-8">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-indigo-100">
+                        <i class="ph ph-bank text-3xl text-indigo-500"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-900">Please Confirm Your Bank Details</h3>
+                    <p class="text-gray-600 mt-2">The administration has added your bank details. Please review and confirm them below.</p>
                 </div>
-                <h3 class="text-lg font-bold text-gray-900">Verification Pending</h3>
-                <p class="text-gray-600 mt-2">Your bank details have been submitted and are currently under review by the administration.</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-gray-50 p-6 rounded-xl border border-gray-100 mb-6 text-sm">
+                    <div>
+                        <span class="text-gray-500 block mb-1">Account Holder Name</span> 
+                        <span class="font-medium text-gray-900 text-base">{{ $bankDetail->name }}</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 block mb-1">Bank Name</span> 
+                        <span class="font-medium text-gray-900 text-base">{{ $bankDetail->bank_name }}</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 block mb-1">Account Number</span> 
+                        <span class="font-medium text-gray-900 text-base">{{ $bankDetail->account_number }}</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 block mb-1">IFSC Code</span> 
+                        <span class="font-medium text-gray-900 text-base">{{ $bankDetail->ifsc_code }}</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 block mb-1">UPI ID</span> 
+                        <span class="font-medium text-gray-900 text-base">{{ $bankDetail->upi_id ?? 'N/A' }}</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-500 block mb-1">UPI Number</span> 
+                        <span class="font-medium text-gray-900 text-base">{{ $bankDetail->upi_number ?? 'N/A' }}</span>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ route('user.verification.bank.confirm') }}" class="text-center">
+                    @csrf
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-xl transition-colors shadow-sm inline-flex items-center gap-2">
+                        <i class="ph ph-check-circle text-lg"></i> I Confirm These Details
+                    </button>
+                </form>
             </div>
         @elseif($bankDetail && $bankDetail->status === 'APPROVED')
             <div class="p-8 text-center">
@@ -68,78 +104,13 @@
                 <p class="text-gray-600 mt-2">Your bank details have been approved. You can now make withdrawals.</p>
             </div>
         @else
-            @if($bankDetail && $bankDetail->status === 'REJECTED')
-                <div class="p-6 bg-red-50 border-b border-red-100 flex items-start gap-3">
-                    <i class="ph ph-warning-circle text-red-600 text-xl shrink-0"></i>
-                    <div>
-                        <h3 class="text-sm font-bold text-red-800">Your previous submission was rejected</h3>
-                        <p class="text-sm text-red-700 mt-1">Reason: {{ $bankDetail->rejection_reason ?? 'No reason provided.' }}</p>
-                        <p class="text-sm text-red-700 mt-2">Please submit your details again carefully.</p>
-                    </div>
+            <div class="p-8 text-center">
+                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
+                    <i class="ph ph-bank text-3xl text-gray-400"></i>
                 </div>
-            @endif
-
-            <form action="{{ route('user.verification.bank.store') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="p-6 sm:p-8 space-y-8">
-                    
-                    {{-- Bank Details Section --}}
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 mb-4 border-b border-gray-100 pb-2">Bank Details</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Account Holder Name <span class="text-red-500">*</span></label>
-                                <input type="text" name="name" value="{{ old('name', $bankDetail->name ?? '') }}" required class="block w-full rounded-xl border border-gray-200 px-4 py-3 shadow-sm focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] sm:text-sm outline-none transition-colors">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Bank Name <span class="text-red-500">*</span></label>
-                                <input type="text" name="bank_name" value="{{ old('bank_name', $bankDetail->bank_name ?? '') }}" required class="block w-full rounded-xl border border-gray-200 px-4 py-3 shadow-sm focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] sm:text-sm outline-none transition-colors">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Account Number <span class="text-red-500">*</span></label>
-                                <input type="text" name="account_number" value="{{ old('account_number', $bankDetail->account_number ?? '') }}" required class="block w-full rounded-xl border border-gray-200 px-4 py-3 shadow-sm focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] sm:text-sm outline-none transition-colors">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">IFSC / Branch Code <span class="text-red-500">*</span></label>
-                                <input type="text" name="ifsc_code" value="{{ old('ifsc_code', $bankDetail->ifsc_code ?? '') }}" required class="block w-full rounded-xl border border-gray-200 px-4 py-3 shadow-sm focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] sm:text-sm outline-none transition-colors">
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- UPI Details Section --}}
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 mb-4 border-b border-gray-100 pb-2">UPI Details <span class="text-sm font-normal text-gray-500">(Optional)</span></h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">UPI ID</label>
-                                <input type="text" name="upi_id" value="{{ old('upi_id', $bankDetail->upi_id ?? '') }}" placeholder="e.g. name@bank" class="block w-full rounded-xl border border-gray-200 px-4 py-3 shadow-sm focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] sm:text-sm outline-none transition-colors">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">UPI Number</label>
-                                <input type="text" name="upi_number" value="{{ old('upi_number', $bankDetail->upi_number ?? '') }}" class="block w-full rounded-xl border border-gray-200 px-4 py-3 shadow-sm focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] sm:text-sm outline-none transition-colors">
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Proof Image --}}
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-900 mb-4 border-b border-gray-100 pb-2">Verification Proof</h3>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Upload Passbook / Cancelled Cheque / Statement Image</label>
-                            <input type="file" name="proof_image" accept="image/*" class="block w-full text-sm text-gray-600 border border-gray-300 rounded-xl p-2.5 bg-gray-50 hover:bg-gray-100 cursor-pointer focus:outline-none focus:border-[var(--primary)] transition-colors file:mr-4 file:py-1 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-200 file:text-gray-700">
-                            <p class="mt-2 text-xs text-gray-500">Supported formats: JPG, PNG, GIF. Max size: 2MB.</p>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="bg-gray-50 px-6 py-4 sm:px-8 border-t border-gray-100 flex items-center justify-end">
-                    <button type="submit" class="inline-flex justify-center items-center gap-2 rounded-xl border border-transparent bg-[var(--primary)] px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:opacity-90 focus:outline-none transition">
-                        Submit Details
-                        <i class="ph ph-arrow-right"></i>
-                    </button>
-                </div>
-            </form>
+                <h3 class="text-lg font-bold text-gray-900">No Bank Details</h3>
+                <p class="text-gray-600 mt-2">Your bank details are managed by the administration. If you need to update them, please contact support.</p>
+            </div>
         @endif
     </div>
 </div>

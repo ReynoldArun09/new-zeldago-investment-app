@@ -10,17 +10,29 @@
         <h1 class="text-base font-semibold text-gray-700">
             User Detail &ndash; {{ $user->username }}
         </h1>
-        <form method="POST" target="_blank" action="{{ route('admin.users.impersonate', $user->username ?? $user->id) }}">
-            @csrf
-            <button type="submit"
-                class="flex items-center gap-1.5 text-sm border rounded-none px-3 py-1.5 hover:opacity-80 transition-opacity"
-                style="color: var(--theme-primary); border-color: var(--theme-primary);">
+        <div class="flex items-center gap-2">
+            @if($user->account_type === 'Normal User')
+            <button type="button" onclick="document.getElementById('investment-modal').classList.remove('hidden')"
+                class="flex items-center gap-1.5 text-sm border rounded-none px-3 py-1.5 hover:opacity-80 transition-opacity bg-indigo-500 text-white"
+                style="border-color: var(--theme-primary); background-color: var(--theme-primary);">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                 </svg>
-                Login as User
+                Create Investment
             </button>
-        </form>
+            @endif
+            <form method="POST" target="_blank" action="{{ route('admin.users.impersonate', $user->username ?? $user->id) }}">
+                @csrf
+                <button type="submit"
+                    class="flex items-center gap-1.5 text-sm border rounded-none px-3 py-1.5 hover:opacity-80 transition-opacity"
+                    style="color: var(--theme-primary); border-color: var(--theme-primary);">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                    </svg>
+                    Login as User
+                </button>
+            </form>
+        </div>
     </div>
 
     {{-- 8 Stats Cards --}}
@@ -32,10 +44,16 @@
             ['label' => 'Total Investments',         'value' => $stats['totalInvestments'],                                     'bg' => 'bg-indigo-700', 'icon' => 'briefcase'],
             ['label' => 'Investment Close Requests', 'value' => $stats['closeRequests'],                                        'bg' => 'bg-red-700',    'icon' => 'hand'],
             ['label' => 'Completed Investments',     'value' => $stats['completedInvestments'],                                 'bg' => 'bg-green-600',  'icon' => 'check-circle'],
-            ['label' => 'My Commissions',            'value' => format_currency($stats['myCommissions']),      'bg' => 'bg-teal-600',   'icon' => 'wallet'],
+        ];
+
+        if ($user->account_type === 'Agent' || $user->account_type === 'Root Distributor') {
+            $cards[] = ['label' => 'My Commissions', 'value' => format_currency($stats['myCommissions']), 'bg' => 'bg-teal-600', 'icon' => 'wallet'];
+        }
+
+        $cards = array_merge($cards, [
             ['label' => 'Withdrawals',               'value' => format_currency($stats['withdrawals']),        'bg' => 'bg-yellow-600', 'icon' => 'landmark'],
             ['label' => 'Transactions',              'value' => $stats['transactions'],                                         'bg' => 'bg-cyan-600',   'icon' => 'arrows'],
-        ];
+        ]);
         @endphp
 
         @foreach($cards as $card)
@@ -187,23 +205,40 @@
 
     {{-- Profile Info Form --}}
     <div class="bg-white rounded-none shadow-sm p-5 sm:p-6" x-data="{ activeDetail: null }">
-        <div class="flex items-center gap-4 mb-5">
-            <h2 class="text-sm font-semibold text-gray-700 whitespace-nowrap">
-                Details of {{ $user->name }}
-            </h2>
+        <div class="mb-5 flex flex-wrap justify-between items-center gap-4">
             <div class="flex flex-wrap items-center gap-2">
                 <button type="button" @click="activeDetail = activeDetail === 'kyc' ? null : 'kyc'" 
                     class="text-sm font-medium text-white px-4 py-2 rounded-none transition-colors bg-green-500 hover:bg-green-600 opacity-80">
-                    View KYC
+                    {{ $user->kyc ? 'View KYC' : 'Create KYC' }}
                 </button>
                 <button type="button" @click="activeDetail = activeDetail === 'nominee' ? null : 'nominee'" 
                     class="text-sm font-medium text-white px-4 py-2 rounded-none transition-colors bg-red-500 hover:bg-red-600 opacity-80">
-                    View Nominee
+                    {{ $user->nominee ? 'View Nominee' : 'Create Nominee' }}
                 </button>
                 <button type="button" @click="activeDetail = activeDetail === 'bank' ? null : 'bank'" 
                     class="text-sm font-medium text-white px-4 py-2 rounded-none transition-colors bg-gray-500 hover:bg-gray-600 opacity-80">
-                    View Bank Details
+                    {{ $user->bankDetail ? 'View Bank Details' : 'Create Bank Details' }}
                 </button>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                @if($user->kyc)
+                <button type="button" @click="activeDetail = activeDetail === 'edit-kyc' ? null : 'edit-kyc'" 
+                    class="text-sm font-medium text-gray-700 bg-gray-100 border border-gray-200 px-4 py-2 rounded-none transition-colors hover:bg-gray-200">
+                    Edit KYC
+                </button>
+                @endif
+                @if($user->nominee)
+                <button type="button" @click="activeDetail = activeDetail === 'edit-nominee' ? null : 'edit-nominee'" 
+                    class="text-sm font-medium text-gray-700 bg-gray-100 border border-gray-200 px-4 py-2 rounded-none transition-colors hover:bg-gray-200">
+                    Edit Nominee
+                </button>
+                @endif
+                @if($user->bankDetail)
+                <button type="button" @click="activeDetail = activeDetail === 'edit-bank' ? null : 'edit-bank'" 
+                    class="text-sm font-medium text-gray-700 bg-gray-100 border border-gray-200 px-4 py-2 rounded-none transition-colors hover:bg-gray-200">
+                    Edit Bank Details
+                </button>
+                @endif
             </div>
         </div>
 
@@ -239,9 +274,89 @@
                     @endif
                 </div>
             @else
-                <p class="text-gray-500 italic">User has not added KYC details.</p>
+                <form method="POST" action="{{ route('admin.users.kyc.store', $user->username ?? $user->id) }}" enctype="multipart/form-data" class="space-y-4">
+                    @csrf
+                    <p class="text-gray-500 italic mb-2">User has not added KYC details.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Document Type</label>
+                            <select name="document_type" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                                <option value="">Select Document Type...</option>
+                                <option value="National ID">National ID</option>
+                                <option value="Passport">Passport</option>
+                                <option value="Driver's License">Driver's License</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Document Number</label>
+                            <input type="text" name="document_number" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Country</label>
+                            <input type="text" name="country" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Address</label>
+                            <input type="text" name="address" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Front Side Image (Optional)</label>
+                            <input type="file" name="document_front_proof" accept="image/*" class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Back Side Image (Optional)</label>
+                            <input type="file" name="document_back_proof" accept="image/*" class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                        </div>
+                        <div class="sm:col-span-2 pt-2">
+                            <button type="submit" class="px-4 py-2 text-sm text-white rounded-none transition-colors bg-green-500 hover:bg-green-600">Submit KYC</button>
+                        </div>
+                    </div>
+                </form>
             @endif
         </div>
+
+        @if($user->kyc)
+        <div x-show="activeDetail === 'edit-kyc'" style="display: none;" class="mb-6 p-4 border border-gray-100 bg-gray-50 text-sm">
+            <form method="POST" action="{{ route('admin.users.kyc.store', $user->username ?? $user->id) }}" enctype="multipart/form-data" class="space-y-4">
+                @csrf
+                <p class="font-semibold text-gray-700 mb-2 border-b border-gray-200 pb-2">Edit KYC Details</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Document Type</label>
+                        <select name="document_type" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                            <option value="">Select Document Type...</option>
+                            <option value="National ID" {{ $user->kyc->document_type === 'National ID' ? 'selected' : '' }}>National ID</option>
+                            <option value="Passport" {{ $user->kyc->document_type === 'Passport' ? 'selected' : '' }}>Passport</option>
+                            <option value="Driver's License" {{ $user->kyc->document_type === "Driver's License" ? 'selected' : '' }}>Driver's License</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Document Number</label>
+                        <input type="text" name="document_number" value="{{ $user->kyc->document_number }}" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Country</label>
+                        <input type="text" name="country" value="{{ $user->kyc->country }}" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Address</label>
+                        <input type="text" name="address" value="{{ $user->kyc->address }}" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Front Side Image (Optional to Update)</label>
+                        <input type="file" name="document_front_proof" accept="image/*" class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Back Side Image (Optional to Update)</label>
+                        <input type="file" name="document_back_proof" accept="image/*" class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                    </div>
+                    <div class="sm:col-span-2 pt-2 flex gap-2">
+                        <button type="submit" class="px-4 py-2 text-sm text-white rounded-none transition-colors bg-green-500 hover:bg-green-600">Update KYC</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        @endif
         
         <div x-show="activeDetail === 'nominee'" style="display: none;" class="mb-6 p-4 border border-gray-100 bg-gray-50 text-sm">
             @if($user->nominee)
@@ -274,9 +389,77 @@
                     @endif
                 </div>
             @else
-                <p class="text-gray-500 italic">User has not added Nominee details.</p>
+                <form method="POST" action="{{ route('admin.users.nominee.store', $user->username ?? $user->id) }}" enctype="multipart/form-data" class="space-y-4">
+                    @csrf
+                    <p class="text-gray-500 italic mb-2">User has not added Nominee details.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Nominee Full Name</label>
+                            <input type="text" name="name" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Relation</label>
+                            <select name="relation" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                                <option value="">Select Relation...</option>
+                                <option value="Spouse">Spouse</option>
+                                <option value="Child">Child</option>
+                                <option value="Parent">Parent</option>
+                                <option value="Sibling">Sibling</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Identity Proof (Front Side) - Optional</label>
+                            <input type="file" name="identity_front_proof" accept="image/*" class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Identity Proof (Back Side) - Optional</label>
+                            <input type="file" name="identity_back_proof" accept="image/*" class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                        </div>
+                        <div class="sm:col-span-2 pt-2">
+                            <button type="submit" class="px-4 py-2 text-sm text-white rounded-none transition-colors bg-red-500 hover:bg-red-600">Submit Nominee</button>
+                        </div>
+                    </div>
+                </form>
             @endif
         </div>
+
+        @if($user->nominee)
+        <div x-show="activeDetail === 'edit-nominee'" style="display: none;" class="mb-6 p-4 border border-gray-100 bg-gray-50 text-sm">
+            <form method="POST" action="{{ route('admin.users.nominee.store', $user->username ?? $user->id) }}" enctype="multipart/form-data" class="space-y-4">
+                @csrf
+                <p class="font-semibold text-gray-700 mb-2 border-b border-gray-200 pb-2">Edit Nominee Details</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Nominee Full Name</label>
+                        <input type="text" name="name" value="{{ $user->nominee->full_name ?? $user->nominee->name }}" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Relation</label>
+                        <select name="relation" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                            <option value="">Select Relation...</option>
+                            <option value="Spouse" {{ $user->nominee->relation === 'Spouse' ? 'selected' : '' }}>Spouse</option>
+                            <option value="Child" {{ $user->nominee->relation === 'Child' ? 'selected' : '' }}>Child</option>
+                            <option value="Parent" {{ $user->nominee->relation === 'Parent' ? 'selected' : '' }}>Parent</option>
+                            <option value="Sibling" {{ $user->nominee->relation === 'Sibling' ? 'selected' : '' }}>Sibling</option>
+                            <option value="Other" {{ $user->nominee->relation === 'Other' ? 'selected' : '' }}>Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Identity Proof (Front Side) - Optional to Update</label>
+                        <input type="file" name="identity_front_proof" accept="image/*" class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Identity Proof (Back Side) - Optional to Update</label>
+                        <input type="file" name="identity_back_proof" accept="image/*" class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                    </div>
+                    <div class="sm:col-span-2 pt-2 flex gap-2">
+                        <button type="submit" class="px-4 py-2 text-sm text-white rounded-none transition-colors bg-red-500 hover:bg-red-600">Update Nominee</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        @endif
 
         <div x-show="activeDetail === 'bank'" style="display: none;" class="mb-6 p-4 border border-gray-100 bg-gray-50 text-sm">
             @if($user->bankDetail)
@@ -312,12 +495,94 @@
                     @endif
                 </div>
             @else
-                <p class="text-gray-500 italic">User has not added Bank details.</p>
+                <form method="POST" action="{{ route('admin.users.bank.store', $user->username ?? $user->id) }}" enctype="multipart/form-data" class="space-y-4">
+                    @csrf
+                    <p class="text-gray-500 italic mb-2">User has not added Bank details.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Account Holder Name</label>
+                            <input type="text" name="name" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Bank Name</label>
+                            <input type="text" name="bank_name" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Account Number</label>
+                            <input type="text" name="account_number" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">IFSC Code</label>
+                            <input type="text" name="ifsc_code" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">UPI ID (Optional)</label>
+                            <input type="text" name="upi_id" class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1">UPI Number (Optional)</label>
+                            <input type="text" name="upi_number" class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Proof Image (Optional)</label>
+                            <input type="file" name="proof_image" accept="image/*" class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                        </div>
+                        <div class="sm:col-span-2 pt-2">
+                            <button type="submit" class="px-4 py-2 text-sm text-white rounded-none transition-colors bg-gray-500 hover:bg-gray-600">Submit Bank Details</button>
+                        </div>
+                    </div>
+                </form>
             @endif
         </div>
 
+        @if($user->bankDetail)
+        <div x-show="activeDetail === 'edit-bank'" style="display: none;" class="mb-6 p-4 border border-gray-100 bg-gray-50 text-sm">
+            <form method="POST" action="{{ route('admin.users.bank.store', $user->username ?? $user->id) }}" enctype="multipart/form-data" class="space-y-4">
+                @csrf
+                <p class="font-semibold text-gray-700 mb-2 border-b border-gray-200 pb-2">Edit Bank Details</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Account Holder Name</label>
+                        <input type="text" name="name" value="{{ $user->bankDetail->name }}" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Bank Name</label>
+                        <input type="text" name="bank_name" value="{{ $user->bankDetail->bank_name }}" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Account Number</label>
+                        <input type="text" name="account_number" value="{{ $user->bankDetail->account_number }}" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">IFSC Code</label>
+                        <input type="text" name="ifsc_code" value="{{ $user->bankDetail->ifsc_code }}" required class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">UPI ID (Optional)</label>
+                        <input type="text" name="upi_id" value="{{ $user->bankDetail->upi_id }}" class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">UPI Number (Optional)</label>
+                        <input type="text" name="upi_number" value="{{ $user->bankDetail->upi_number }}" class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Proof Image (Optional to Update)</label>
+                        <input type="file" name="proof_image" accept="image/*" class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
+                    </div>
+                    <div class="sm:col-span-2 pt-2 flex gap-2">
+                        <button type="submit" class="px-4 py-2 text-sm text-white rounded-none transition-colors bg-gray-500 hover:bg-gray-600">Update Bank Details</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        @endif
+
         <form method="POST" action="{{ route('admin.users.update', $user->username ?? $user->id) }}">
             @csrf @method('PUT')
+
+            <h2 class="text-sm font-semibold text-gray-700 mb-4 border-b border-gray-100 pb-2">
+                Details of {{ $user->name }}
+            </h2>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="sm:col-span-2">
@@ -459,6 +724,43 @@
 
 </div>
 
+{{-- Create Investment Modal --}}
+<div id="investment-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-none shadow-xl w-full max-w-md overflow-hidden">
+        <div class="flex justify-between items-center p-4 border-b border-gray-100">
+            <h3 class="font-semibold text-gray-800">Create Investment for {{ $user->username }}</h3>
+            <button type="button" onclick="document.getElementById('investment-modal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
+        </div>
+        <form method="POST" action="{{ route('admin.users.investment.store', $user->username ?? $user->id) }}" enctype="multipart/form-data" class="p-4 space-y-4">
+            @csrf
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Amount</label>
+                <input type="number" step="0.01" name="amount" required
+                    class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none"
+                    placeholder="Enter amount">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Transaction ID</label>
+                <input type="text" name="trx_id" required
+                    class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none"
+                    placeholder="Transaction ID">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Payment Proof</label>
+                <input type="file" name="payment_proof" accept="image/*" required
+                    class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-gray-50">
+            </div>
+            <div class="pt-2 flex justify-end gap-2">
+                <button type="button" onclick="document.getElementById('investment-modal').classList.add('hidden')"
+                    class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-none transition-colors">Cancel</button>
+                <button type="submit"
+                    class="px-4 py-2 text-sm text-white rounded-none transition-colors"
+                    style="background-color: var(--theme-primary);">Create Investment</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 {{-- Notification Modal --}}
 <div id="notif-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-none shadow-xl w-full max-w-md overflow-hidden">
@@ -504,6 +806,9 @@ function setBalanceTab(tab) {
     document.getElementById('btn-balance-sub').classList.toggle('ring-offset-1', tab === 'sub');
 }
 
+
+
+<script>
 function toggleVerify(field, current) {
     const isOn = current === '1' || document.getElementById('val-' + field).value === '1';
     const newVal = isOn ? '0' : '1';
