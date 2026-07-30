@@ -37,10 +37,11 @@
                 <label for="amount" class="block text-sm font-medium text-gray-700 mb-2">Investment Amount</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <span class="text-gray-500 font-medium">{{ get_setting('currency_symbol', '$') }}</span>
+                        <span class="text-gray-500 font-medium">{{ get_setting('currency_symbol') ?? 'Rs.' }}</span>
                     </div>
                     <input type="number" name="amount" id="amount" value="{{ old('amount') }}" required min="1" step="0.01"
-                        class="block w-full pl-10 pr-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50 transition-colors"
+                        class="block w-full pr-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50 transition-colors"
+                        style="padding-left: 3.5rem;"
                         placeholder="0.00">
                 </div>
                 <p class="mt-2 text-xs text-gray-500">Enter the exact amount you have transferred.</p>

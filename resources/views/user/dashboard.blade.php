@@ -32,9 +32,9 @@
                 <i class="ph ph-user-plus"></i> Add Investor
             </button>
             @endif
-            <button class="bg-indigo-100/50 hover:bg-indigo-100 text-primary text-sm font-semibold py-2.5 px-4 rounded-xl transition-colors border border-indigo-100 shadow-sm flex items-center gap-2">
+            <a href="{{ route('user.statements.download') }}" class="bg-indigo-100/50 hover:bg-indigo-100 text-primary text-sm font-semibold py-2.5 px-4 rounded-xl transition-colors border border-indigo-100 shadow-sm flex items-center gap-2">
                 Download Statements
-            </button>
+            </a>
         </div>
     </div>
 
@@ -60,6 +60,28 @@
             </div>
             <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0,0,0,0.1);">
                 <i class="ph ph-chart-line-up text-2xl opacity-90"></i>
+            </div>
+        </div>
+
+        <!-- Card 5 (Active Investments) -->
+        <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden" style="background-color: #00a65a;">
+            <div class="p-4 flex flex-col justify-center">
+                <p class="text-xs mb-1 font-medium opacity-90">Active Investments</p>
+                <p class="text-xl font-bold tracking-wide">{{ $active_investments_count }}</p>
+            </div>
+            <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0,0,0,0.1);">
+                <i class="ph ph-activity text-2xl opacity-90"></i>
+            </div>
+        </div>
+
+        <!-- Card 6 (Closed Investments) -->
+        <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden" style="background-color: #dd4b39;">
+            <div class="p-4 flex flex-col justify-center">
+                <p class="text-xs mb-1 font-medium opacity-90">Closed Investments</p>
+                <p class="text-xl font-bold tracking-wide">{{ $closed_investments_count }}</p>
+            </div>
+            <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0,0,0,0.1);">
+                <i class="ph ph-archive-box text-2xl opacity-90"></i>
             </div>
         </div>
         @endif
@@ -139,6 +161,65 @@
                                             @endif">
                                             {{ ucfirst($roi->status) }}
                                         </span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
+    </div>
+    <div class="mb-8">
+        <div class="bg-white rounded-2xl p-6 shadow-sm shadow-indigo-100/50 border border-slate-50 flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-sm font-bold text-indigo-950">My Investments</h3>
+                <a href="{{ route('user.investments.active') }}" class="text-xs text-primary font-semibold hover:underline">View All</a>
+            </div>
+            @if($user_investments->isEmpty())
+                <div class="flex-1 flex items-center justify-center py-10">
+                    <p class="text-sm text-slate-400">No active investments</p>
+                </div>
+            @else
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="text-white text-xs font-bold uppercase tracking-wider" style="background-color: var(--primary);">
+                                <th class="px-5 py-3 font-medium">Transaction ID</th>
+                                <th class="px-5 py-3 font-medium">Amount</th>
+                                <th class="px-5 py-3 font-medium text-center">Status</th>
+                                <th class="px-5 py-3 font-medium text-right">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            @foreach($user_investments as $inv)
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="px-5 py-4">
+                                        <p class="text-sm font-bold text-indigo-950">
+                                            {{ $inv->trx_id ?? 'N/A' }}
+                                        </p>
+                                    </td>
+                                    <td class="px-5 py-4">
+                                        <p class="text-sm font-bold text-green-600">{{ format_currency($inv->amount) }}</p>
+                                    </td>
+                                    <td class="px-5 py-4 text-center">
+                                        @if($inv->status === 'pending')
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                                                <i class="ph ph-clock text-amber-500"></i> Pending
+                                            </span>
+                                        @elseif(strtoupper($inv->status) === 'ACTIVE')
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+                                                <i class="ph ph-check-circle text-green-500"></i> Active
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200">
+                                                {{ ucfirst($inv->status) }}
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-5 py-4 text-right">
+                                        <p class="text-sm text-slate-600">{{ $inv->created_at->format('M d, Y') }}</p>
+                                        <p class="text-xs text-slate-400">{{ $inv->created_at->format('h:i A') }}</p>
                                     </td>
                                 </tr>
                             @endforeach

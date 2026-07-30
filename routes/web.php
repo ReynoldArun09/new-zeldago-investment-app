@@ -47,6 +47,9 @@ Route::middleware('auth')->group(function () {
     });
     
     // User Settings
+    // Statement Downloads
+    Route::get('/statements/download', [\App\Http\Controllers\User\DashboardController::class, 'downloadStatements'])->name('user.statements.download');
+
     Route::prefix('settings')->name('user.settings.')->group(function () {
         Route::get('/profile', [\App\Http\Controllers\User\SettingsController::class, 'profile'])->name('profile');
         Route::post('/profile', [\App\Http\Controllers\User\SettingsController::class, 'updateProfile'])->name('profile.update');
