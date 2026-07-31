@@ -18,6 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectUsersTo(fn (Request $request) => 
             $request->is('admin', 'admin/*') ? route('admin.dashboard') : route('user.dashboard')
         );
+        $middleware->alias([
+            'admin.settings.lock' => \App\Http\Middleware\AdminSettingsLock::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

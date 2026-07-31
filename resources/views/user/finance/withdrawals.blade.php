@@ -16,7 +16,7 @@
         </div>
         <div>
             <p class="text-indigo-200 text-sm font-medium">Available Balance</p>
-            <p class="text-2xl font-black">{{ get_setting('currency_symbol', '$') }}{{ number_format($available_balance, 2) }}</p>
+            <p class="text-2xl font-black">{{ get_setting('currency_symbol', 'Rs') }}{{ number_format($available_balance, 2) }}</p>
         </div>
     </div>
 </div>
@@ -57,10 +57,10 @@
             @csrf
             
             <div>
-                <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Amount ({{ get_setting('currency_symbol', '$') }})</label>
+                <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Amount ({{ get_setting('currency_symbol', 'Rs') }})</label>
                 <input type="number" name="amount" id="amount" min="10" max="{{ $available_balance }}" step="0.01" required
                     class="block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50" placeholder="0.00">
-                <p class="text-xs text-gray-500 mt-1">Minimum withdrawal is {{ get_setting('currency_symbol', '$') }}10.00.</p>
+                <p class="text-xs text-gray-500 mt-1">Minimum withdrawal is {{ get_setting('currency_symbol', 'Rs') }}10.00.</p>
             </div>
             
             <div>
@@ -103,7 +103,7 @@
                                 {{ $withdrawal->created_at->format('M d, Y') }}
                             </td>
                             <td class="px-6 py-4 font-bold text-gray-900">
-                                {{ get_setting('currency_symbol', '$') }}{{ number_format($withdrawal->amount, 2) }}
+                                {{ get_setting('currency_symbol', 'Rs') }}{{ number_format($withdrawal->amount, 2) }}
                             </td>
                             <td class="px-6 py-4 text-gray-600">
                                 {{ $withdrawal->payout_method }}

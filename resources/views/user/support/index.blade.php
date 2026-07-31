@@ -13,7 +13,7 @@
     </a>
 </div>
 
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+<div class="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
     <div class="p-6 border-b border-gray-100 flex items-center justify-between">
         <h2 class="text-lg font-semibold text-gray-900">My Tickets</h2>
     </div>
@@ -21,13 +21,13 @@
     <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
             <thead>
-                <tr class="bg-gray-50/50 border-b border-gray-100">
-                    <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Ticket ID</th>
-                    <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Subject</th>
-                    <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Priority</th>
-                    <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                    <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Last Updated</th>
-                    <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Action</th>
+                <tr class="text-white text-xs font-bold uppercase tracking-wider" style="background-color: var(--primary);">
+                    <th class="px-6 py-4 font-medium">Ticket ID</th>
+                    <th class="px-6 py-4 font-medium">Subject</th>
+                    <th class="px-6 py-4 font-medium">Priority</th>
+                    <th class="px-6 py-4 font-medium">Status</th>
+                    <th class="px-6 py-4 font-medium">Last Updated</th>
+                    <th class="px-6 py-4 font-medium text-right">Action</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">

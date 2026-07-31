@@ -119,29 +119,34 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('users/{username}/notify', [\App\Http\Controllers\Admin\UserController::class, 'notify'])->name('users.notification');
         Route::post('users/{username}/impersonate', [\App\Http\Controllers\Admin\UserController::class, 'impersonate'])->name('users.impersonate');
         Route::put('users/{username}/become-agent', [\App\Http\Controllers\Admin\UserController::class, 'becomeAgent'])->name('users.become-agent');
+        Route::post('users/{username}/contract', [\App\Http\Controllers\Admin\UserController::class, 'storeContract'])->name('users.contract');
 
         // Settings routes
         Route::prefix('settings')->name('settings.')->group(function () {
-            Route::get('admin',      fn() => view('admin.settings.admin-settings'))->name('admin');
+            Route::get('unlock', [\App\Http\Controllers\Admin\AuthController::class, 'showSettingsUnlockForm'])->name('unlock');
+            Route::post('unlock', [\App\Http\Controllers\Admin\AuthController::class, 'unlockSettings'])->name('unlock.submit');
 
-            // Admin Sub-pages
-            Route::get('admin/logo', fn() => view('admin.settings.logo'))->name('logo');
-            Route::post('admin/logo', [\App\Http\Controllers\Admin\SettingsController::class, 'updateLogoFavicon'])->name('logo.update');
+            Route::middleware('admin.settings.lock')->group(function () {
+                Route::get('admin',      fn() => view('admin.settings.admin-settings'))->name('admin');
 
-            Route::get('admin/seo', fn() => view('admin.settings.seo'))->name('seo');
-            Route::post('admin/seo', [\App\Http\Controllers\Admin\SettingsController::class, 'updateSeo'])->name('seo.update');
+                // Admin Sub-pages
+                Route::get('admin/logo', fn() => view('admin.settings.logo'))->name('logo');
+                Route::post('admin/logo', [\App\Http\Controllers\Admin\SettingsController::class, 'updateLogoFavicon'])->name('logo.update');
 
-            Route::get('admin/theme', fn() => view('admin.settings.theme'))->name('theme');
-            Route::post('admin/theme', [\App\Http\Controllers\Admin\SettingsController::class, 'updateTheme'])->name('theme.update');
-            
-            Route::get('admin/currency', fn() => view('admin.settings.currency'))->name('currency');
-            Route::post('admin/currency', [\App\Http\Controllers\Admin\SettingsController::class, 'updateCurrency'])->name('currency.update');
-            Route::get('admin/roi', fn() => view('admin.settings.roi'))->name('roi');
-            Route::post('admin/roi', [\App\Http\Controllers\Admin\SettingsController::class, 'updateRoi'])->name('roi.update');
-            
+                Route::get('admin/seo', fn() => view('admin.settings.seo'))->name('seo');
+                Route::post('admin/seo', [\App\Http\Controllers\Admin\SettingsController::class, 'updateSeo'])->name('seo.update');
 
-            Route::get('admin/commission', [\App\Http\Controllers\Admin\CommissionSettingController::class, 'edit'])->name('commission');
-            Route::post('admin/commission', [\App\Http\Controllers\Admin\CommissionSettingController::class, 'update'])->name('commission.update');
+                Route::get('admin/theme', fn() => view('admin.settings.theme'))->name('theme');
+                Route::post('admin/theme', [\App\Http\Controllers\Admin\SettingsController::class, 'updateTheme'])->name('theme.update');
+                
+                Route::get('admin/currency', fn() => view('admin.settings.currency'))->name('currency');
+                Route::post('admin/currency', [\App\Http\Controllers\Admin\SettingsController::class, 'updateCurrency'])->name('currency.update');
+                Route::get('admin/roi', fn() => view('admin.settings.roi'))->name('roi');
+                Route::post('admin/roi', [\App\Http\Controllers\Admin\SettingsController::class, 'updateRoi'])->name('roi.update');
+
+                Route::get('admin/commission', [\App\Http\Controllers\Admin\CommissionSettingController::class, 'edit'])->name('commission');
+                Route::post('admin/commission', [\App\Http\Controllers\Admin\CommissionSettingController::class, 'update'])->name('commission.update');
+            });
 
             
             // API endpoints for updating/fetching
@@ -150,6 +155,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         Route::get('notifications', [\App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('notifications.index');
+        Route::get('notifications/history', [\App\Http\Controllers\Admin\NotificationController::class, 'history'])->name('notifications.history');
+        Route::post('notifications/send', [\App\Http\Controllers\Admin\NotificationController::class, 'send'])->name('notifications.send');
         Route::post('notifications/{id}/mark-read', [\App\Http\Controllers\Admin\NotificationController::class, 'markAsRead'])->name('notifications.mark-read');
         Route::post('notifications/mark-all-read', function () {
             Auth::guard('admin')->user()->unreadNotifications->markAsRead();
@@ -172,6 +179,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Investment Management
         Route::prefix('investments')->name('investments.')->group(function () {
+            Route::get('/export/{status?}', [\App\Http\Controllers\Admin\InvestmentController::class, 'export'])->name('export');
             Route::get('/details/{id}', [\App\Http\Controllers\Admin\InvestmentController::class, 'show'])->name('show');
             Route::post('/{id}/approve', [\App\Http\Controllers\Admin\InvestmentController::class, 'approve'])->name('approve');
             Route::post('/{id}/reject', [\App\Http\Controllers\Admin\InvestmentController::class, 'reject'])->name('reject');
@@ -218,6 +226,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('nominee/{status?}', [\App\Http\Controllers\Admin\VerificationController::class, 'nomineeList'])->name('nominee');
             Route::post('nominee/{id}/status', [\App\Http\Controllers\Admin\VerificationController::class, 'nomineeUpdate'])->name('nominee.status');
 
+            Route::get('bank/review/{id}', [\App\Http\Controllers\Admin\VerificationController::class, 'bankReview'])->name('bank.review');
+            Route::get('bank/{status?}', [\App\Http\Controllers\Admin\VerificationController::class, 'bankList'])->name('bank');
             Route::post('bank/{id}/status', [\App\Http\Controllers\Admin\VerificationController::class, 'bankUpdate'])->name('bank.status');
         });
     });

@@ -39,6 +39,8 @@ class NetworkController extends Controller
             'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
+            'city' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
         ]);
 
         $sponsor = Auth::user();
@@ -47,6 +49,8 @@ class NetworkController extends Controller
         $user->name = $request->name;
         $user->username = $request->username;
         $user->email = $request->email;
+        $user->city = $request->city;
+        $user->phone = $request->phone;
         $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
         $user->account_type = 'Normal User';
         $user->sponsor_id = $sponsor->id;

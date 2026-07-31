@@ -12,7 +12,7 @@ use Illuminate\Notifications\Notifiable;
 
 use Illuminate\Support\Str;
 
-#[Fillable(['sponsor_id', 'referral_code', 'account_type', 'name', 'first_name', 'last_name', 'address', 'city', 'state', 'zip', 'country', 'username', 'email', 'phone', 'password', 'profile_image'])]
+#[Fillable(['sponsor_id', 'referral_code', 'account_type', 'name', 'first_name', 'last_name', 'address', 'city', 'state', 'zip', 'country', 'username', 'email', 'phone', 'password', 'profile_image', 'contract_date', 'contract_notify_date', 'contract_message'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -29,6 +29,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'contract_date' => 'date',
+            'contract_notify_date' => 'date',
         ];
     }
 

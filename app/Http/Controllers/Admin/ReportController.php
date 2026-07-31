@@ -79,15 +79,25 @@ class ReportController extends Controller
     {
         $commissionSetting = CommissionSetting::first();
         $levels = $commissionSetting ? $commissionSetting->level_count : 4;
-        
+
         $commissionLevels = [];
         $totalCommission = 0;
         for ($i = 1; $i <= $levels; $i++) {
+            $amount = Transaction::where('type', 'COMMISSION')
+                ->where('description', 'like', "%Level {$i}%")
+                ->sum('amount');
+
+            $transactions = Transaction::where('type', 'COMMISSION')
+                ->where('description', 'like', "%Level {$i}%")
+                ->count();
+
             $commissionLevels[] = [
-                'level' => $i,
-                'amount' => 0,
-                'transactions' => 0
+                'level'        => $i,
+                'amount'       => (float) $amount,
+                'transactions' => $transactions,
             ];
+
+            $totalCommission += $amount;
         }
 
         $topEarners = User::select('users.id', 'users.username')

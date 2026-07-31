@@ -16,22 +16,22 @@
         </div>
         <div>
             <p class="text-indigo-200 text-sm font-medium">Available Balance</p>
-            <p class="text-2xl font-black">{{ get_setting('currency_symbol', '$') }}{{ number_format(auth()->user()->wallet_balance, 2) }}</p>
+            <p class="text-2xl font-black">{{ get_setting('currency_symbol', 'Rs') }}{{ number_format(auth()->user()->wallet_balance, 2) }}</p>
         </div>
     </div>
 </div>
 
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+<div class="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-sm text-left whitespace-nowrap">
-            <thead class="bg-gray-50/50 text-gray-500 font-medium border-b border-gray-100">
-                <tr>
-                    <th class="px-6 py-4">Transaction ID</th>
-                    <th class="px-6 py-4">Date</th>
-                    <th class="px-6 py-4">Investment</th>
-                    <th class="px-6 py-4">Status</th>
-                    <th class="px-6 py-4 text-right">Amount</th>
-                    <th class="px-6 py-4 text-center">Action</th>
+            <thead>
+                <tr class="text-white text-xs font-bold uppercase tracking-wider" style="background-color: var(--primary);">
+                    <th class="px-6 py-4 font-medium">Transaction ID</th>
+                    <th class="px-6 py-4 font-medium">Date</th>
+                    <th class="px-6 py-4 font-medium">Investment</th>
+                    <th class="px-6 py-4 font-medium">Status</th>
+                    <th class="px-6 py-4 font-medium text-right">Amount</th>
+                    <th class="px-6 py-4 font-medium text-center">Action</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
@@ -66,7 +66,7 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 text-right font-bold text-gray-900">
-                            {{ get_setting('currency_symbol', '$') }}{{ number_format($log->amount, 2) }}
+                            {{ get_setting('currency_symbol', 'Rs') }}{{ number_format($log->amount, 2) }}
                         </td>
                         <td class="px-6 py-4 text-center">
                             <button @click="openDetails = true" class="px-3 py-1.5 text-xs font-medium text-[var(--theme-primary)] bg-[var(--theme-primary)]/10 hover:bg-[var(--theme-primary)]/20 rounded-md transition-colors">

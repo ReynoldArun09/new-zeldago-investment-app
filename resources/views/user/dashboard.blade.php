@@ -8,6 +8,19 @@
 
 @section('content')
 <div x-data="{ showAddInvestorModal: false }">
+    @if(Auth::user()->contract_date && Auth::user()->contract_notify_date && \Carbon\Carbon::now()->startOfDay()->gte(\Carbon\Carbon::parse(Auth::user()->contract_notify_date)->startOfDay()))
+        <div class="mb-6 p-2 rounded-none bg-amber-50 border border-amber-200 text-amber-800 flex items-center">
+            <i class="ph ph-warning-circle text-xl text-amber-500 mr-3"></i>
+            <marquee class="font-medium text-sm flex-1">
+                <strong>Contract Reminder:</strong> 
+                @if(Auth::user()->contract_message)
+                    {{ Auth::user()->contract_message }}
+                @else
+                    Your contract is ending on {{ \Carbon\Carbon::parse(Auth::user()->contract_date)->format('d M Y') }}.
+                @endif
+            </marquee>
+        </div>
+    @endif
     <!-- Page Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
         <div>
@@ -279,6 +292,68 @@
             </div>
         @endif
     </div>
+
+    <!-- Recent Withdrawals -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm shadow-indigo-100/50 border border-slate-50 flex flex-col mt-6">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-sm font-bold text-indigo-950">Recent Withdrawals</h3>
+            <a href="{{ route('user.finance.withdrawals') }}" class="text-xs text-primary font-semibold hover:underline">View All</a>
+        </div>
+        @if($recent_withdrawals->isEmpty())
+            <div class="flex-1 flex items-center justify-center py-10">
+                <p class="text-sm text-slate-400">No recent withdrawals</p>
+            </div>
+        @else
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-white text-xs font-bold uppercase tracking-wider" style="background-color: var(--primary);">
+                            <th class="px-5 py-3 font-medium">Method</th>
+                            <th class="px-5 py-3 font-medium">Date</th>
+                            <th class="px-5 py-3 font-medium">Status</th>
+                            <th class="px-5 py-3 font-medium text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        @foreach($recent_withdrawals as $withdrawal)
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="px-5 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                                            <i class="ph ph-arrow-up-right text-lg"></i>
+                                        </div>
+                                        <p class="text-sm font-bold text-indigo-950">{{ $withdrawal->bank_name ?? 'Bank Transfer' }}</p>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-4">
+                                    <p class="text-sm text-slate-600">{{ $withdrawal->created_at->format('M d, Y') }}</p>
+                                    <p class="text-xs text-slate-400">{{ $withdrawal->created_at->format('h:i A') }}</p>
+                                </td>
+                                <td class="px-5 py-4">
+                                    @if($withdrawal->status === 'approved')
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-green-100 text-green-700 uppercase tracking-wider">
+                                            Approved
+                                        </span>
+                                    @elseif($withdrawal->status === 'rejected')
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-100 text-red-700 uppercase tracking-wider">
+                                            Rejected
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 uppercase tracking-wider">
+                                            Pending
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="px-5 py-4 text-right">
+                                    <p class="text-sm font-bold text-red-600">-{{ format_currency($withdrawal->amount) }}</p>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </div>
     @endif
 
     @if(Auth::user()->account_type === 'Agent')
@@ -311,6 +386,21 @@
                         
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <div class="sm:col-span-2">
+                                <h2 class="text-sm font-semibold text-slate-800 border-b border-slate-100 pb-2 mb-4">Information</h2>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Account Type</label>
+                                <p class="text-sm font-medium text-slate-800">Investor</p>
+                                <input type="hidden" name="account_type" value="Normal User">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Sponsor</label>
+                                <p class="text-sm font-medium text-slate-800">{{ Auth::user()->username }}</p>
+                            </div>
+
+                            <div class="sm:col-span-2 mt-2">
                                 <h2 class="text-sm font-semibold text-slate-800 border-b border-slate-100 pb-2 mb-4">Basic Information</h2>
                             </div>
 
@@ -329,6 +419,16 @@
                                 <input type="email" name="email" value="{{ old('email') }}" required
                                     class="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
                             </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Phone Number</label>
+                                <input type="text" name="phone" value="{{ old('phone') }}" 
+                                    class="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">City</label>
+                                <input type="text" name="city" value="{{ old('city') }}" 
+                                    class="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+                            </div>
                             <div x-data="{ showPassword: false }">
                                 <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Password <span class="text-red-500">*</span></label>
                                 <div class="relative">
@@ -338,23 +438,6 @@
                                         <i class="ph text-lg" :class="showPassword ? 'ph-eye-slash' : 'ph-eye'"></i>
                                     </button>
                                 </div>
-                            </div>
-
-                            <div class="sm:col-span-2 mt-2">
-                                <h2 class="text-sm font-semibold text-slate-800 border-b border-slate-100 pb-2 mb-4">Information</h2>
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Account Type <span class="text-red-500">*</span></label>
-                                <input type="text" value="Investor" disabled
-                                    class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none cursor-not-allowed pointer-events-none select-none">
-                                <input type="hidden" name="account_type" value="Normal User">
-                            </div>
-                            
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Sponsor <span class="text-red-500">*</span></label>
-                                <input type="text" name="sponsor" value="{{ Auth::user()->username }}" disabled
-                                    class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-500 outline-none cursor-not-allowed pointer-events-none select-none">
                             </div>
                         </div>
 

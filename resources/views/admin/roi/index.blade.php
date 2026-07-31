@@ -132,10 +132,15 @@
                 </div>
             </div>
         @else
-            <div class="px-6 py-4 border-t border-gray-100">
+            <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
                 <span class="text-sm text-gray-500">
                     Showing {{ $logs->count() }} to {{ $logs->count() }} of {{ $logs->count() }} results
                 </span>
+                <div class="flex gap-1">
+                    <button disabled class="px-3 py-1 border border-gray-100 rounded-md bg-gray-50 text-gray-400 text-sm">&lt;</button>
+                    <button class="px-3 py-1 border border-[var(--theme-primary)] rounded-md bg-[var(--theme-primary)] text-white text-sm">1</button>
+                    <button disabled class="px-3 py-1 border border-gray-100 rounded-md bg-gray-50 text-gray-400 text-sm">&gt;</button>
+                </div>
             </div>
         @endif
     </div>

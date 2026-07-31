@@ -61,6 +61,12 @@ class DashboardController extends Controller
         $closed_investments_count = \App\Models\Investment::where('user_id', $user->id)
             ->where('status', 'COMPLETED')
             ->count();
+            
+        // Recent Withdrawals
+        $recent_withdrawals = \App\Models\Withdrawal::where('user_id', $user->id)
+            ->latest()
+            ->take(5)
+            ->get();
 
         return view('user.dashboard', compact(
             'wallet_balance', 
@@ -72,7 +78,8 @@ class DashboardController extends Controller
             'recent_rois',
             'user_investments',
             'active_investments_count',
-            'closed_investments_count'
+            'closed_investments_count',
+            'recent_withdrawals'
         ));
     }
 

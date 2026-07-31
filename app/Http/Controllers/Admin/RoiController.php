@@ -157,6 +157,12 @@ class RoiController extends Controller
             'reference_id' => $roiLog->trx_id,
         ]);
 
+        $user->notify(new \App\Notifications\GenericNotification(
+            'ROI Credited',
+            'Your ROI of ' . format_currency($roiAmount) . ' has been approved and credited to your wallet.',
+            'ph-trend-up'
+        ));
+
         return redirect()->back()->with('success', 'ROI approved and credited to user.');
     }
 

@@ -136,6 +136,7 @@ class UserController extends Controller
             'myCommissions'        => \App\Models\Transaction::where('user_id', $user->id)->where('type', 'COMMISSION')->sum('amount'),
             'totalInvestments'     => 0,
             'totalContribution'    => 0,
+            'pendingInvestments'   => 0,
             'closeRequests'        => 0,
             'completedInvestments' => 0,
             'withdrawals'          => 0,
@@ -143,13 +144,14 @@ class UserController extends Controller
         ];
 
         try {
-            // Count their own investments
             $allInvestments = Investment::where('user_id', $user->id)->get();
             if ($allInvestments->isNotEmpty()) {
-                $stats['totalInvestments']     = $allInvestments->count();
-                $stats['totalContribution']    = (float) $allInvestments->sum('amount');
-                $stats['completedInvestments'] = $allInvestments->where('status', 'COMPLETED')->count();
-                $stats['closeRequests']        = $allInvestments->where('status', 'CLOSE_REQUEST')->count();
+                $approvedInvestments = $allInvestments->whereNotIn('status', [Investment::STATUS_PENDING, Investment::STATUS_REJECTED]);
+                $stats['totalInvestments']     = $approvedInvestments->count();
+                $stats['totalContribution']    = (float) $approvedInvestments->sum('amount');
+                $stats['pendingInvestments']   = (float) $allInvestments->where('status', Investment::STATUS_PENDING)->sum('amount');
+                $stats['completedInvestments'] = $allInvestments->where('status', Investment::STATUS_COMPLETED)->count();
+                $stats['closeRequests']        = $allInvestments->where('status', Investment::STATUS_CLOSE_REQUEST)->count();
                 $stats['transactions']         = $allInvestments->count();
             }
         } catch (\Exception $e) {
@@ -285,6 +287,12 @@ class UserController extends Controller
             'status' => Investment::STATUS_PENDING,
             'payment_proof' => $path,
         ]);
+
+        $user->notify(new \App\Notifications\GenericNotification(
+            'Investment Created',
+            'An investment of ' . format_currency($request->amount) . ' has been created on your account by the admin. It is currently pending review.',
+            'ph-trend-up'
+        ));
 
         return back()->with('success', 'Investment created successfully for ' . $user->username . '. It is pending review.');
     }
@@ -473,5 +481,25 @@ class UserController extends Controller
             'message' => 'Investment status updated successfully.',
             'data' => $investment
         ]);
+    }
+
+    public function storeContract(Request $request, $username)
+    {
+        $user = User::where('username', $username)->orWhere('id', $username)->firstOrFail();
+
+        $request->validate([
+            'contract_date' => 'nullable|date',
+            'contract_notify_date' => 'nullable|date|before_or_equal:contract_date',
+            'contract_message' => 'nullable|string',
+        ], [
+            'contract_notify_date.before_or_equal' => 'The notify date cannot be after the contract date.'
+        ]);
+
+        $user->contract_date = $request->contract_date;
+        $user->contract_notify_date = $request->contract_notify_date;
+        $user->contract_message = $request->contract_message;
+        $user->save();
+
+        return back()->with('success', 'Contract details updated successfully.');
     }
 }

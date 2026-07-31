@@ -38,13 +38,18 @@
     {{-- 8 Stats Cards --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         @php
-        $cards = [
-            ['label' => 'Total Invest',              'value' => format_currency($stats['totalContribution']),  'bg' => 'bg-purple-600', 'icon' => 'arrow-down'],
-            ['label' => 'ROI Returns',              'value' => format_currency($stats['roiReturns']),         'bg' => 'bg-sky-500',    'icon' => 'dollar'],
-            ['label' => 'Total Investments',         'value' => $stats['totalInvestments'],                                     'bg' => 'bg-indigo-700', 'icon' => 'briefcase'],
-            ['label' => 'Investment Close Requests', 'value' => $stats['closeRequests'],                                        'bg' => 'bg-red-700',    'icon' => 'hand'],
-            ['label' => 'Completed Investments',     'value' => $stats['completedInvestments'],                                 'bg' => 'bg-green-600',  'icon' => 'check-circle'],
-        ];
+        $cards = [];
+        if ($user->account_type !== 'Agent') {
+            $cards[] = ['label' => 'Total Invest', 'value' => format_currency($stats['totalContribution']), 'bg' => 'bg-purple-600', 'icon' => 'arrow-down'];
+        }
+        $cards[] = ['label' => 'ROI Returns', 'value' => format_currency($stats['roiReturns']), 'bg' => 'bg-sky-500', 'icon' => 'dollar'];
+        
+        if ($user->account_type !== 'Agent') {
+            $cards[] = ['label' => 'Total Investments', 'value' => $stats['totalInvestments'], 'bg' => 'bg-indigo-700', 'icon' => 'briefcase'];
+            $cards[] = ['label' => 'Investment Close Requests', 'value' => $stats['closeRequests'], 'bg' => 'bg-red-700', 'icon' => 'hand'];
+            $cards[] = ['label' => 'Pending Investments', 'value' => format_currency($stats['pendingInvestments']), 'bg' => 'bg-amber-500', 'icon' => 'hourglass'];
+            $cards[] = ['label' => 'Completed Investments', 'value' => $stats['completedInvestments'], 'bg' => 'bg-green-600', 'icon' => 'check-circle'];
+        }
 
         if ($user->account_type === 'Agent' || $user->account_type === 'Root Distributor') {
             $cards[] = ['label' => 'My Commissions', 'value' => format_currency($stats['myCommissions']), 'bg' => 'bg-teal-600', 'icon' => 'wallet'];
@@ -161,6 +166,58 @@
                 </div>
             </div>
         @endif
+        
+        {{-- Contract --}}
+        <div x-data="{ showContractModal: false, contractDate: '{{ $user->contract_date ? \Carbon\Carbon::parse($user->contract_date)->format('Y-m-d') : '' }}' }">
+            <button type="button" @click="showContractModal = true"
+                class="flex items-center gap-1.5 text-sm font-medium text-white px-4 py-2 rounded-none transition-colors bg-purple-500 hover:bg-purple-600 opacity-80">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Contract
+            </button>
+
+            <div x-show="showContractModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" style="display: none;">
+                <div @click.outside="showContractModal = false" class="bg-white rounded-none shadow-2xl w-full max-w-2xl mx-4 overflow-hidden transform transition-all border border-gray-200">
+                    <div class="px-5 py-4 border-b border-gray-100 flex items-center justify-between bg-purple-50/50">
+                        <h3 class="text-base font-semibold text-purple-900 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            Contract Details
+                        </h3>
+                        <button type="button" @click="showContractModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                    <form method="POST" action="{{ route('admin.users.contract', $user->username ?? $user->id) }}">
+                        @csrf
+                        <div class="px-5 py-6 text-gray-600 text-sm">
+                            <div class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Contract Date</label>
+                                        <input type="date" name="contract_date" x-model="contractDate" class="w-full text-sm border border-gray-200 rounded-none px-3 py-2 focus:outline-none focus:border-purple-500 transition-colors">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Notify User Date</label>
+                                        <input type="date" name="contract_notify_date" :max="contractDate" value="{{ $user->contract_notify_date ? \Carbon\Carbon::parse($user->contract_notify_date)->format('Y-m-d') : '' }}" class="w-full text-sm border border-gray-200 rounded-none px-3 py-2 focus:outline-none focus:border-purple-500 transition-colors">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Message</label>
+                                    <textarea name="contract_message" rows="3" class="w-full text-sm border border-gray-200 rounded-none px-3 py-2 focus:outline-none focus:border-purple-500 transition-colors" placeholder="Enter custom message to show to user...">{{ $user->contract_message }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-5 py-4 bg-gray-50/50 border-t border-gray-100 flex justify-end gap-2">
+                            <button type="button" @click="showContractModal = false" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-none shadow-sm hover:bg-gray-50 transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-purple-500 border border-transparent rounded-none shadow-sm hover:bg-purple-600 transition-colors">
+                                Save Contract
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     {{-- Information --}}
@@ -171,7 +228,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
                 <p class="text-xs text-gray-500 mb-1">Account Type</p>
-                <p class="text-sm font-medium text-gray-800">{{ $user->account_type ?? 'Normal User' }}</p>
+                <p class="text-sm font-medium text-gray-800">{{ $user->account_type === 'Normal User' || empty($user->account_type) ? 'Investor' : $user->account_type }}</p>
             </div>
             <div>
                 <p class="text-xs text-gray-500 mb-1">Referral Code</p>
@@ -223,19 +280,19 @@
             <div class="flex flex-wrap items-center gap-2">
                 @if($user->kyc)
                 <button type="button" @click="activeDetail = activeDetail === 'edit-kyc' ? null : 'edit-kyc'" 
-                    class="text-sm font-medium text-gray-700 bg-gray-100 border border-gray-200 px-4 py-2 rounded-none transition-colors hover:bg-gray-200">
+                    class="text-sm font-medium text-white px-4 py-2 rounded-none transition-colors bg-green-500 hover:bg-green-600 opacity-80">
                     Edit KYC
                 </button>
                 @endif
                 @if($user->nominee)
                 <button type="button" @click="activeDetail = activeDetail === 'edit-nominee' ? null : 'edit-nominee'" 
-                    class="text-sm font-medium text-gray-700 bg-gray-100 border border-gray-200 px-4 py-2 rounded-none transition-colors hover:bg-gray-200">
+                    class="text-sm font-medium text-white px-4 py-2 rounded-none transition-colors bg-red-500 hover:bg-red-600 opacity-80">
                     Edit Nominee
                 </button>
                 @endif
                 @if($user->bankDetail)
                 <button type="button" @click="activeDetail = activeDetail === 'edit-bank' ? null : 'edit-bank'" 
-                    class="text-sm font-medium text-gray-700 bg-gray-100 border border-gray-200 px-4 py-2 rounded-none transition-colors hover:bg-gray-200">
+                    class="text-sm font-medium text-white px-4 py-2 rounded-none transition-colors bg-gray-500 hover:bg-gray-600 opacity-80">
                     Edit Bank Details
                 </button>
                 @endif
@@ -528,7 +585,7 @@
                             <input type="file" name="proof_image" accept="image/*" class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-white">
                         </div>
                         <div class="sm:col-span-2 pt-2">
-                            <button type="submit" class="px-4 py-2 text-sm text-white rounded-none transition-colors bg-gray-500 hover:bg-gray-600">Submit Bank Details</button>
+                            <button type="submit" class="px-4 py-2 text-sm text-white rounded-none transition-colors bg-blue-600 hover:bg-blue-700">Submit Bank Details</button>
                         </div>
                     </div>
                 </form>

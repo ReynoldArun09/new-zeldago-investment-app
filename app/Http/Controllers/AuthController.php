@@ -22,12 +22,20 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
+        $request->validate([
+            'login_id' => 'required|string',
             'password' => 'required',
         ]);
 
-        if (Auth::guard('web')->attempt($credentials)) {
+        $loginId = $request->input('login_id');
+        $password = $request->input('password');
+
+        $user = User::where('email', $loginId)
+                    ->orWhere('username', $loginId)
+                    ->orWhere('phone', $loginId)
+                    ->first();
+
+        if ($user && Auth::guard('web')->attempt(['email' => $user->email, 'password' => $password])) {
             $request->session()->regenerate();
 
             // Redirect to user dashboard
@@ -35,8 +43,8 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+            'login_id' => 'The provided credentials do not match our records.',
+        ])->onlyInput('login_id');
     }
 
     /**
