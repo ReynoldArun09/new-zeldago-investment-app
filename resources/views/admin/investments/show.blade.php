@@ -71,6 +71,16 @@
                         <a href="{{ $investment->user && $investment->user->username ? route('admin.users.details', $investment->user->username) : '#' }}" class="font-medium text-[var(--theme-primary)] hover:underline">{{ $investment->user && $investment->user->username ? '@' . $investment->user->username : '@unknown' }}</a>
                     </li>
                     <li class="flex items-center justify-between">
+                        <span class="text-gray-500">Sponsor By</span>
+                        @if($investment->user && $investment->user->sponsor)
+                            <a href="{{ route('admin.users.details', $investment->user->sponsor->username) }}" class="font-medium text-[var(--theme-primary)] hover:underline">
+                                {{ '@' . $investment->user->sponsor->username }}
+                            </a>
+                        @else
+                            <span class="font-bold text-gray-900">Admin</span>
+                        @endif
+                    </li>
+                    <li class="flex items-center justify-between">
                         <span class="text-gray-500">Email</span>
                         <span class="font-medium text-[var(--theme-primary)]">{{ $investment->user->email ?? 'N/A' }}</span>
                     </li>

@@ -9,8 +9,8 @@
 @section('content')
 <div x-data="{ showAddInvestorModal: false }">
     @if(Auth::user()->contract_date && Auth::user()->contract_notify_date && \Carbon\Carbon::now()->startOfDay()->gte(\Carbon\Carbon::parse(Auth::user()->contract_notify_date)->startOfDay()))
-        <div class="mb-6 p-2 rounded-none bg-amber-50 border border-amber-200 text-amber-800 flex items-center">
-            <i class="ph ph-warning-circle text-xl text-amber-500 mr-3"></i>
+        <div class="mb-6 py-4 px-3 rounded-none bg-red-600 border border-red-700 text-white flex items-center">
+            <i class="ph ph-warning-circle text-xl text-white mr-3"></i>
             <marquee class="font-medium text-sm flex-1">
                 <strong>Contract Reminder:</strong> 
                 @if(Auth::user()->contract_message)

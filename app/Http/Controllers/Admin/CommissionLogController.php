@@ -29,7 +29,7 @@ class CommissionLogController extends Controller
         $commissions = $query->paginate(20);
         
         $referenceIds = $commissions->pluck('reference_id')->filter()->toArray();
-        $roiLogs = RoiLog::with(['user', 'investment'])->whereIn('trx_id', $referenceIds)->get()->keyBy('trx_id');
+        $sourceInvestments = \App\Models\Investment::with(['user'])->whereIn('trx_id', $referenceIds)->get()->keyBy('trx_id');
         
         $commissionSetting = CommissionSetting::first();
         $totalLevels = $commissionSetting ? $commissionSetting->level_count : 4;
@@ -43,6 +43,6 @@ class CommissionLogController extends Controller
 
         $totalPaid = Transaction::whereIn('type', ['COMMISSION', 'commission', 'transfer_in'])->sum('amount');
 
-        return view('admin.commissions.log', compact('commissions', 'roiLogs', 'levelTotals', 'totalPaid'));
+        return view('admin.commissions.log', compact('commissions', 'sourceInvestments', 'levelTotals', 'totalPaid'));
     }
 }
