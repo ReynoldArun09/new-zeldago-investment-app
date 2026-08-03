@@ -11,12 +11,10 @@ class DashboardController extends Controller
     public function index()
     {
         // Members
-        $totalInvestors   = User::whereIn('role', ['INVESTOR', 'NORMAL'])->count();
-        $totalAgents      = User::where('role', 'AGENT')->count();
-        $activeMembers    = User::whereIn('role', ['INVESTOR', 'NORMAL', 'AGENT'])->where('is_active', true)->count();
-        $newRegistrations = User::whereIn('role', ['INVESTOR', 'AGENT', 'NORMAL'])
-            ->where('created_at', '>=', now()->subDays(7))
-            ->count();
+        $totalInvestors   = User::where('account_type', 'Normal User')->count();
+        $totalAgents      = User::where('account_type', 'Agent')->count();
+        $activeMembers    = User::where('is_active', true)->count();
+        $newRegistrations = User::where('created_at', '>=', now()->subDays(7))->count();
 
         // Business
         $totalBusiness          = Investment::whereNotIn('status', [Investment::STATUS_PENDING, Investment::STATUS_REJECTED])->sum('amount') ?? 0;
