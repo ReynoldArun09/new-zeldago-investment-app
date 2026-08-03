@@ -24,6 +24,8 @@ Route::middleware('auth')->group(function () {
     
     // User Investments
     Route::prefix('investments')->name('user.investments.')->group(function () {
+        Route::get('/create', [\App\Http\Controllers\User\InvestmentController::class, 'create'])->name('create');
+        Route::post('/store', [\App\Http\Controllers\User\InvestmentController::class, 'store'])->name('store');
         Route::get('/active', [\App\Http\Controllers\User\InvestmentController::class, 'active'])->name('active');
         Route::get('/closed', [\App\Http\Controllers\User\InvestmentController::class, 'closed'])->name('closed');
         Route::post('/{id}/close', [\App\Http\Controllers\User\InvestmentController::class, 'closeRequest'])->name('close');

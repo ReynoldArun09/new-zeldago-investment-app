@@ -274,7 +274,7 @@ class UserController extends Controller
         $request->validate([
             'amount' => 'required|numeric|min:1',
             'trx_id' => 'required|string|max:255|unique:investments,trx_id',
-            'payment_proof' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'payment_proof' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         $path = $request->file('payment_proof')->store('proofs', 'public');

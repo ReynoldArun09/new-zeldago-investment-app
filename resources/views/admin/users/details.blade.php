@@ -806,6 +806,10 @@
                 <label class="block text-xs font-medium text-gray-500 mb-1">Payment Proof</label>
                 <input type="file" name="payment_proof" accept="image/*" required
                     class="w-full border border-gray-200 rounded-none px-3 py-2 text-sm focus:border-[var(--theme-primary)] outline-none bg-gray-50">
+                <p class="mt-1 text-[10px] text-gray-400">Allowed image types: jpeg, png, jpg, gif, webp (Max: 2MB).</p>
+                @error('payment_proof')
+                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                @enderror
             </div>
             <div class="pt-2 flex justify-end gap-2">
                 <button type="button" onclick="document.getElementById('investment-modal').classList.add('hidden')"
@@ -894,5 +898,11 @@ function cycleKyc() {
     btn.dataset.kyc = next;
     document.getElementById('val-kyc').value = next;
 }
+
+@if($errors->has('payment_proof') || $errors->has('amount') || $errors->has('trx_id'))
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('investment-modal').classList.remove('hidden');
+});
+@endif
 </script>
 @endsection
