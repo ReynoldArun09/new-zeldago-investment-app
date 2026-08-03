@@ -40,8 +40,7 @@
                         <th class="text-left px-5 py-3 font-medium">City</th>
                         <th class="text-left px-4 py-3 font-medium">User Info</th>
                         <th class="text-left px-5 py-3 font-medium">Joined At</th>
-                        <th class="text-right px-5 py-3 font-medium">ROI</th>
-                        <th class="text-right px-5 py-3 font-medium">Commission</th>
+                        <th class="text-right px-5 py-3 font-medium">Investment</th>
                         <th class="text-center px-5 py-3 font-medium">Action</th>
                     </tr>
                 </thead>
@@ -69,19 +68,18 @@
                             <p class="text-gray-400">{{ \Carbon\Carbon::parse($user->created_at)->diffForHumans() }}</p>
                         </td>
                         @php
-                            $roiAmount = \App\Models\Transaction::where('user_id', $user->id)->where('type', 'ROI')->sum('amount');
-                            $commAmount = \App\Models\Transaction::where('user_id', $user->id)->where('type', 'COMMISSION')->sum('amount');
+                            $invAmount = 0;
+                            if ($user->account_type === 'Normal User') {
+                                $invAmount = \App\Models\Investment::where('user_id', $user->id)->whereIn('status', ['ACTIVE', 'COMPLETED'])->sum('amount');
+                            }
                         @endphp
                         <td class="px-5 py-3.5 text-right">
-                            @if($roiAmount > 0)
-                                <p class="text-sm font-semibold text-gray-700">{{ format_currency($roiAmount) }}</p>
-                            @else
-                                <p class="text-sm text-gray-400">—</p>
-                            @endif
-                        </td>
-                        <td class="px-5 py-3.5 text-right">
-                            @if($commAmount > 0)
-                                <p class="text-sm font-semibold text-gray-700">{{ format_currency($commAmount) }}</p>
+                            @if($user->account_type === 'Normal User')
+                                @if($invAmount > 0)
+                                    <p class="text-sm font-semibold text-gray-700">{{ format_currency($invAmount) }}</p>
+                                @else
+                                    <p class="text-sm text-gray-400">—</p>
+                                @endif
                             @else
                                 <p class="text-sm text-gray-400">—</p>
                             @endif
@@ -108,7 +106,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="7" class="text-center py-12 text-gray-400 text-sm">No users found</td>
+                        <td colspan="6" class="text-center py-12 text-gray-400 text-sm">No users found</td>
                     </tr>
                     @endforelse
                 </tbody>

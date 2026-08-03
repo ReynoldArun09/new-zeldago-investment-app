@@ -35,7 +35,7 @@
                         <th class="text-left px-5 py-3 font-medium">Contact</th>
                         <th class="text-left px-4 py-3 font-medium">User Info</th>
                         <th class="text-left px-5 py-3 font-medium">Joined At</th>
-                        <th class="text-right px-5 py-3 font-medium">ROI</th>
+
                         <th class="text-right px-5 py-3 font-medium">Commission</th>
                         <th class="text-center px-5 py-3 font-medium">Action</th>
                     </tr>
@@ -61,16 +61,8 @@
                             <p class="text-gray-400">{{ \Carbon\Carbon::parse($user->created_at)->diffForHumans() }}</p>
                         </td>
                         @php
-                            $roiAmount = \App\Models\Transaction::where('user_id', $user->id)->where('type', 'ROI')->sum('amount');
                             $commAmount = \App\Models\Transaction::where('user_id', $user->id)->where('type', 'COMMISSION')->sum('amount');
                         @endphp
-                        <td class="px-5 py-3.5 text-right">
-                            @if($roiAmount > 0)
-                                <p class="text-sm font-semibold text-gray-700">{{ format_currency($roiAmount) }}</p>
-                            @else
-                                <p class="text-sm text-gray-400">—</p>
-                            @endif
-                        </td>
                         <td class="px-5 py-3.5 text-right">
                             @if($commAmount > 0)
                                 <p class="text-sm font-semibold text-gray-700">{{ format_currency($commAmount) }}</p>
@@ -79,16 +71,28 @@
                             @endif
                         </td>
                         <td class="px-5 py-3.5 text-center">
-                            <a href="{{ route('admin.users.details', $user->username ?? $user->id) }}"
-                               class="inline-flex items-center gap-1 text-xs font-medium border rounded-none px-3 py-1.5 hover:opacity-80 transition-opacity"
-                               style="color: var(--theme-primary); border-color: var(--theme-primary);">
-                                Details
-                            </a>
+                            <div class="flex items-center justify-center gap-2">
+                                <a href="{{ route('admin.users.details', $user->username ?? $user->id) }}"
+                                   class="inline-flex items-center gap-1 text-xs font-medium border rounded-none px-3 py-1.5 hover:opacity-80 transition-opacity"
+                                   style="color: var(--theme-primary); border-color: var(--theme-primary);">
+                                    Details
+                                </a>
+                                <form method="POST" target="_blank" action="{{ route('admin.users.impersonate', $user->username ?? $user->id) }}">
+                                    @csrf
+                                    <button type="submit" title="Login as User"
+                                        class="inline-flex items-center gap-1 text-xs font-medium border rounded-none px-3 py-1.5 hover:opacity-80 transition-opacity text-green-600 border-green-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                                        </svg>
+                                        Login
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="text-center py-12 text-gray-400 text-sm">No agents found</td>
+                        <td colspan="5" class="text-center py-12 text-gray-400 text-sm">No agents found</td>
                     </tr>
                     @endforelse
                 </tbody>
