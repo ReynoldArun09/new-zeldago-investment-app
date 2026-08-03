@@ -23,6 +23,19 @@
             </div>
         </div>
 
+        {{-- Pending Investments --}}
+        <div class="bg-[#f59e0b] rounded-none p-4 flex items-center justify-between shadow-sm text-white">
+            <div class="min-w-0 flex-1">
+                <p class="text-[11px] opacity-90 truncate mb-1">Pending Investments</p>
+                <p class="text-xl font-bold truncate">{{ format_currency($stats['totalPendingBusiness']) }}</p>
+            </div>
+            <div class="w-10 h-10 rounded bg-white/20 flex items-center justify-center shrink-0 ml-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+        </div>
+
         {{-- Total Investors --}}
         <div class="bg-[#0ea5e9] rounded-none p-4 flex items-center justify-between shadow-sm text-white">
             <div class="min-w-0 flex-1">
@@ -84,19 +97,6 @@
             <div class="w-10 h-10 rounded bg-white/20 flex items-center justify-center shrink-0 ml-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-            </div>
-        </div>
-
-        {{-- Pending Investments --}}
-        <div class="bg-[#f59e0b] rounded-none p-4 flex items-center justify-between shadow-sm text-white">
-            <div class="min-w-0 flex-1">
-                <p class="text-[11px] opacity-90 truncate mb-1">Pending Investments</p>
-                <p class="text-xl font-bold truncate">{{ format_currency($stats['totalPendingBusiness']) }}</p>
-            </div>
-            <div class="w-10 h-10 rounded bg-white/20 flex items-center justify-center shrink-0 ml-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </div>
         </div>
@@ -252,50 +252,6 @@
                                     <button type="button" @click="openReject = true" class="px-3 py-1 text-white bg-[#E2000F] hover:bg-red-700 rounded text-[11px] font-medium transition-colors">
                                         Reject
                                     </button>
-
-                                    <!-- Approve Modal -->
-                                    <div x-show="openApprove" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
-                                        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                                            <div x-show="openApprove" @click="openApprove = false" x-transition.opacity class="fixed inset-0 transition-opacity" aria-hidden="true">
-                                                <div class="absolute inset-0 bg-gray-900/75 backdrop-blur-sm"></div>
-                                            </div>
-                                            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                                            <div x-show="openApprove" x-transition.scale.origin.bottom class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full">
-                                                <form action="{{ route('admin.roi.approve', $roi->id) }}" method="POST">
-                                                    @csrf
-                                                    <div class="bg-white px-6 pt-5 pb-4">
-                                                        <h3 class="text-xl font-bold text-gray-800 mb-4 text-left" id="modal-title">
-                                                            Approve ROI Request
-                                                        </h3>
-                                                        <hr class="border-gray-100 mb-4 -mx-6">
-                                                        <div class="space-y-4 text-left">
-                                                            @if(in_array('manual', $roiSettings['roi_type'] ?? []))
-                                                            <div>
-                                                                <label class="block text-sm text-gray-600 mb-1">ROI Payout Amount ({{ default_currency() }})</label>
-                                                                <input type="number" step="any" name="amount" value="{{ $roi->amount }}" class="w-full rounded-lg border-gray-300 focus:border-[var(--theme-primary)] focus:ring-0 text-sm p-3" placeholder="e.g. 1500">
-                                                            </div>
-                                                            @endif
-                                                            
-                                                            @if(in_array('auto', $roiSettings['roi_type'] ?? []))
-                                                            <div>
-                                                                <label class="block text-sm text-gray-600 mb-1">ROI Percentage (%)</label>
-                                                                <input type="number" step="any" name="rate" value="{{ $roi->rate }}" class="w-full rounded-lg border-gray-300 focus:border-[var(--theme-primary)] focus:ring-0 text-sm p-3" placeholder="e.g. 5">
-                                                            </div>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                    <div class="bg-white px-6 py-4 flex flex-row-reverse gap-3 border-t border-gray-100">
-                                                        <button type="submit" class="inline-flex justify-center rounded-lg border border-transparent px-4 py-2 bg-[var(--theme-primary)] text-sm font-medium text-white hover:opacity-90 focus:outline-none transition-opacity">
-                                                            Approve & Credit
-                                                        </button>
-                                                        <button type="button" @click="openApprove = false" class="inline-flex justify-center rounded-lg border border-gray-300 px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none transition-colors">
-                                                            Cancel
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
 
                                     <!-- Reject Modal -->
                                     <div x-show="openReject" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">

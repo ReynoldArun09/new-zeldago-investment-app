@@ -133,7 +133,7 @@ class UserController extends Controller
 
         $stats = [
             'roiReturns'           => \App\Models\Transaction::where('user_id', $user->id)->where('type', 'ROI')->sum('amount'),
-            'myCommissions'        => \App\Models\Transaction::where('user_id', $user->id)->where('type', 'COMMISSION')->sum('amount'),
+            'myCommissions'        => \App\Models\Transaction::where('user_id', $user->id)->whereIn('type', ['COMMISSION', 'commission', 'transfer_in'])->sum('amount'),
             'totalInvestments'     => 0,
             'totalContribution'    => 0,
             'pendingInvestments'   => 0,

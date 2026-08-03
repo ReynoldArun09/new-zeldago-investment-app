@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/referrals', [\App\Http\Controllers\User\NetworkController::class, 'referrals'])->name('referrals');
         Route::get('/genealogy', [\App\Http\Controllers\User\NetworkController::class, 'genealogy'])->name('genealogy');
         Route::post('/add-investor', [\App\Http\Controllers\User\NetworkController::class, 'addInvestor'])->name('add-investor');
+        Route::get('/investor/{id}/investments', [\App\Http\Controllers\User\NetworkController::class, 'investorInvestments'])->name('investor.investments');
     });
 
     // User Finance
@@ -44,6 +45,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/transactions/roi', [\App\Http\Controllers\User\FinanceController::class, 'roiTransactions'])->name('transactions.roi');
         Route::get('/withdrawals', [\App\Http\Controllers\User\FinanceController::class, 'withdrawals'])->name('withdrawals');
         Route::post('/withdrawals', [\App\Http\Controllers\User\FinanceController::class, 'submitWithdrawal'])->name('withdrawals.submit');
+        Route::get('/transfer', [\App\Http\Controllers\User\FinanceController::class, 'transfer'])->name('transfer');
+        Route::post('/transfer/search', [\App\Http\Controllers\User\FinanceController::class, 'searchAgent'])->name('transfer.search');
+        Route::post('/transfer', [\App\Http\Controllers\User\FinanceController::class, 'submitTransfer'])->name('transfer.submit');
     });
     
     // User Settings

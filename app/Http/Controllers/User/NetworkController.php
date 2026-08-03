@@ -58,4 +58,17 @@ class NetworkController extends Controller
 
         return back()->with('success', 'Investor added successfully.');
     }
+
+    public function investorInvestments($id)
+    {
+        $sponsor = Auth::user();
+        $investor = \App\Models\User::where('id', $id)->where('sponsor_id', $sponsor->id)->firstOrFail();
+
+        $investments = \App\Models\Investment::where('user_id', $investor->id)
+            ->whereIn('status', ['ACTIVE', 'PENDING', 'REJECTED', 'CLOSED'])
+            ->latest()
+            ->paginate(15);
+
+        return view('user.network.investor_investments', compact('investor', 'investments'));
+    }
 }

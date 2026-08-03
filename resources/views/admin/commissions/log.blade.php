@@ -47,7 +47,6 @@
                         <th class="px-5 py-3 font-medium text-xs tracking-wider">From User</th>
                         <th class="px-5 py-3 font-medium text-xs tracking-wider">Investment Trx</th>
                         <th class="px-5 py-3 font-medium text-xs tracking-wider">Level</th>
-                        <th class="px-5 py-3 font-medium text-xs tracking-wider">Rate</th>
                         <th class="px-5 py-3 font-medium text-xs tracking-wider">Amount</th>
                         <th class="px-5 py-3 font-medium text-xs tracking-wider">Credited At</th>
                     </tr>
@@ -59,7 +58,7 @@
                             if (preg_match('/Level (\d+)/i', $commission->description, $matches)) {
                                 $levelNum = $matches[1];
                             }
-                            $roi = $commission->reference_id ? ($roiLogs[$commission->reference_id] ?? null) : null;
+                            $sourceInv = $commission->reference_id ? ($sourceInvestments[$commission->reference_id] ?? null) : null;
                         @endphp
                         <tr class="hover:bg-gray-50/50 transition-colors">
                             <td class="px-5 py-3 font-medium text-gray-800">TRX-C{{ str_pad($commission->id, 6, '0', STR_PAD_LEFT) }}</td>
@@ -69,18 +68,18 @@
                                 </a>
                             </td>
                             <td class="px-5 py-3">
-                                @if($roi && $roi->user)
-                                    <a href="{{ route('admin.users.details', $roi->user->username) }}" class="text-gray-700 hover:underline">
-                                        {{ '@' . $roi->user->username }}
+                                @if($sourceInv && $sourceInv->user)
+                                    <a href="{{ route('admin.users.details', $sourceInv->user->username) }}" class="text-gray-700 hover:underline">
+                                        {{ '@' . $sourceInv->user->username }}
                                     </a>
                                 @else
                                     <span class="text-gray-400 italic">N/A</span>
                                 @endif
                             </td>
                             <td class="px-5 py-3 text-gray-600">
-                                @if($roi && $roi->investment)
-                                    <a href="{{ route('admin.investments.show', $roi->investment->id ?? 0) }}" class="hover:underline">
-                                        {{ $roi->investment->trx_id ?? 'N/A' }}
+                                @if($sourceInv)
+                                    <a href="{{ route('admin.investments.show', $sourceInv->id ?? 0) }}" class="hover:underline">
+                                        {{ $sourceInv->trx_id ?? 'N/A' }}
                                     </a>
                                 @else
                                     <span class="text-gray-400 italic">N/A</span>
@@ -91,13 +90,6 @@
                                     L{{ $levelNum }}
                                 </span>
                             </td>
-                            <td class="px-5 py-3 text-gray-600">
-                                @if($roi && $roi->rate > 0)
-                                    {{ $roi->rate }}%
-                                @else
-                                    <span class="text-gray-400 italic">N/A</span>
-                                @endif
-                            </td>
                             <td class="px-5 py-3 font-bold text-emerald-600">
                                 {{ format_currency($commission->amount) }}
                             </td>
@@ -107,7 +99,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-5 py-10 text-center text-gray-400">
+                            <td colspan="7" class="px-5 py-10 text-center text-gray-400">
                                 Data not found
                             </td>
                         </tr>

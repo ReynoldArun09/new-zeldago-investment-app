@@ -10,13 +10,13 @@
     </div>
     
     <!-- Balance Card -->
-    <div class="bg-gradient-to-br from-indigo-900 to-indigo-950 px-6 py-4 rounded-xl text-white shadow-sm flex items-center gap-4">
-        <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-            <i class="ph ph-wallet text-2xl text-indigo-200"></i>
+    <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden min-w-[240px]" style="background-color: #f39c12;">
+        <div class="p-4 flex flex-col justify-center">
+            <p class="text-xs mb-1 font-medium opacity-90">Available Balance</p>
+            <p class="text-xl font-bold tracking-wide">{{ get_setting('currency_symbol', 'Rs') }}{{ number_format($available_balance, 2) }}</p>
         </div>
-        <div>
-            <p class="text-indigo-200 text-sm font-medium">Available Balance</p>
-            <p class="text-2xl font-black">{{ get_setting('currency_symbol', 'Rs') }}{{ number_format($available_balance, 2) }}</p>
+        <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0,0,0,0.1);">
+            <i class="ph ph-wallet text-2xl opacity-90"></i>
         </div>
     </div>
 </div>
@@ -53,7 +53,7 @@
     <div class="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <h3 class="text-lg font-bold text-gray-900 mb-4">Request Payout</h3>
         
-        <form action="{{ route('user.finance.withdrawals.submit') }}" method="POST" class="space-y-4">
+        <form action="{{ route('user.finance.withdrawals.submit') }}" method="POST" class="space-y-4" onsubmit="return confirm('Are you sure you want to submit this withdrawal request?');">
             @csrf
             
             <div>
@@ -63,15 +63,7 @@
                 <p class="text-xs text-gray-500 mt-1">Minimum withdrawal is {{ get_setting('currency_symbol', 'Rs') }}10.00.</p>
             </div>
             
-            <div>
-                <label for="payout_method" class="block text-sm font-medium text-gray-700 mb-1">Payout Method</label>
-                <select name="payout_method" id="payout_method" required class="block w-full px-4 py-3 rounded-xl border-gray-200 focus:ring-primary focus:border-primary sm:text-sm bg-gray-50/50">
-                    <option value="">Select Method...</option>
-                    <option value="Cash">Cash</option>
-                    <option value="UPI">UPI</option>
-                    <option value="Bank Transfer">Bank Transfer</option>
-                </select>
-            </div>
+
             
             <button type="submit" class="w-full px-4 py-3 bg-primary text-white rounded-xl font-medium shadow-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 mt-2">
                 <i class="ph ph-paper-plane-tilt"></i>
@@ -81,17 +73,17 @@
     </div>
     
     <!-- History Table -->
-    <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+    <div class="lg:col-span-2 bg-white rounded-sm shadow-sm border border-gray-100 overflow-hidden flex flex-col">
         <div class="px-6 py-5 border-b border-gray-100">
             <h3 class="text-lg font-bold text-gray-900">Withdrawal History</h3>
         </div>
         <div class="overflow-x-auto flex-1">
             <table class="w-full text-sm text-left whitespace-nowrap">
-                <thead class="bg-gray-50/50 text-gray-500 font-medium border-b border-gray-100">
-                    <tr>
+                <thead>
+                    <tr class="text-white text-xs font-bold uppercase tracking-wider" style="background-color: var(--primary);">
                         <th class="px-6 py-4">Date</th>
                         <th class="px-6 py-4">Amount</th>
-                        <th class="px-6 py-4">Method</th>
+
                         <th class="px-6 py-4">Status</th>
                         <th class="px-6 py-4 text-right">Action</th>
                     </tr>
@@ -105,9 +97,7 @@
                             <td class="px-6 py-4 font-bold text-gray-900">
                                 {{ get_setting('currency_symbol', 'Rs') }}{{ number_format($withdrawal->amount, 2) }}
                             </td>
-                            <td class="px-6 py-4 text-gray-600">
-                                {{ $withdrawal->payout_method }}
-                            </td>
+
                             <td class="px-6 py-4">
                                 @if($withdrawal->status === 'pending')
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">

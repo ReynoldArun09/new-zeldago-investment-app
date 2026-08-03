@@ -158,7 +158,7 @@
                 <div x-show="open" x-transition.opacity style="display: {{ request()->routeIs('user.network.*') ? 'block' : 'none' }};" class="pl-[33px] py-1">
                     <div class="border-l border-indigo-200/20 space-y-1 py-1">
                         <a href="{{ route('user.network.referrals') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.network.referrals') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.network.referrals') ? '' : 'color: var(--sidebar-muted);' }}">
-                            <i class="ph ph-users"></i> Referrals
+                            <i class="ph ph-users"></i> Investors
                         </a>
                         <a href="{{ route('user.network.genealogy') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.network.genealogy') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.network.genealogy') ? '' : 'color: var(--sidebar-muted);' }}">
                             <i class="ph ph-tree-structure"></i> Genealogy Tree
@@ -190,6 +190,9 @@
                         @if(Auth::user()->account_type === 'Agent')
                         <a href="{{ route('user.finance.withdrawals') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.finance.withdrawals') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.finance.withdrawals') ? '' : 'color: var(--sidebar-muted);' }}">
                             <i class="ph ph-money"></i> Withdrawals
+                        </a>
+                        <a href="{{ route('user.finance.transfer') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.finance.transfer') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.finance.transfer') ? '' : 'color: var(--sidebar-muted);' }}">
+                            <i class="ph ph-arrows-left-right"></i> Transfer
                         </a>
                         @endif
                     </div>
@@ -453,7 +456,7 @@
                     { title: 'Closed Investments', url: '{{ route('user.investments.closed') }}', category: 'Investments', icon: 'ph-trend-up' },
                     @endif
                     @if(Auth::user()->account_type !== 'Normal User')
-                    { title: 'Referrals', url: '{{ route('user.network.referrals') }}', category: 'Network', icon: 'ph-users' },
+                    { title: 'Investors', url: '{{ route('user.network.referrals') }}', category: 'Network', icon: 'ph-users' },
                     { title: 'Genealogy Tree', url: '{{ route('user.network.genealogy') }}', category: 'Network', icon: 'ph-tree-structure' },
                     @endif
                     @if(Auth::user()->account_type === 'Agent')
@@ -463,6 +466,7 @@
                     @endif
                     @if(Auth::user()->account_type === 'Agent')
                     { title: 'Withdrawals', url: '{{ route('user.finance.withdrawals') }}', category: 'Finance', icon: 'ph-money' },
+                    { title: 'Transfer', url: '{{ route('user.finance.transfer') }}', category: 'Finance', icon: 'ph-arrows-left-right' },
                     @endif
                     { title: 'Profile Settings', url: '{{ route('user.settings.profile') }}', category: 'Settings', icon: 'ph-user' },
                     { title: 'Password Reset', url: '{{ route('user.settings.password') }}', category: 'Settings', icon: 'ph-key' },

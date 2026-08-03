@@ -71,6 +71,16 @@
                         <a href="{{ $investment->user && $investment->user->username ? route('admin.users.details', $investment->user->username) : '#' }}" class="font-medium text-[var(--theme-primary)] hover:underline">{{ $investment->user && $investment->user->username ? '@' . $investment->user->username : '@unknown' }}</a>
                     </li>
                     <li class="flex items-center justify-between">
+                        <span class="text-gray-500">Sponsor By</span>
+                        @if($investment->user && $investment->user->sponsor)
+                            <a href="{{ route('admin.users.details', $investment->user->sponsor->username) }}" class="font-medium text-[var(--theme-primary)] hover:underline">
+                                {{ '@' . $investment->user->sponsor->username }}
+                            </a>
+                        @else
+                            <span class="font-bold text-gray-900">Admin</span>
+                        @endif
+                    </li>
+                    <li class="flex items-center justify-between">
                         <span class="text-gray-500">Email</span>
                         <span class="font-medium text-[var(--theme-primary)]">{{ $investment->user->email ?? 'N/A' }}</span>
                     </li>
@@ -162,20 +172,74 @@
                 </div>
 
                 @if(strtoupper($investment->status) === 'PENDING')
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <form action="{{ route('admin.investments.approve', $investment->id) }}" method="POST" class="w-full">
-                            @csrf
-                            <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#00A843] text-white rounded-lg font-medium hover:bg-green-700 transition-colors">
-                                <i class="ph ph-check-circle text-lg"></i> Approve Investment
-                            </button>
-                        </form>
-                        <form action="{{ route('admin.investments.reject', $investment->id) }}" method="POST" class="w-full">
-                            @csrf
-                            <button type="button" onclick="const msg = prompt('Enter rejection reason (optional):'); if(msg !== null) { this.nextElementSibling.value = msg; this.closest('form').submit(); }" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-500 border border-red-200 rounded-lg font-medium hover:bg-red-100 transition-colors">
-                                <i class="ph ph-x-circle text-lg"></i> Reject Investment
-                            </button>
-                            <input type="hidden" name="admin_message" value="">
-                        </form>
+                    <div class="flex flex-col sm:flex-row gap-3" x-data="{ showApprove: false, showReject: false, rejectReason: '' }">
+                        <!-- Approve Button -->
+                        <button type="button" @click="showApprove = true" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#00A843] text-white rounded-lg font-medium hover:bg-green-700 transition-colors">
+                            <i class="ph ph-check-circle text-lg"></i> Approve Investment
+                        </button>
+                        
+                        <!-- Reject Button -->
+                        <button type="button" @click="showReject = true" class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-500 border border-red-200 rounded-lg font-medium hover:bg-red-100 transition-colors">
+                            <i class="ph ph-x-circle text-lg"></i> Reject Investment
+                        </button>
+
+                        <!-- Approve Modal -->
+                        <div x-show="showApprove" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" x-cloak>
+                            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                                <div x-show="showApprove" @click="showApprove = false" x-transition.opacity class="fixed inset-0 transition-opacity bg-gray-900/75 backdrop-blur-sm" aria-hidden="true"></div>
+                                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                                <div x-show="showApprove" x-transition.scale.origin.bottom class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full">
+                                    <form action="{{ route('admin.investments.approve', $investment->id) }}" method="POST">
+                                        @csrf
+                                        <div class="bg-white px-6 pt-5 pb-4 text-center">
+                                            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                                                <i class="ph ph-check-circle text-2xl text-green-600"></i>
+                                            </div>
+                                            <h3 class="text-lg font-medium text-gray-900 mb-2">Approve Investment</h3>
+                                            <p class="text-sm text-gray-500">Are you sure you want to approve this investment? This action cannot be undone.</p>
+                                        </div>
+                                        <div class="bg-gray-50 px-6 py-4 flex flex-row-reverse gap-3 border-t border-gray-100">
+                                            <button type="submit" class="w-full inline-flex justify-center rounded-lg border border-transparent px-4 py-2 bg-[#00A843] text-sm font-medium text-white hover:bg-green-700 sm:w-auto transition-colors">
+                                                Confirm Approval
+                                            </button>
+                                            <button type="button" @click="showApprove = false" class="w-full inline-flex justify-center rounded-lg border border-gray-300 px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto transition-colors">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reject Modal -->
+                        <div x-show="showReject" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" x-cloak>
+                            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                                <div x-show="showReject" @click="showReject = false" x-transition.opacity class="fixed inset-0 transition-opacity bg-gray-900/75 backdrop-blur-sm" aria-hidden="true"></div>
+                                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                                <div x-show="showReject" x-transition.scale.origin.bottom class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full">
+                                    <form action="{{ route('admin.investments.reject', $investment->id) }}" method="POST">
+                                        @csrf
+                                        <div class="bg-white px-6 pt-5 pb-4">
+                                            <div class="flex items-center gap-3 mb-4 text-red-600">
+                                                <i class="ph ph-x-circle text-2xl"></i>
+                                                <h3 class="text-lg font-medium text-gray-900">Reject Investment</h3>
+                                            </div>
+                                            <p class="text-sm text-gray-500 mb-4">Please provide a reason for rejecting this investment (optional):</p>
+                                            <textarea name="admin_message" x-model="rejectReason" class="w-full rounded-none border-gray-300 focus:border-gray-500 focus:ring-gray-500 text-sm" rows="3" placeholder="Enter rejection reason..."></textarea>
+                                        </div>
+                                        <div class="bg-gray-50 px-6 py-4 flex flex-row-reverse gap-3 border-t border-gray-100">
+                                            <button type="submit" class="w-full inline-flex justify-center rounded-lg border border-transparent px-4 py-2 bg-red-600 text-sm font-medium text-white hover:bg-red-700 sm:w-auto transition-colors">
+                                                Confirm Rejection
+                                            </button>
+                                            <button type="button" @click="showReject = false" class="w-full inline-flex justify-center rounded-lg border border-gray-300 px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 sm:w-auto transition-colors">
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 @else
                     <div class="p-4 rounded-lg border {{ in_array(strtoupper($investment->status), ['ACTIVE', 'COMPLETED']) ? 'bg-green-50 border-green-100 text-green-700' : 'bg-red-50 border-red-100 text-red-700' }}">
