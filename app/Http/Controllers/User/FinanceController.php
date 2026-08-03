@@ -106,7 +106,12 @@ class FinanceController extends Controller
             
         $available_balance = min(Auth::user()->wallet_balance, max(0, $total_commissions - $withdrawn));
 
-        return view('user.finance.transfer', compact('available_balance'));
+        $transfers = Transaction::where('user_id', Auth::id())
+            ->whereIn('type', ['transfer_in', 'transfer_out'])
+            ->latest()
+            ->paginate(15);
+
+        return view('user.finance.transfer', compact('available_balance', 'transfers'));
     }
 
     public function submitWithdrawal(Request $request)
@@ -119,7 +124,6 @@ class FinanceController extends Controller
         
         $request->validate([
             'amount' => 'required|numeric|min:10',
-            'payout_method' => 'required|string|in:Cash,UPI,Bank Transfer',
         ]);
 
         \Illuminate\Support\Facades\DB::transaction(function () use ($user, $request) {
@@ -161,7 +165,7 @@ class FinanceController extends Controller
             $withdrawal = Withdrawal::create([
                 'user_id' => $lockedUser->id,
                 'amount' => $request->amount,
-                'payout_method' => $request->payout_method,
+                'payout_method' => 'Default',
                 'payout_details' => '',
                 'status' => 'pending',
             ]);
@@ -171,7 +175,7 @@ class FinanceController extends Controller
                 'user_id' => $lockedUser->id,
                 'amount' => -$request->amount,
                 'type' => 'withdrawal',
-                'description' => 'Withdrawal request via ' . $request->payout_method,
+                'description' => 'Withdrawal request',
                 'reference_id' => $withdrawal->id,
             ]);
         });

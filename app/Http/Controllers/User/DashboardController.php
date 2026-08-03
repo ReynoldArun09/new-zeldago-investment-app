@@ -24,6 +24,11 @@ class DashboardController extends Controller
             ->whereIn('status', ['ACTIVE', 'COMPLETED'])
             ->sum('amount');
 
+        // Network Total Investments
+        $network_investments = \App\Models\Investment::whereHas('user', function($q) use ($user) {
+            $q->where('sponsor_id', $user->id);
+        })->sum('amount');
+
         // Total ROI Received
         $total_roi = \App\Models\RoiLog::where('user_id', $user->id)
             ->where('status', 'credited')
@@ -74,6 +79,7 @@ class DashboardController extends Controller
             'total_commissions',
             'total_investment',
             'total_roi',
+            'network_investments',
             'recent_commissions',
             'recent_rois',
             'user_investments',

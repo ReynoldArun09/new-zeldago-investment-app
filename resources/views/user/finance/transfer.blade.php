@@ -105,19 +105,73 @@
 
     <!-- Balance Card -->
     <div class="lg:col-span-1">
-        <div class="bg-white rounded-none p-6 border border-gray-200 relative overflow-hidden shadow-sm">
-            <div class="absolute top-0 right-0 p-4 opacity-5">
-                <i class="ph ph-wallet text-8xl text-gray-900"></i>
+        <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden min-w-[240px]" style="background-color: #f39c12;">
+            <div class="p-4 flex flex-col justify-center">
+                <p class="text-xs mb-1 font-medium opacity-90">Available Balance</p>
+                <p class="text-xl font-bold tracking-wide">{{ get_setting('currency_symbol', 'Rs') }}{{ number_format($available_balance, 2) }}</p>
             </div>
-            
-            <div class="relative z-10">
-                <p class="text-gray-500 text-sm font-medium mb-1">Available Balance</p>
-                <h3 class="text-3xl font-bold mb-6 text-gray-900">
-                    {{ get_setting('currency_symbol', 'Rs') }}{{ number_format($available_balance, 2) }}
-                </h3>
+            <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0,0,0,0.1);">
+                <i class="ph ph-wallet text-2xl opacity-90"></i>
             </div>
         </div>
     </div>
+</div>
+
+<div class="mt-8 bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-6 py-5 border-b border-gray-100">
+        <h3 class="text-lg font-bold text-gray-900">Transfer History</h3>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left whitespace-nowrap">
+            <thead>
+                <tr class="text-white text-xs font-bold uppercase tracking-wider" style="background-color: var(--primary);">
+                    <th class="px-6 py-3 font-medium">Date</th>
+                    <th class="px-6 py-3 font-medium">Type</th>
+                    <th class="px-6 py-3 font-medium">Description</th>
+                    <th class="px-6 py-3 font-medium text-right">Amount</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                @forelse($transfers as $tx)
+                    <tr class="hover:bg-gray-50/50 transition-colors">
+                        <td class="px-6 py-4 text-gray-500">
+                            {{ $tx->created_at->format('M d, Y h:i A') }}
+                        </td>
+                        <td class="px-6 py-4">
+                            @if($tx->type === 'transfer_in')
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <i class="ph ph-arrow-down-left text-emerald-500"></i> Received
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-orange-50 text-orange-700 border border-orange-200">
+                                    <i class="ph ph-arrow-up-right text-orange-500"></i> Sent
+                                </span>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 text-gray-700">{{ $tx->description }}</td>
+                        <td class="px-6 py-4 text-right font-bold {{ $tx->amount > 0 ? 'text-emerald-600' : 'text-orange-600' }}">
+                            {{ $tx->amount > 0 ? '+' : '' }}{{ format_currency($tx->amount) }}
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-12 text-center text-gray-500">
+                            <div class="flex flex-col items-center justify-center">
+                                <i class="ph ph-swap text-4xl text-gray-300 mb-3"></i>
+                                <p class="font-medium text-gray-600">No transfers found.</p>
+                            </div>
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+    @if($transfers->hasPages())
+        <div class="px-6 py-4 border-t border-gray-100">
+            {{ $transfers->links() }}
+        </div>
+    @endif
 </div>
 
 @push('scripts')

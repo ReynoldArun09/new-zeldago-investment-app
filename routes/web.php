@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/referrals', [\App\Http\Controllers\User\NetworkController::class, 'referrals'])->name('referrals');
         Route::get('/genealogy', [\App\Http\Controllers\User\NetworkController::class, 'genealogy'])->name('genealogy');
         Route::post('/add-investor', [\App\Http\Controllers\User\NetworkController::class, 'addInvestor'])->name('add-investor');
+        Route::get('/investor/{id}/investments', [\App\Http\Controllers\User\NetworkController::class, 'investorInvestments'])->name('investor.investments');
     });
 
     // User Finance

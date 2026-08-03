@@ -10,22 +10,22 @@
     </div>
     
     <!-- Balance Card -->
-    <div class="bg-gradient-to-br from-indigo-900 to-indigo-950 px-6 py-4 rounded-xl text-white shadow-sm flex items-center gap-4">
-        <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-            <i class="ph ph-wallet text-2xl text-indigo-200"></i>
+    <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden min-w-[240px]" style="background-color: #f39c12;">
+        <div class="p-4 flex flex-col justify-center">
+            <p class="text-xs mb-1 font-medium opacity-90">Available Balance</p>
+            <p class="text-xl font-bold tracking-wide">{{ get_setting('currency_symbol', 'Rs') }}{{ number_format(auth()->user()->wallet_balance, 2) }}</p>
         </div>
-        <div>
-            <p class="text-indigo-200 text-sm font-medium">Available Balance</p>
-            <p class="text-2xl font-black">{{ get_setting('currency_symbol', 'Rs') }}{{ number_format(auth()->user()->wallet_balance, 2) }}</p>
+        <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0,0,0,0.1);">
+            <i class="ph ph-wallet text-2xl opacity-90"></i>
         </div>
     </div>
 </div>
 
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+<div class="bg-white rounded-sm shadow-sm border border-gray-100 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-sm text-left whitespace-nowrap">
-            <thead class="bg-gray-50/50 text-gray-500 font-medium border-b border-gray-100">
-                <tr>
+            <thead>
+                <tr class="text-white text-xs font-bold uppercase tracking-wider" style="background-color: var(--primary);">
                     <th class="px-6 py-4">Transaction ID</th>
                     <th class="px-6 py-4">Date</th>
                     <th class="px-6 py-4">Type</th>
