@@ -191,6 +191,9 @@
                         <a href="{{ route('user.finance.withdrawals') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.finance.withdrawals') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.finance.withdrawals') ? '' : 'color: var(--sidebar-muted);' }}">
                             <i class="ph ph-money"></i> Withdrawals
                         </a>
+                        <a href="{{ route('user.finance.transfer') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.finance.transfer') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.finance.transfer') ? '' : 'color: var(--sidebar-muted);' }}">
+                            <i class="ph ph-arrows-left-right"></i> Transfer
+                        </a>
                         @endif
                     </div>
                 </div>
@@ -463,6 +466,7 @@
                     @endif
                     @if(Auth::user()->account_type === 'Agent')
                     { title: 'Withdrawals', url: '{{ route('user.finance.withdrawals') }}', category: 'Finance', icon: 'ph-money' },
+                    { title: 'Transfer', url: '{{ route('user.finance.transfer') }}', category: 'Finance', icon: 'ph-arrows-left-right' },
                     @endif
                     { title: 'Profile Settings', url: '{{ route('user.settings.profile') }}', category: 'Settings', icon: 'ph-user' },
                     { title: 'Password Reset', url: '{{ route('user.settings.password') }}', category: 'Settings', icon: 'ph-key' },

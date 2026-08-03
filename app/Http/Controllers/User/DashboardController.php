@@ -31,12 +31,12 @@ class DashboardController extends Controller
             
         // Calculate total commissions (Level Bonuses)
         $total_commissions = Transaction::where('user_id', $user->id)
-            ->where('type', 'commission')
+            ->whereIn('type', ['commission', 'transfer_in'])
             ->sum('amount');
         
-        // Recent commissions
+        // Recent commissions and transfers
         $recent_commissions = Transaction::where('user_id', $user->id)
-            ->where('type', 'commission')
+            ->whereIn('type', ['commission', 'transfer_in', 'transfer_out'])
             ->latest()
             ->take(5)
             ->get();

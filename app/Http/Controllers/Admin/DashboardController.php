@@ -59,7 +59,7 @@ class DashboardController extends Controller
 
         // Payouts
         $totalRoiPaid = \App\Models\Transaction::where('type', 'ROI')->sum('amount') ?? 0;
-        $totalCommissionPaid = \App\Models\Transaction::where('type', 'COMMISSION')->sum('amount') ?? 0;
+        $totalCommissionPaid = \App\Models\Transaction::whereIn('type', ['COMMISSION', 'commission', 'transfer_in', 'transfer_out'])->sum('amount') ?? 0;
 
         $stats = [
             'totalInvestors'      => $totalInvestors,

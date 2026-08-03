@@ -44,6 +44,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/transactions/roi', [\App\Http\Controllers\User\FinanceController::class, 'roiTransactions'])->name('transactions.roi');
         Route::get('/withdrawals', [\App\Http\Controllers\User\FinanceController::class, 'withdrawals'])->name('withdrawals');
         Route::post('/withdrawals', [\App\Http\Controllers\User\FinanceController::class, 'submitWithdrawal'])->name('withdrawals.submit');
+        Route::get('/transfer', [\App\Http\Controllers\User\FinanceController::class, 'transfer'])->name('transfer');
+        Route::post('/transfer/search', [\App\Http\Controllers\User\FinanceController::class, 'searchAgent'])->name('transfer.search');
+        Route::post('/transfer', [\App\Http\Controllers\User\FinanceController::class, 'submitTransfer'])->name('transfer.submit');
     });
     
     // User Settings
