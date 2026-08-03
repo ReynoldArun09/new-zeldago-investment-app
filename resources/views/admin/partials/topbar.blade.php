@@ -25,7 +25,7 @@
     <div class="flex items-center gap-1 ml-auto">
 
         {{-- Globe --}}
-        <a href="{{ url('/') }}" target="_blank" class="w-9 h-9 flex items-center justify-center text-white/40 hover:text-white/80 rounded-lg transition-colors">
+        <a href="{{ url('/') }}" target="_blank" title="View Site" class="w-9 h-9 flex items-center justify-center text-white/40 hover:text-white/80 rounded-lg transition-colors">
             @include('admin.partials.icon', ['name' => 'globe', 'size' => 18])
         </a>
 
@@ -35,7 +35,7 @@
                 $adminUser = Auth::guard('admin')->user();
                 $unreadCount = $adminUser ? $adminUser->unreadNotifications->count() : 0;
             @endphp
-            <button onclick="toggleNotif()" class="relative w-9 h-9 flex items-center justify-center text-white/40 hover:text-white/80 rounded-lg transition-colors">
+            <button onclick="toggleNotif()" title="Notifications" class="relative w-9 h-9 flex items-center justify-center text-white/40 hover:text-white/80 rounded-lg transition-colors">
                 @include('admin.partials.icon', ['name' => 'bell', 'size' => 18])
                 @if($unreadCount > 0)
                 <span class="absolute top-0 right-0 min-w-[16px] h-4 px-1 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full ring-2 ring-[#0d1e45]">{{ $unreadCount > 99 ? '99+' : $unreadCount }}</span>
@@ -79,7 +79,7 @@
         </div>
 
         {{-- Settings --}}
-        <a href="{{ route('admin.settings.admin') }}" class="w-9 h-9 flex items-center justify-center text-white/40 hover:text-white/80 rounded-lg transition-colors">
+        <a href="{{ route('admin.settings.admin') }}" title="Settings" class="w-9 h-9 flex items-center justify-center text-white/40 hover:text-white/80 rounded-lg transition-colors">
             @include('admin.partials.icon', ['name' => 'wrench', 'size' => 18])
         </a>
 

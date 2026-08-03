@@ -16,7 +16,7 @@
         </div>
         <div>
             <p class="text-indigo-200 text-sm font-medium">Available Balance</p>
-            <p class="text-2xl font-black">{{ get_setting('currency_symbol', '$') }}{{ number_format(auth()->user()->wallet_balance, 2) }}</p>
+            <p class="text-2xl font-black">{{ get_setting('currency_symbol', 'Rs') }}{{ number_format(auth()->user()->wallet_balance, 2) }}</p>
         </div>
     </div>
 </div>
@@ -65,7 +65,7 @@
                             {{ $transaction->description }}
                         </td>
                         <td class="px-6 py-4 text-right font-bold {{ $transaction->amount > 0 ? 'text-green-600' : 'text-gray-900' }}">
-                            {{ $transaction->amount > 0 ? '+' : '' }}{{ get_setting('currency_symbol', '$') }}{{ number_format($transaction->amount, 2) }}
+                            {{ $transaction->amount > 0 ? '+' : '' }}{{ get_setting('currency_symbol', 'Rs') }}{{ number_format($transaction->amount, 2) }}
                         </td>
                     </tr>
                 @empty

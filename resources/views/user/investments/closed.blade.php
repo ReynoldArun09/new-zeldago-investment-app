@@ -10,16 +10,16 @@
         <p class="text-gray-600 mt-1">View your completed and rejected investment requests.</p>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-none shadow-sm border border-gray-100 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left whitespace-nowrap">
-                <thead class="bg-gray-50/50 text-gray-500 font-medium border-b border-gray-100">
-                    <tr>
-                        <th class="px-6 py-4">Transaction ID</th>
-                        <th class="px-6 py-4">Amount</th>
-                        <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4">Date</th>
-                        <th class="px-6 py-4 text-center">Proof</th>
+                <thead>
+                    <tr class="text-white text-xs font-bold uppercase tracking-wider" style="background-color: var(--primary);">
+                        <th class="px-6 py-4 font-medium">Transaction ID</th>
+                        <th class="px-6 py-4 font-medium">Amount</th>
+                        <th class="px-6 py-4 font-medium">Status</th>
+                        <th class="px-6 py-4 font-medium">Date</th>
+                        <th class="px-6 py-4 font-medium text-center">Proof</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">

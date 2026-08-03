@@ -66,6 +66,26 @@
                                         if ($childPath === 'admin/withdrawals' && request()->is('admin/withdrawals/pending')) {
                                             $childActive = false;
                                         }
+
+                                        // Prevent 'All Investments' from being active when on specific status pages
+                                        if ($childPath === 'admin/investments' && (request()->is('admin/investments/pending') || request()->is('admin/investments/active') || request()->is('admin/investments/completed') || request()->is('admin/investments/closed') || request()->is('admin/investments/close-requests'))) {
+                                            $childActive = false;
+                                        }
+                                        
+                                        // Prevent 'All KYC' from being active when on specific status pages
+                                        if ($childPath === 'admin/verification/kyc' && (request()->is('admin/verification/kyc/pending') || request()->is('admin/verification/kyc/approved') || request()->is('admin/verification/kyc/rejected'))) {
+                                            $childActive = false;
+                                        }
+
+                                        // Prevent 'All Nominee' from being active when on specific status pages
+                                        if ($childPath === 'admin/verification/nominee' && (request()->is('admin/verification/nominee/pending') || request()->is('admin/verification/nominee/approved') || request()->is('admin/verification/nominee/rejected'))) {
+                                            $childActive = false;
+                                        }
+
+                                        // Prevent 'All Bank Details' from being active when on specific status pages
+                                        if ($childPath === 'admin/verification/bank' && (request()->is('admin/verification/bank/pending') || request()->is('admin/verification/bank/approved') || request()->is('admin/verification/bank/rejected'))) {
+                                            $childActive = false;
+                                        }
                                         
                                         if (request()->has('role')) {
                                             $childActive = false;

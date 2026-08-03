@@ -150,8 +150,24 @@
         </div>
         
         @if($withdrawals->hasPages())
-        <div class="px-5 py-3 border-t border-gray-100">
-            {{ $withdrawals->links() }}
+        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+            <span class="text-sm text-gray-500">
+                Showing {{ $withdrawals->firstItem() ?? 0 }} to {{ $withdrawals->lastItem() ?? 0 }} of {{ $withdrawals->total() }} results
+            </span>
+            <div>
+                {{ $withdrawals->appends(request()->query())->links('pagination::tailwind') }}
+            </div>
+        </div>
+        @else
+        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+            <span class="text-sm text-gray-500">
+                Showing {{ $withdrawals->count() }} to {{ $withdrawals->count() }} of {{ $withdrawals->count() }} results
+            </span>
+            <div class="flex gap-1">
+                <button disabled class="px-3 py-1 border border-gray-100 rounded-md bg-gray-50 text-gray-400 text-sm">&lt;</button>
+                <button class="px-3 py-1 border border-[var(--theme-primary)] rounded-md bg-[var(--theme-primary)] text-white text-sm">1</button>
+                <button disabled class="px-3 py-1 border border-gray-100 rounded-md bg-gray-50 text-gray-400 text-sm">&gt;</button>
+            </div>
         </div>
         @endif
     </div>

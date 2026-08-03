@@ -18,10 +18,10 @@
         $g = hexdec(substr($hexcolor, 3, 2));
         $b = hexdec(substr($hexcolor, 5, 2));
         $yiq = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
-        return ($yiq >= 128) ? '#1e293b' : '#f8fafc';
+        return ($yiq >= 128) ? '#1e293b' : '#ffffff';
     }
     $sidebarTextColor = getContrastColor($sidebarColor);
-    $sidebarTextMuted = ($sidebarTextColor == '#f8fafc') ? '#94a3b8' : '#475569';
+    $sidebarTextMuted = ($sidebarTextColor == '#ffffff') ? '#ffffff' : '#475569';
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -131,6 +131,11 @@
                 <div x-show="open" x-transition.opacity style="display: none;" class="pl-[33px] py-1">
                     <div class="border-l border-indigo-200/20 space-y-1 py-1">
 
+                        @if(Auth::user()->account_type === 'Normal User')
+                        <a href="{{ route('user.investments.create') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.investments.create') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.investments.create') ? '' : 'color: var(--sidebar-muted);' }}">
+                            <i class="ph ph-circle text-[8px]"></i> Create Investments
+                        </a>
+                        @endif
                         <a href="{{ route('user.investments.active') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.investments.active') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.investments.active') ? '' : 'color: var(--sidebar-muted);' }}">
                             <i class="ph ph-circle text-[8px]"></i> My Investments
                         </a>
@@ -441,7 +446,9 @@
                 items: [
                     { title: 'Dashboard', url: '{{ route('user.dashboard') }}', category: 'General', icon: 'ph-squares-four' },
                     @if(Auth::user()->account_type !== 'Agent')
-
+                    @if(Auth::user()->account_type === 'Normal User')
+                    { title: 'Create Investments', url: '{{ route('user.investments.create') }}', category: 'Investments', icon: 'ph-plus-circle' },
+                    @endif
                     { title: 'My Investments', url: '{{ route('user.investments.active') }}', category: 'Investments', icon: 'ph-trend-up' },
                     { title: 'Closed Investments', url: '{{ route('user.investments.closed') }}', category: 'Investments', icon: 'ph-trend-up' },
                     @endif

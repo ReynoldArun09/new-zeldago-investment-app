@@ -94,4 +94,27 @@ class AuthController extends Controller
 
         return redirect()->back()->with('success', 'Password updated successfully.');
     }
+
+    public function showSettingsUnlockForm()
+    {
+        return view('admin.settings.unlock');
+    }
+
+    public function unlockSettings(Request $request)
+    {
+        $admin = Auth::guard('admin')->user();
+
+        $request->validate([
+            'password' => ['required'],
+        ]);
+
+        if (!\Illuminate\Support\Facades\Hash::check($request->password, $admin->password)) {
+            return redirect()->back()->withErrors(['password' => 'The provided password does not match our records.']);
+        }
+
+        $request->session()->put('admin_settings_unlocked_at', time());
+
+        $intendedUrl = $request->session()->pull('url.intended', route('admin.settings.admin'));
+        return redirect()->to($intendedUrl);
+    }
 }

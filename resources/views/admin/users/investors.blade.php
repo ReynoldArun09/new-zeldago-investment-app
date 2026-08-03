@@ -47,12 +47,12 @@
                             <p class="font-semibold text-gray-800 text-sm">{{ $user->name }}</p>
                             <p class="text-xs" style="color: var(--theme-primary);">{{ '@' . ($user->username ?? $user->id) }}</p>
                         </td>
-                        <td class="px-5 py-3.5 text-xs text-gray-400 space-y-0.5">
+                        <td class="px-5 py-3.5 text-xs text-gray-600 space-y-0.5">
                             <p>{{ $user->email }}</p>
                             <p>{{ $user->mobile ?? '—' }}</p>
                         </td>
                         <td class="px-4 py-3.5 text-xs space-y-0.5">
-                            <p><span class="font-medium text-gray-600">Type:</span> <span class="{{ $user->account_type == 'Root Distributor' ? 'text-purple-600 font-semibold' : 'text-gray-500' }}">{{ $user->account_type }}</span></p>
+                            <p><span class="font-medium text-gray-600">Type:</span> <span class="{{ $user->account_type == 'Root Distributor' ? 'text-purple-600 font-semibold' : 'text-gray-500' }}">{{ $user->account_type === 'Normal User' ? 'Investor' : $user->account_type }}</span></p>
                             <p><span class="font-medium text-gray-600">Code:</span> {{ $user->referral_code ?? '—' }}</p>
                             <p><span class="font-medium text-gray-600">Sponsor:</span> {!! $user->sponsor ? '<a href="'.route('admin.users.details', $user->sponsor->username ?? $user->sponsor->id).'" class="hover:underline text-blue-600">@'.$user->sponsor->username.'</a>' : '<span class="text-gray-400">None</span>' !!}</p>
                         </td>
@@ -96,38 +96,26 @@
         </div>
 
         {{-- Pagination --}}
-        @if($users->lastPage() > 1)
-        <div class="flex items-center justify-between px-5 py-3 border-t border-gray-100 text-xs text-gray-500">
-            <span>
-                Showing {{ $users->firstItem() }}–{{ $users->lastItem() }} of {{ $users->total() }} results
-            </span>
-            <div class="flex items-center gap-1">
-                {{-- Prev --}}
-                @if($users->onFirstPage())
-                    <span class="px-3 py-1 border border-gray-200 rounded-none opacity-40 cursor-not-allowed">Prev</span>
-                @else
-                    <a href="{{ $users->previousPageUrl() }}" class="px-3 py-1 border border-gray-200 rounded-none hover:bg-gray-50 transition-colors">Prev</a>
-                @endif
-
-                {{-- Page numbers --}}
-                @foreach($users->getUrlRange(1, $users->lastPage()) as $page => $url)
-                    @if($page == $users->currentPage())
-                        <span class="px-3 py-1 border rounded-none text-white" style="background-color: var(--theme-primary); border-color: var(--theme-primary);">{{ $page }}</span>
-                    @elseif($page == 1 || $page == $users->lastPage() || abs($page - $users->currentPage()) <= 1)
-                        <a href="{{ $url }}" class="px-3 py-1 border border-gray-200 rounded-none hover:bg-gray-50 transition-colors">{{ $page }}</a>
-                    @elseif(abs($page - $users->currentPage()) == 2)
-                        <span class="px-2">…</span>
-                    @endif
-                @endforeach
-
-                {{-- Next --}}
-                @if($users->hasMorePages())
-                    <a href="{{ $users->nextPageUrl() }}" class="px-3 py-1 border border-gray-200 rounded-none hover:bg-gray-50 transition-colors">Next</a>
-                @else
-                    <span class="px-3 py-1 border border-gray-200 rounded-none opacity-40 cursor-not-allowed">Next</span>
-                @endif
+        @if($users->hasPages())
+            <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-sm text-gray-500">
+                    Showing {{ $users->firstItem() ?? 0 }} to {{ $users->lastItem() ?? 0 }} of {{ $users->total() }} results
+                </span>
+                <div>
+                    {{ $users->appends(request()->query())->links('pagination::tailwind') }}
+                </div>
             </div>
-        </div>
+        @else
+            <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-sm text-gray-500">
+                    Showing {{ $users->count() }} to {{ $users->count() }} of {{ $users->count() }} results
+                </span>
+                <div class="flex gap-1">
+                    <button disabled class="px-3 py-1 border border-gray-100 rounded-md bg-gray-50 text-gray-400 text-sm">&lt;</button>
+                    <button class="px-3 py-1 border border-[var(--theme-primary)] rounded-md bg-[var(--theme-primary)] text-white text-sm">1</button>
+                    <button disabled class="px-3 py-1 border border-gray-100 rounded-md bg-gray-50 text-gray-400 text-sm">&gt;</button>
+                </div>
+            </div>
         @endif
     </div>
 </div>

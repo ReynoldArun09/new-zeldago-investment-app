@@ -13,6 +13,41 @@ use Illuminate\Support\Str;
 
 class InvestmentController extends Controller
 {
+    public function create()
+    {
+        return view('user.investments.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:10',
+            'trx_id' => 'required|string|max:255|unique:investments,trx_id',
+            'payment_proof' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        $path = $request->file('payment_proof')->store('proofs', 'public');
+
+        Investment::create([
+            'user_id' => Auth::id(),
+            'amount' => $request->amount,
+            'trx_id' => $request->trx_id,
+            'status' => Investment::STATUS_PENDING,
+            'payment_proof' => $path,
+        ]);
+
+        $admins = Admin::all();
+        if ($admins->count() > 0) {
+            Notification::send($admins, new GenericNotification(
+                'New Investment Created',
+                Auth::user()->username . ' has created a new investment of ' . format_currency($request->amount) . ' and it is pending review.',
+                'ph-currency-circle-dollar'
+            ));
+        }
+
+        return redirect()->route('user.investments.active')->with('success', 'Investment created successfully. It is pending review.');
+    }
+
     public function active()
     {
         $investments = Investment::where('user_id', Auth::id())

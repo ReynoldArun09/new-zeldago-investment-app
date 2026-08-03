@@ -104,6 +104,27 @@ class VerificationController extends Controller
     }
 
     // Bank Details Management
+    public function bankReview($id)
+    {
+        $bank = \App\Models\BankDetail::with('user')->findOrFail($id);
+        return view('admin.verification.bank-review', compact('bank'));
+    }
+
+    public function bankList(Request $request, $status = null)
+    {
+        $query = \App\Models\BankDetail::with('user')->latest();
+        
+        if ($status) {
+            $query->where('status', strtoupper($status));
+        }
+
+        $banks = $query->paginate(15);
+        
+        $title = $status ? ucfirst($status) . ' Bank Details' : 'All Bank Details';
+
+        return view('admin.verification.bank', compact('banks', 'title'));
+    }
+
     public function bankUpdate(Request $request, $id)
     {
         $request->validate([

@@ -40,6 +40,14 @@ class InvestmentController extends Controller
                   });
             });
         }
+        
+        if ($request->filled('month')) {
+            $query->whereMonth('created_at', $request->month);
+        }
+        
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
+        }
 
         $investments = $query->paginate(20);
         
@@ -61,6 +69,87 @@ class InvestmentController extends Controller
     {
         $investment = Investment::with('user')->findOrFail($id);
         return view('admin.investments.show', compact('investment'));
+    }
+
+    /**
+     * Export investments to CSV
+     */
+    public function export(Request $request, $status = null)
+    {
+        $query = Investment::with('user')->latest();
+
+        if ($status && $status !== 'all') {
+            $dbStatus = match ($status) {
+                'active' => Investment::STATUS_ACTIVE,
+                'completed' => Investment::STATUS_COMPLETED,
+                'closed' => Investment::STATUS_CLOSED,
+                'close-requests' => Investment::STATUS_CLOSE_REQUEST,
+                default => strtoupper($status),
+            };
+            $query->where('status', $dbStatus);
+        } else if ($request->filled('status') && $request->status !== 'all') {
+             $dbStatus = match ($request->status) {
+                'active' => Investment::STATUS_ACTIVE,
+                'completed' => Investment::STATUS_COMPLETED,
+                'closed' => Investment::STATUS_CLOSED,
+                'close-requests' => Investment::STATUS_CLOSE_REQUEST,
+                default => strtoupper($request->status),
+            };
+            $query->where('status', $dbStatus);
+        }
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('trx_id', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($uq) use ($search) {
+                      $uq->where('username', 'like', "%{$search}%")
+                         ->orWhere('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        if ($request->filled('month')) {
+            $query->whereMonth('created_at', $request->month);
+        }
+        
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
+        }
+
+        $investments = $query->get();
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=investments_" . date('Y-m-d_His') . ".csv",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $columns = ['Trx ID', 'Date Started', 'User Name', 'Username', 'Initial Deposit', 'Next ROI Date', 'Status'];
+
+        $callback = function() use($investments, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($investments as $inv) {
+                $row = [
+                    $inv->trx_id,
+                    $inv->created_at->format('Y-m-d H:i:s'),
+                    $inv->user->name ?? 'N/A',
+                    $inv->user->username ?? 'N/A',
+                    $inv->amount,
+                    $inv->next_roi_date ? \Carbon\Carbon::parse($inv->next_roi_date)->format('Y-m-d H:i:s') : 'N/A',
+                    $inv->status
+                ];
+                fputcsv($file, $row);
+            }
+
+            fclose($file);
+        };
+
+        return \Illuminate\Support\Facades\Response::stream($callback, 200, $headers);
     }
 
     /**

@@ -43,6 +43,13 @@ class TicketController extends Controller
             'message' => $request->message,
         ]);
 
+        $admins = \App\Models\Admin::all();
+        \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\GenericNotification(
+            'New Support Ticket',
+            'A new support ticket (' . $ticket->ticket_id . ') has been created by ' . auth()->user()->username . '.',
+            'ph-envelope-simple'
+        ));
+
         return redirect()->route('user.support.index')->with('success', 'Support ticket created successfully.');
     }
 
@@ -77,6 +84,13 @@ class TicketController extends Controller
         } else {
             $ticket->touch(); // Update updated_at timestamp
         }
+
+        $admins = \App\Models\Admin::all();
+        \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\GenericNotification(
+            'New Ticket Reply',
+            auth()->user()->username . ' has replied to ticket ' . $ticket->ticket_id . '.',
+            'ph-chat-circle-dots'
+        ));
 
         return back()->with('success', 'Reply sent successfully.');
     }

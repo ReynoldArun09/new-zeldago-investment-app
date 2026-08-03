@@ -19,7 +19,8 @@ class DashboardController extends Controller
             ->count();
 
         // Business
-        $totalBusiness          = Investment::sum('amount') ?? 0;
+        $totalBusiness          = Investment::whereNotIn('status', [Investment::STATUS_PENDING, Investment::STATUS_REJECTED])->sum('amount') ?? 0;
+        $totalPendingBusiness   = Investment::where('status', Investment::STATUS_PENDING)->sum('amount') ?? 0;
         $pendingInvestments     = Investment::where('status', 'PENDING')->count();
         $completedInvestments   = Investment::where('status', 'COMPLETED')->count();
         $closeRequests          = Investment::where('status', 'CLOSE_REQUEST')->count();
@@ -68,6 +69,8 @@ class DashboardController extends Controller
             'activeMembers'       => $activeMembers,
             'newRegistrations'    => $newRegistrations,
             'totalBusiness'       => $totalBusiness,
+            'totalPendingBusiness'=> $totalPendingBusiness,
+            'pendingInvestments'  => $pendingInvestments,
             'totalRoiPaid'        => $totalRoiPaid,
             'totalCommissionPaid' => $totalCommissionPaid,
             'totalIncomePaid'     => 0,

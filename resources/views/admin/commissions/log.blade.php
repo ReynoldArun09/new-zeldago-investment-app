@@ -117,13 +117,25 @@
         </div>
         
         @if($commissions->hasPages())
-            <div class="px-5 py-4 border-t border-gray-50">
-                {{ $commissions->links() }}
+        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+            <span class="text-sm text-gray-500">
+                Showing {{ $commissions->firstItem() ?? 0 }} to {{ $commissions->lastItem() ?? 0 }} of {{ $commissions->total() }} results
+            </span>
+            <div>
+                {{ $commissions->appends(request()->query())->links('pagination::tailwind') }}
             </div>
+        </div>
         @else
-            <div class="px-5 py-4 border-t border-gray-50 text-xs text-gray-500">
-                Showing {{ $commissions->count() }} of {{ $commissions->total() }} results
+        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+            <span class="text-sm text-gray-500">
+                Showing {{ $commissions->count() }} to {{ $commissions->count() }} of {{ $commissions->count() }} results
+            </span>
+            <div class="flex gap-1">
+                <button disabled class="px-3 py-1 border border-gray-100 rounded-md bg-gray-50 text-gray-400 text-sm">&lt;</button>
+                <button class="px-3 py-1 border border-[var(--theme-primary)] rounded-md bg-[var(--theme-primary)] text-white text-sm">1</button>
+                <button disabled class="px-3 py-1 border border-gray-100 rounded-md bg-gray-50 text-gray-400 text-sm">&gt;</button>
             </div>
+        </div>
         @endif
     </div>
 </div>

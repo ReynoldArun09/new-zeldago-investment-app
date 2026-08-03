@@ -23,7 +23,7 @@ function format_currency($amount)
     $symbol = get_setting('currency_symbol', 'Rs');
     $code = get_setting('currency_code', 'INR');
     
-    return $symbol . number_format((float)$amount, 2) . ' ' . $code;
+    return $symbol . number_format((float)$amount, 2);
 }
 
 function default_currency()
@@ -45,6 +45,7 @@ function admin_sidebar_menu(): array
             'icon'     => 'trending-up',
             'children' => [
                 ['label' => 'All Investments',       'href' => '/admin/investments',               'icon' => 'list'],
+                ['label' => 'Pending Investments',   'href' => '/admin/investments/pending',       'icon' => 'hourglass'],
                 ['label' => 'Active Investments',    'href' => '/admin/investments/active',        'icon' => 'check-circle'],
                 ['label' => 'Completed Investments', 'href' => '/admin/investments/completed',     'icon' => 'check-square'],
                 ['label' => 'Closed Investments',    'href' => '/admin/investments/closed',        'icon' => 'x-circle'],
@@ -104,6 +105,17 @@ function admin_sidebar_menu(): array
         ],
 
         [
+            'label'    => 'Bank Details',
+            'icon'     => 'credit-card',
+            'children' => [
+                ['label' => 'All Bank Details',    'href' => '/admin/verification/bank',          'icon' => 'list'],
+                ['label' => 'Pending Bank Details','href' => '/admin/verification/bank/pending',  'icon' => 'clock'],
+                ['label' => 'Approved Bank Details','href' => '/admin/verification/bank/approved', 'icon' => 'check-circle'],
+                ['label' => 'Rejected Bank Details','href' => '/admin/verification/bank/rejected', 'icon' => 'x-circle'],
+            ],
+        ],
+
+        [
             'label'    => 'Reports',
             'icon'     => 'pie-chart',
             'children' => [
@@ -117,9 +129,7 @@ function admin_sidebar_menu(): array
         [
             'label'    => 'Support Tickets',
             'icon'     => 'mail',
-            'children' => [
-                ['label' => 'All Tickets',         'href' => '/admin/support',                       'icon' => 'list'],
-            ],
+            'href'     => '/admin/support',
         ],
 
         [

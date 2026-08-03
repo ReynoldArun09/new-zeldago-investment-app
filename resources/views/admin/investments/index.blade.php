@@ -20,12 +20,36 @@
         <div class="px-6 py-5 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <h2 class="text-lg font-bold text-gray-800">{{ $title }}</h2>
             
-            <form action="{{ route('admin.investments.index', ['status' => $status]) }}" method="GET" class="flex">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="TrxID / Username" class="w-full md:w-64 px-4 py-2 text-sm border border-gray-200 rounded-l-lg focus:outline-none focus:border-[var(--theme-primary)]">
-                <button type="submit" class="px-4 py-2 bg-[var(--theme-primary)] text-white rounded-r-lg hover:opacity-90 transition-opacity">
-                    <i class="ph ph-magnifying-glass"></i>
-                </button>
-            </form>
+            <div class="flex flex-col sm:flex-row gap-3">
+                <form action="{{ route('admin.investments.index', ['status' => $status]) }}" method="GET" class="flex gap-2">
+                    <select name="month" class="px-3 py-2 text-sm bg-indigo-50 border border-indigo-100 text-indigo-700 rounded-lg focus:outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 transition-colors font-medium">
+                        <option value="">All Months</option>
+                        @foreach(range(1, 12) as $m)
+                            <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>
+                                {{ date('F', mktime(0, 0, 0, $m, 10)) }}
+                            </option>
+                        @endforeach
+                    </select>
+                    
+                    <select name="year" class="px-3 py-2 text-sm bg-violet-50 border border-violet-100 text-violet-700 rounded-lg focus:outline-none focus:border-violet-300 focus:ring-2 focus:ring-violet-100 transition-colors font-medium">
+                        <option value="">All Years</option>
+                        @foreach(range(date('Y'), 2023) as $y)
+                            <option value="{{ $y }}" {{ request('year') == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endforeach
+                    </select>
+
+                    <div class="flex">
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="TrxID / Username" class="w-full md:w-64 px-4 py-2 text-sm border border-gray-200 rounded-l-lg focus:outline-none focus:border-[var(--theme-primary)] border-r-0">
+                        <button type="submit" class="px-4 py-2 bg-[var(--theme-primary)] text-white rounded-r-lg hover:opacity-90 transition-opacity">
+                            <i class="ph ph-magnifying-glass"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <a href="{{ route('admin.investments.export', ['status' => $status ?? 'all', 'month' => request('month'), 'year' => request('year'), 'search' => request('search')]) }}" class="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2">
+                    <i class="ph ph-download-simple"></i> Export CSV
+                </a>
+            </div>
         </div>
 
         {{-- Table --}}

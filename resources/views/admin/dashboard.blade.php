@@ -88,6 +88,19 @@
             </div>
         </div>
 
+        {{-- Pending Investments --}}
+        <div class="bg-[#f59e0b] rounded-none p-4 flex items-center justify-between shadow-sm text-white">
+            <div class="min-w-0 flex-1">
+                <p class="text-[11px] opacity-90 truncate mb-1">Pending Investments</p>
+                <p class="text-xl font-bold truncate">{{ format_currency($stats['totalPendingBusiness']) }}</p>
+            </div>
+            <div class="w-10 h-10 rounded bg-white/20 flex items-center justify-center shrink-0 ml-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+        </div>
+
     </div>
 
     {{-- Withdrawals Cards --}}

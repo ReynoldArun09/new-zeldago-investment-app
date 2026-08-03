@@ -57,14 +57,14 @@
             <form action="{{ route('login') }}" method="POST" class="space-y-6">
                 @csrf
                 <div>
-                    <label for="email" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Email Address</label>
+                    <label for="login_id" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Email, Phone, or Username</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="ph ph-envelope text-gray-400 text-lg"></i>
                         </div>
-                        <input type="email" id="email" name="email" value="{{ old('email') }}" class="block w-full pl-10 pr-3 py-3 border @error('email') border-red-500 @else border-gray-200 @enderror rounded-xl focus:outline-none focus:ring-2 focus-ring-primary bg-gray-50/50 transition-all text-gray-800 placeholder-gray-400" placeholder="name@example.com" required>
+                        <input type="text" id="login_id" name="login_id" value="{{ old('login_id') }}" class="block w-full pl-10 pr-3 py-3 border @error('login_id') border-red-500 @else border-gray-200 @enderror rounded-xl focus:outline-none focus:ring-2 focus-ring-primary bg-gray-50/50 transition-all text-gray-800 placeholder-gray-400" placeholder="Enter email, phone, or username" required>
                     </div>
-                    @error('email')
+                    @error('login_id')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
