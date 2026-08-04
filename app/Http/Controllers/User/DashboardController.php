@@ -73,6 +73,11 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        $agent_investors = collect();
+        if ($user->account_type === 'Agent') {
+            $agent_investors = \App\Models\User::where('sponsor_id', $user->id)->get();
+        }
+
         return view('user.dashboard', compact(
             'wallet_balance', 
             'active_referrals', 
@@ -85,7 +90,8 @@ class DashboardController extends Controller
             'user_investments',
             'active_investments_count',
             'closed_investments_count',
-            'recent_withdrawals'
+            'recent_withdrawals',
+            'agent_investors'
         ));
     }
 
