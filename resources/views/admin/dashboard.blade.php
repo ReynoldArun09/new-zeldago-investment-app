@@ -217,7 +217,8 @@
                             <th class="text-left px-5 py-3 font-medium">User</th>
                             <th class="text-left px-5 py-3 font-medium">Contact Info</th>
                             <th class="text-left px-5 py-3 font-medium">Investment</th>
-                            <th class="text-right px-5 py-3 font-medium">Amount</th>
+                            <th class="text-left px-5 py-3 font-medium">City</th>
+                            <th class="text-left px-5 py-3 font-medium">Agent</th>
                             <th class="text-right px-5 py-3 font-medium">Action</th>
                         </tr>
                     </thead>
@@ -235,11 +236,13 @@
                                 @endif
                             </td>
                             <td class="px-5 py-3">
-                                <p class="text-sm font-medium text-gray-700">#{{ $roi->investment_id ?? 'N/A' }}</p>
-                                <p class="text-xs text-gray-500">{{ format_currency($roi->investment->amount ?? 0) }}</p>
+                                <p class="text-sm font-medium text-gray-700">{{ format_currency($roi->investment->amount ?? 0) }}</p>
                             </td>
-                            <td class="px-5 py-3 text-right font-semibold text-emerald-600">
-                                {{ format_currency($roi->amount) }}
+                            <td class="px-5 py-3">
+                                <p class="text-sm text-gray-700">{{ $roi->user->city ?? 'N/A' }}</p>
+                            </td>
+                            <td class="px-5 py-3">
+                                <p class="text-sm text-gray-700">{{ $roi->user->sponsor->name ?? 'None' }}</p>
                             </td>
                             <td class="px-5 py-3 text-right">
                                 <div class="flex items-center justify-end gap-2" x-data="{ openReject: false }">
@@ -292,7 +295,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="px-5 py-8 text-center text-xs text-gray-400">No pending ROI requests</td>
+                            <td colspan="6" class="px-5 py-8 text-center text-xs text-gray-400">No pending ROI requests</td>
                         </tr>
                         @endforelse
                     </tbody>
