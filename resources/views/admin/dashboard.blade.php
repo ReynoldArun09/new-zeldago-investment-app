@@ -236,7 +236,7 @@
                             </td>
                             <td class="px-5 py-3">
                                 <p class="text-sm font-medium text-gray-700">#{{ $roi->investment_id ?? 'N/A' }}</p>
-                                <p class="text-xs text-gray-500">{{ $roi->created_at->format('M d, Y h:i A') }}</p>
+                                <p class="text-xs text-gray-500">{{ format_currency($roi->investment->amount ?? 0) }}</p>
                             </td>
                             <td class="px-5 py-3 text-right font-semibold text-emerald-600">
                                 {{ format_currency($roi->amount) }}
