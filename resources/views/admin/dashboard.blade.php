@@ -217,7 +217,8 @@
                             <th class="text-left px-5 py-3 font-medium">User</th>
                             <th class="text-left px-5 py-3 font-medium">Contact Info</th>
                             <th class="text-left px-5 py-3 font-medium">Investment</th>
-                            <th class="text-right px-5 py-3 font-medium">Amount</th>
+                            <th class="text-left px-5 py-3 font-medium">City</th>
+                            <th class="text-left px-5 py-3 font-medium">Agent</th>
                             <th class="text-right px-5 py-3 font-medium">Action</th>
                         </tr>
                     </thead>
@@ -225,21 +226,23 @@
                         @forelse($pendingRois as $roi)
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-5 py-3">
-                                <p class="font-medium text-gray-800">{{ $roi->user->name ?? 'N/A' }}</p>
-                                <p class="text-xs" style="color: var(--theme-primary);">{{ '@' . ($roi->user->username ?? '') }}</p>
+                                <p class="font-medium text-gray-800">{{ $roi->user?->name ?? 'N/A' }}</p>
+                                <p class="text-xs" style="color: var(--theme-primary);">{{ '@' . ($roi->user?->username ?? '') }}</p>
                             </td>
                             <td class="px-5 py-3">
-                                <p class="text-sm text-gray-600">{{ $roi->user->email ?? 'N/A' }}</p>
-                                @if(!empty($roi->user->phone))
-                                    <p class="text-xs text-gray-500">{{ $roi->user->phone }}</p>
+                                <p class="text-sm text-gray-600">{{ $roi->user?->email ?? 'N/A' }}</p>
+                                @if(!empty($roi->user?->phone))
+                                    <p class="text-xs text-gray-500">{{ $roi->user?->phone }}</p>
                                 @endif
                             </td>
                             <td class="px-5 py-3">
-                                <p class="text-sm font-medium text-gray-700">#{{ $roi->investment_id ?? 'N/A' }}</p>
-                                <p class="text-xs text-gray-500">{{ format_currency($roi->investment->amount ?? 0) }}</p>
+                                <p class="text-sm font-medium text-gray-700">{{ format_currency($roi->investment?->amount ?? 0) }}</p>
                             </td>
-                            <td class="px-5 py-3 text-right font-semibold text-emerald-600">
-                                {{ format_currency($roi->amount) }}
+                            <td class="px-5 py-3">
+                                <p class="text-sm text-gray-700">{{ $roi->user?->city ?? 'N/A' }}</p>
+                            </td>
+                            <td class="px-5 py-3">
+                                <p class="text-sm text-gray-700">{{ $roi->user?->sponsor?->name ?? 'None' }}</p>
                             </td>
                             <td class="px-5 py-3 text-right">
                                 <div class="flex items-center justify-end gap-2" x-data="{ openReject: false }">
@@ -292,7 +295,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="px-5 py-8 text-center text-xs text-gray-400">No pending ROI requests</td>
+                            <td colspan="6" class="px-5 py-8 text-center text-xs text-gray-400">No pending ROI requests</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -325,9 +328,9 @@
                         @forelse($recentInvestments as $inv)
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-5 py-3">
-                                <p class="font-medium text-gray-800">{{ $inv->user->name ?? 'N/A' }}</p>
-                                @if(!empty($inv->user->username))
-                                    <p class="text-xs" style="color: var(--theme-primary);">{{ '@' . $inv->user->username }}</p>
+                                <p class="font-medium text-gray-800">{{ $inv->user?->name ?? 'N/A' }}</p>
+                                @if(!empty($inv->user?->username))
+                                    <p class="text-xs" style="color: var(--theme-primary);">{{ '@' . $inv->user?->username }}</p>
                                 @endif
                             </td>
                             <td class="px-5 py-3 font-mono text-xs text-gray-600">
@@ -385,8 +388,8 @@
                         @forelse($pendingKycs as $kyc)
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-5 py-3">
-                                <p class="font-medium text-gray-800">{{ $kyc->user->name ?? 'N/A' }}</p>
-                                <p class="text-xs" style="color: var(--theme-primary);">{{ '@' . ($kyc->user->username ?? '') }}</p>
+                                <p class="font-medium text-gray-800">{{ $kyc->user?->name ?? 'N/A' }}</p>
+                                <p class="text-xs" style="color: var(--theme-primary);">{{ '@' . ($kyc->user?->username ?? '') }}</p>
                             </td>
                             <td class="px-5 py-3 text-gray-600">
                                 {{ $kyc->document_type ?? 'ID Card' }}
@@ -434,7 +437,7 @@
                                 {{ $ticket->ticket_id }}
                             </td>
                             <td class="px-5 py-3">
-                                <p class="font-medium text-gray-800">{{ $ticket->user->name ?? 'N/A' }}</p>
+                                <p class="font-medium text-gray-800">{{ $ticket->user?->name ?? 'N/A' }}</p>
                             </td>
                             <td class="px-5 py-3 text-right">
                                 <a href="{{ route('admin.support.show', $ticket->id) }}" class="text-[var(--theme-primary)] hover:underline text-xs font-medium">
@@ -476,8 +479,8 @@
                         @forelse($pendingWithdrawalsList as $withdrawal)
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-5 py-3">
-                                <p class="font-medium text-gray-800">{{ $withdrawal->user->name ?? 'N/A' }}</p>
-                                <p class="text-xs" style="color: var(--theme-primary);">{{ '@' . ($withdrawal->user->username ?? '') }}</p>
+                                <p class="font-medium text-gray-800">{{ $withdrawal->user?->name ?? 'N/A' }}</p>
+                                <p class="text-xs" style="color: var(--theme-primary);">{{ '@' . ($withdrawal->user?->username ?? '') }}</p>
                             </td>
                             <td class="px-5 py-3 text-right font-semibold text-red-600">
                                 {{ format_currency($withdrawal->amount) }}

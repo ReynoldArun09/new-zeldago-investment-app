@@ -12,9 +12,24 @@
     {{-- Top Cards --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         @foreach($levelTotals as $level => $total)
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                <p class="text-[11px] text-gray-500 font-medium mb-1">Level {{ $level }} Commissions</p>
-                <h3 class="text-lg font-bold text-[var(--theme-primary)]">{{ format_currency($total) }}</h3>
+            @php
+                $bgClass = match((int)$level) {
+                    1 => 'bg-[#0ea5e9]',
+                    2 => 'bg-[#10b981]',
+                    3 => 'bg-[#f59e0b]',
+                    4 => 'bg-[#8b5cf6]',
+                    5 => 'bg-[#ec4899]',
+                    default => 'bg-[var(--theme-primary)]',
+                };
+            @endphp
+            <div class="{{ $bgClass }} rounded-none shadow-sm flex overflow-hidden text-white h-24">
+                <div class="flex-1 p-5 flex flex-col justify-center">
+                    <p class="text-[13px] opacity-90 mb-1 font-medium">Level {{ $level }} Commissions</p>
+                    <h3 class="text-2xl font-bold">{{ format_currency($total) }}</h3>
+                </div>
+                <div class="w-20 bg-black/10 flex items-center justify-center text-3xl font-bold opacity-90">
+                    {{ $level }}
+                </div>
             </div>
         @endforeach
     </div>

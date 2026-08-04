@@ -23,7 +23,7 @@ function format_currency($amount)
     $symbol = get_setting('currency_symbol', 'Rs');
     $code = get_setting('currency_code', 'INR');
     
-    return $symbol . number_format((float)$amount, 2);
+    return $symbol . ' ' . number_format((float)$amount, 2);
 }
 
 function default_currency()

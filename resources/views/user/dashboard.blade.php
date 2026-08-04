@@ -7,7 +7,44 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div x-data="{ showAddInvestorModal: false }">
+<div x-data="{ 
+    showAddInvestorModal: false, 
+    showAddInvestmentModal: false,
+    investmentDate: '',
+    roiMonths: [],
+    generateMonths() {
+        this.roiMonths = [];
+        if (!this.investmentDate) return;
+        
+        let startDate = new Date(this.investmentDate);
+        if (isNaN(startDate.getTime())) return;
+        
+        let now = new Date();
+        let targetMonth = now.getMonth() - 1;
+        let targetYear = now.getFullYear();
+        if (targetMonth < 0) {
+            targetMonth = 11;
+            targetYear--;
+        }
+        
+        let currentMonth = startDate.getMonth();
+        let currentYear = startDate.getFullYear();
+        
+        while (currentYear < targetYear || (currentYear === targetYear && currentMonth <= targetMonth)) {
+            let lastDay = new Date(currentYear, currentMonth + 1, 0);
+            this.roiMonths.push({
+                dateStr: lastDay.getFullYear() + '-' + String(lastDay.getMonth() + 1).padStart(2, '0') + '-' + String(lastDay.getDate()).padStart(2, '0'),
+                displayStr: String(lastDay.getDate()).padStart(2, '0') + '/' + String(lastDay.getMonth() + 1).padStart(2, '0') + '/' + lastDay.getFullYear(),
+                amount: ''
+            });
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+        }
+    }
+}">
     @if(Auth::user()->contract_date && Auth::user()->contract_notify_date && \Carbon\Carbon::now()->startOfDay()->gte(\Carbon\Carbon::parse(Auth::user()->contract_notify_date)->startOfDay()))
         <div class="mb-6 py-4 px-3 rounded-none bg-red-600 border border-red-700 text-white flex items-center">
             <i class="ph ph-warning-circle text-xl text-white mr-3"></i>
@@ -44,6 +81,9 @@
             @if(Auth::user()->account_type === 'Agent')
             <button @click="showAddInvestorModal = true" class="bg-primary hover:opacity-90 text-white text-sm font-semibold py-2.5 px-4 rounded-none transition-colors border border-primary shadow-sm flex items-center gap-2">
                 <i class="ph ph-user-plus"></i> Add Investor
+            </button>
+            <button @click="showAddInvestmentModal = true" class="bg-primary hover:opacity-90 text-white text-sm font-semibold py-2.5 px-4 rounded-none transition-colors border border-primary shadow-sm flex items-center gap-2">
+                <i class="ph ph-plus-circle"></i> Add Investments
             </button>
             @endif
             <a href="{{ route('user.statements.download') }}" class="bg-indigo-100/50 hover:bg-indigo-100 text-primary text-sm font-semibold py-2.5 px-4 rounded-none transition-colors border border-indigo-100 shadow-sm flex items-center gap-2">
@@ -458,6 +498,88 @@
                             </button>
                             <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-primary hover:opacity-90 rounded-sm transition-opacity flex items-center gap-2">
                                 Add Investor
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </template>
+    <!-- Add Investment Modal -->
+    <template x-teleport="body">
+        <div x-show="showAddInvestmentModal" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <div x-show="showAddInvestmentModal" x-transition.opacity class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" @click="showAddInvestmentModal = false"></div>
+            
+            <div x-show="showAddInvestmentModal" 
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                class="relative bg-white rounded-2xl shadow-xl w-[40%] max-h-[90vh] overflow-hidden flex flex-col z-10 border border-indigo-50">
+                
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
+                    <h3 class="font-bold text-lg text-indigo-950 flex items-center gap-2">
+                        <i class="ph ph-briefcase text-primary"></i> Add Investment
+                    </h3>
+                    <button @click="showAddInvestmentModal = false" class="text-slate-400 hover:text-slate-600 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100">
+                        <i class="ph ph-x text-lg"></i>
+                    </button>
+                </div>
+
+                <div class="p-6 overflow-y-auto">
+                    <form method="POST" action="{{ route('user.network.add-investment') }}" class="space-y-6">
+                        @csrf
+                        
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Select Investor <span class="text-red-500">*</span></label>
+                            <select name="investor_id" required class="w-full bg-slate-50/50 border border-slate-200 rounded-sm px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+                                <option value="">-- Select an Investor --</option>
+                                @foreach($agent_investors as $investor)
+                                    <option value="{{ $investor->id }}">{{ $investor->name }} ({{ $investor->username }})</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Amount <span class="text-red-500">*</span></label>
+                            <input type="number" step="0.01" name="amount" required
+                                class="w-full bg-slate-50/50 border border-slate-200 rounded-sm px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Enter amount">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Investment Date <span class="text-red-500">*</span></label>
+                            <input type="date" name="investment_date" x-model="investmentDate" @change="generateMonths()" required
+                                class="w-full bg-slate-50/50 border border-slate-200 rounded-sm px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+                        </div>
+
+                        <div class="mt-4" x-show="roiMonths.length > 0">
+                            <h4 class="text-sm font-semibold text-slate-800 mb-3 border-b border-slate-100 pb-2">ROI Payouts (Till Last Month)</h4>
+                            
+                            <template x-for="(month, index) in roiMonths" :key="index">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="flex-1">
+                                        <input type="date" :name="`roi_dates[${index}]`" x-model="month.dateStr" required
+                                            class="w-full bg-slate-50/50 border border-slate-200 rounded-sm px-3 py-2 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
+                                    </div>
+                                    <div class="flex-1">
+                                        <input type="number" step="0.01" :name="`roi_amounts[${index}]`" x-model="month.amount" placeholder="ROI Payout"
+                                            class="w-full bg-slate-50/50 border border-slate-200 rounded-sm px-3 py-2 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary">
+                                    </div>
+                                    <button type="button" @click="roiMonths.splice(index, 1)" class="text-red-500 hover:text-red-700 p-2 transition-colors">
+                                        <i class="ph ph-trash text-lg"></i>
+                                    </button>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="mt-8 pt-5 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+                            <button type="button" @click="showAddInvestmentModal = false" class="px-5 py-2.5 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-sm transition-colors">
+                                Cancel
+                            </button>
+                            <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-primary hover:opacity-90 rounded-sm transition-opacity flex items-center gap-2">
+                                Save
                             </button>
                         </div>
                     </form>
