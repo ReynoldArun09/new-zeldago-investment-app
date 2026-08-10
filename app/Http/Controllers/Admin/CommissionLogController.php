@@ -31,6 +31,13 @@ class CommissionLogController extends Controller
         $referenceIds = $commissions->pluck('reference_id')->filter()->toArray();
         $sourceInvestments = \App\Models\Investment::with(['user'])->whereIn('trx_id', $referenceIds)->get()->keyBy('trx_id');
         
+        $roiLogs = \App\Models\RoiLog::with(['investment.user'])->whereIn('trx_id', $referenceIds)->get();
+        foreach ($roiLogs as $roiLog) {
+            if ($roiLog->investment) {
+                $sourceInvestments[$roiLog->trx_id] = $roiLog->investment;
+            }
+        }
+        
         $commissionSetting = CommissionSetting::first();
         $totalLevels = $commissionSetting ? $commissionSetting->level_count : 4;
         $levelTotals = [];

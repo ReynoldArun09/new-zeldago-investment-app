@@ -297,8 +297,70 @@
     @endif
 
 
-    <!-- Recent Commissions -->
+    <!-- Agent Investors Investments -->
     @if(Auth::user()->account_type === 'Agent')
+    <div class="bg-white rounded-2xl p-6 shadow-sm shadow-indigo-100/50 border border-slate-50 flex flex-col mb-8">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-sm font-bold text-indigo-950">My Investor Investments</h3>
+            <a href="{{ route('user.network.referrals') }}" class="text-xs text-primary font-semibold hover:underline">View All</a>
+        </div>
+        @if($agent_investor_investments->isEmpty())
+            <div class="flex-1 flex items-center justify-center py-10">
+                <p class="text-sm text-slate-400">No recent investments from investors</p>
+            </div>
+        @else
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-white text-xs font-bold uppercase tracking-wider" style="background-color: var(--primary);">
+                            <th class="px-5 py-3 font-medium">Investor</th>
+                            <th class="px-5 py-3 font-medium">Transaction ID</th>
+                            <th class="px-5 py-3 font-medium text-center">Status</th>
+                            <th class="px-5 py-3 font-medium text-right">Date</th>
+                            <th class="px-5 py-3 font-medium text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        @foreach($agent_investor_investments as $inv)
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="px-5 py-4">
+                                    <p class="text-sm font-bold text-indigo-950">{{ $inv->user->name ?? 'N/A' }}</p>
+                                    <p class="text-xs text-slate-500">{{ $inv->user->username ?? 'N/A' }}</p>
+                                </td>
+                                <td class="px-5 py-4">
+                                    <p class="text-sm font-bold text-indigo-950">{{ $inv->trx_id ?? 'N/A' }}</p>
+                                </td>
+                                <td class="px-5 py-4 text-center">
+                                    @if($inv->status === 'pending')
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                                            <i class="ph ph-clock text-amber-500"></i> Pending
+                                        </span>
+                                    @elseif(strtoupper($inv->status) === 'ACTIVE')
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+                                            <i class="ph ph-check-circle text-green-500"></i> Active
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200">
+                                            {{ ucfirst($inv->status) }}
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="px-5 py-4 text-right">
+                                    <p class="text-sm text-slate-600">{{ $inv->created_at->format('M d, Y') }}</p>
+                                    <p class="text-xs text-slate-400">{{ $inv->created_at->format('h:i A') }}</p>
+                                </td>
+                                <td class="px-5 py-4 text-right">
+                                    <p class="text-sm font-bold text-green-600">{{ format_currency($inv->amount) }}</p>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+    </div>
+
+    <!-- Recent Commissions -->
     <div class="bg-white rounded-2xl p-6 shadow-sm shadow-indigo-100/50 border border-slate-50 flex flex-col">
         <div class="flex justify-between items-center mb-6">
             <h3 class="text-sm font-bold text-indigo-950">Recent Commissions</h3>

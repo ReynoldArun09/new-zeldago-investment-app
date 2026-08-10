@@ -74,8 +74,14 @@ class DashboardController extends Controller
             ->get();
 
         $agent_investors = collect();
+        $agent_investor_investments = collect();
         if ($user->account_type === 'Agent') {
             $agent_investors = \App\Models\User::where('sponsor_id', $user->id)->get();
+            $agent_investor_investments = \App\Models\Investment::with('user')
+                ->whereIn('user_id', $agent_investors->pluck('id'))
+                ->latest()
+                ->take(10)
+                ->get();
         }
 
         return view('user.dashboard', compact(
@@ -91,7 +97,8 @@ class DashboardController extends Controller
             'active_investments_count',
             'closed_investments_count',
             'recent_withdrawals',
-            'agent_investors'
+            'agent_investors',
+            'agent_investor_investments'
         ));
     }
 

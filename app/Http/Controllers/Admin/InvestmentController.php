@@ -174,56 +174,11 @@ class InvestmentController extends Controller
                 'Your investment of ' . format_currency($investment->amount) . ' has been approved and is now active.',
                 'ph-check-circle'
             ));
-            
-            // Distribute MLM Commission based on Investment Amount
-            $this->distributeInvestmentCommission($investment->user, $investment->amount, $investment);
         }
 
         return redirect()->back()->with('success', 'Investment has been approved successfully.');
     }
 
-    private function distributeInvestmentCommission($user, $investmentAmount, $investment)
-    {
-        $commissionSetting = \App\Models\CommissionSetting::first();
-        if (!$commissionSetting) return;
-        
-        $levels = $commissionSetting->commissions ?? [];
-        
-        $currentSponsorId = $user->sponsor_id;
-        $level = 1;
-        
-        while ($currentSponsorId && $level <= $commissionSetting->level_count) {
-            $sponsor = \App\Models\User::find($currentSponsorId);
-            if (!$sponsor) break;
-            
-            // Dynamic Compression: Skip Normal Users
-            if (!in_array($sponsor->account_type, ['Agent', 'Root Distributor'])) {
-                $currentSponsorId = $sponsor->sponsor_id;
-                continue;
-            }
-            
-            $percentage = $levels[$level] ?? 0;
-            if ($percentage > 0) {
-                $commissionAmount = ($investmentAmount * $percentage) / 100;
-                
-                $sponsor->wallet_balance = ($sponsor->wallet_balance ?? 0) + $commissionAmount;
-                $sponsor->save();
-                
-                \App\Models\Transaction::create([
-                    'trx_id' => 'TRX-' . strtoupper(\Illuminate\Support\Str::random(10)),
-                    'user_id' => $sponsor->id,
-                    'amount' => $commissionAmount,
-                    'type' => 'COMMISSION',
-                    'description' => 'Investment Commission from Level ' . $level,
-                    'reference_id' => $investment->trx_id,
-                    'status' => 'COMPLETED',
-                ]);
-            }
-            
-            $currentSponsorId = $sponsor->sponsor_id;
-            $level++;
-        }
-    }
 
     /**
      * Reject investment
