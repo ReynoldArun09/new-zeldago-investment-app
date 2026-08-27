@@ -26,6 +26,9 @@ class DashboardController extends Controller
         // Pending ROI requests
         $pendingRois = \App\Models\RoiLog::with(['user', 'investment'])
             ->where('status', 'PENDING')
+            ->whereHas('investment', function ($query) {
+                $query->whereNotIn('status', [\App\Models\Investment::STATUS_PENDING, \App\Models\Investment::STATUS_REJECTED]);
+            })
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();

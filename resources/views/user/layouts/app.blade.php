@@ -133,14 +133,14 @@
 
                         @if(Auth::user()->account_type === 'Normal User')
                         <a href="{{ route('user.investments.create') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.investments.create') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.investments.create') ? '' : 'color: var(--sidebar-muted);' }}">
-                            <i class="ph ph-circle text-[8px]"></i> Create Investments
+                            <i class="ph ph-plus-circle"></i> Create Investments
                         </a>
                         @endif
                         <a href="{{ route('user.investments.active') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.investments.active') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.investments.active') ? '' : 'color: var(--sidebar-muted);' }}">
-                            <i class="ph ph-circle text-[8px]"></i> My Investments
+                            <i class="ph ph-list-bullets"></i> My Investments
                         </a>
                         <a href="{{ route('user.investments.closed') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.investments.closed') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.investments.closed') ? '' : 'color: var(--sidebar-muted);' }}">
-                            <i class="ph ph-circle text-[8px]"></i> Closed Investments
+                            <i class="ph ph-archive"></i> Closed Investments
                         </a>
                     </div>
                 </div>
@@ -185,6 +185,9 @@
                         @elseif(Auth::user()->account_type === 'Normal User')
                         <a href="{{ route('user.finance.transactions.roi') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.finance.transactions.roi') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.finance.transactions.roi') ? '' : 'color: var(--sidebar-muted);' }}">
                             <i class="ph ph-chart-line-up"></i> ROI Returns
+                        </a>
+                        <a href="{{ route('user.finance.transactions.direct_roi') }}" class="flex items-center gap-3 text-sm font-medium hover:text-primary transition-colors pl-6 py-2 {{ request()->routeIs('user.finance.transactions.direct_roi') ? 'text-primary' : '' }}" style="{{ request()->routeIs('user.finance.transactions.direct_roi') ? '' : 'color: var(--sidebar-muted);' }}">
+                            <i class="ph ph-hand-coins"></i> Direct Returns
                         </a>
                         @endif
                         @if(Auth::user()->account_type === 'Agent')
@@ -463,6 +466,7 @@
                     { title: 'Commissions', url: '{{ route('user.finance.transactions.commissions') }}', category: 'Finance', icon: 'ph-trend-up' },
                     @elseif(Auth::user()->account_type === 'Normal User')
                     { title: 'ROI Returns', url: '{{ route('user.finance.transactions.roi') }}', category: 'Finance', icon: 'ph-chart-line-up' },
+                    { title: 'Direct Returns', url: '{{ route('user.finance.transactions.direct_roi') }}', category: 'Finance', icon: 'ph-hand-coins' },
                     @endif
                     @if(Auth::user()->account_type === 'Agent')
                     { title: 'Withdrawals', url: '{{ route('user.finance.withdrawals') }}', category: 'Finance', icon: 'ph-money' },

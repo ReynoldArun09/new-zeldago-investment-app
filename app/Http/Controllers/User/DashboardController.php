@@ -52,9 +52,24 @@ class DashboardController extends Controller
             ->latest()
             ->take(5)
             ->get();
+            
+        // Recent Direct ROI returns
+        $recent_direct_rois = \App\Models\RoiLog::with('investment')
+            ->where('user_id', $user->id)
+            ->where('direct_roi_amount', '>', 0)
+            ->latest()
+            ->take(5)
+            ->get();
 
-        // All Investments for normal user
-        $user_investments = \App\Models\Investment::where('user_id', $user->id)
+        // Normal Investments for user
+        $user_investments = \App\Models\Investment::with('roiLogs')->where('user_id', $user->id)
+            ->where('is_old', false)
+            ->latest()
+            ->get();
+            
+        // Old Investments for user
+        $old_user_investments = \App\Models\Investment::with('roiLogs')->where('user_id', $user->id)
+            ->where('is_old', true)
             ->latest()
             ->get();
 
@@ -66,6 +81,14 @@ class DashboardController extends Controller
         $closed_investments_count = \App\Models\Investment::where('user_id', $user->id)
             ->where('status', 'COMPLETED')
             ->count();
+            
+        $old_investments_amount = \App\Models\Investment::where('user_id', $user->id)
+            ->where('is_old', true)
+            ->sum('amount');
+            
+        $total_direct_roi = \App\Models\RoiLog::where('user_id', $user->id)
+            ->where('status', 'credited')
+            ->sum('direct_roi_amount');
             
         // Recent Withdrawals
         $recent_withdrawals = \App\Models\Withdrawal::where('user_id', $user->id)
@@ -93,9 +116,13 @@ class DashboardController extends Controller
             'network_investments',
             'recent_commissions',
             'recent_rois',
+            'recent_direct_rois',
             'user_investments',
+            'old_user_investments',
             'active_investments_count',
             'closed_investments_count',
+            'old_investments_amount',
+            'total_direct_roi',
             'recent_withdrawals',
             'agent_investors',
             'agent_investor_investments'
@@ -135,16 +162,15 @@ class DashboardController extends Controller
             }
         } else {
             $columns = ['Date', 'Transaction ID', 'Plan', 'Amount', 'Status'];
-            $investments = \App\Models\Investment::with('plan')
-                ->where('user_id', $user->id)
+            $investments = \App\Models\Investment::where('user_id', $user->id)
                 ->latest()
                 ->get();
-                
+
             foreach ($investments as $inv) {
                 $data[] = [
                     $inv->created_at->format('Y-m-d H:i:s'),
                     $inv->trx_id,
-                    $inv->plan->name ?? 'N/A',
+                    'Investment',
                     $inv->amount,
                     $inv->status
                 ];

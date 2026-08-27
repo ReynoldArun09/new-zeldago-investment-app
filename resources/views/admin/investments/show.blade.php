@@ -40,7 +40,12 @@
                 <ul class="space-y-5 text-sm">
                     <li class="flex items-center justify-between">
                         <span class="text-gray-500">Transaction ID</span>
-                        <span class="font-bold text-gray-900">{{ $investment->trx_id }}</span>
+                        <div class="flex items-center gap-2">
+                            @if($investment->is_old)
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-700 uppercase border border-purple-200">Old Investment</span>
+                            @endif
+                            <span class="font-bold text-gray-900">{{ $investment->trx_id }}</span>
+                        </div>
                     </li>
                     <li class="flex items-center justify-between">
                         <span class="text-gray-500">Status</span>

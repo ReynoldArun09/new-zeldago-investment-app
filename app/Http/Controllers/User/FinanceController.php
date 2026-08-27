@@ -27,6 +27,23 @@ class FinanceController extends Controller
         return view('user.finance.transactions', compact('transactions', 'pageTitle', 'pageSubtitle'));
     }
 
+    public function directRoiTransactions()
+    {
+        if (Auth::user()->account_type !== 'Normal User') {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $roiLogs = \App\Models\RoiLog::where('user_id', Auth::id())
+            ->where('direct_roi_amount', '>', 0)
+            ->latest()
+            ->paginate(15);
+            
+        $pageTitle = 'Direct ROI Returns';
+        $pageSubtitle = 'A ledger of your direct return on investments.';
+            
+        return view('user.finance.direct_roi', compact('roiLogs', 'pageTitle', 'pageSubtitle'));
+    }
+
     public function roiTransactions()
     {
         if (Auth::user()->account_type !== 'Normal User') {

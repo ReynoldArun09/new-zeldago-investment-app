@@ -160,11 +160,13 @@ class InvestmentController extends Controller
         $investment = Investment::findOrFail($id);
         $investment->status = Investment::STATUS_ACTIVE;
         
-        $roiSetting = \App\Models\Setting::where('key', 'roi_settings')->first();
-        $settings = $roiSetting ? $roiSetting->value : [];
-        $cycleDays = (int) ($settings['cycle_days'] ?? 1);
-        // Set the next ROI date based on settings
-        $investment->next_roi_date = now()->addDays($cycleDays);
+        if (!$investment->is_old) {
+            $roiSetting = \App\Models\Setting::where('key', 'roi_settings')->first();
+            $settings = $roiSetting ? $roiSetting->value : [];
+            $cycleDays = (int) ($settings['cycle_days'] ?? 1);
+            // Set the next ROI date based on settings
+            $investment->next_roi_date = now()->addDays($cycleDays);
+        }
         
         $investment->save();
 

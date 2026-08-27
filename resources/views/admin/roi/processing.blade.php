@@ -114,6 +114,14 @@
                                                                 <input type="number" step="any" name="rate" value="{{ $log->rate }}" class="w-full rounded-lg border-gray-300 focus:border-[var(--theme-primary)] focus:ring-0 text-sm p-3" placeholder="e.g. 5">
                                                             </div>
                                                             @endif
+
+                                                            @if($log->investment && $log->investment->is_old)
+                                                            <div>
+                                                                <label class="block text-sm text-gray-600 mb-1">Direct ROI Amount</label>
+                                                                <input type="number" step="any" name="direct_roi_amount" class="w-full rounded-lg border-gray-300 focus:border-[var(--theme-primary)] focus:ring-0 text-sm p-3" placeholder="e.g. 500">
+                                                                <p class="text-[10px] text-[var(--theme-primary)] font-medium mt-1">This field is only applicable for old investments.</p>
+                                                            </div>
+                                                            @endif
                             
                                                             <p class="text-xs text-gray-500">This amount will be credited to the user's account upon approval.</p>
                                                         </div>

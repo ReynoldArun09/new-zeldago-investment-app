@@ -32,7 +32,10 @@ class RoiController extends Controller
         $totalRoiPaid = RoiLog::where('status', 'credited')->sum('amount');
         $totalRecords = RoiLog::count();
         $creditedCount = RoiLog::where('status', 'credited')->count();
-        $pendingCount = RoiLog::where('status', 'pending')->count();
+        $pendingCount = RoiLog::where('status', 'pending')
+            ->whereHas('investment', function($q) {
+                $q->whereNotIn('status', ['PENDING', 'REJECTED']);
+            })->count();
 
         return view('admin.roi.index', compact('logs', 'totalRoiPaid', 'totalRecords', 'creditedCount', 'pendingCount'));
     }
@@ -42,7 +45,12 @@ class RoiController extends Controller
      */
     public function pending(Request $request)
     {
-        $query = RoiLog::with(['user', 'investment'])->where('status', 'pending')->orderByDesc('created_at');
+        $query = RoiLog::with(['user', 'investment'])
+            ->where('status', 'pending')
+            ->whereHas('investment', function($q) {
+                $q->whereNotIn('status', ['PENDING', 'REJECTED']);
+            })
+            ->orderByDesc('created_at');
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -129,7 +137,11 @@ class RoiController extends Controller
         }
 
         if ($roiAmount <= 0) {
-            return redirect()->back()->with('error', 'Invalid ROI amount or rate provided.');
+            $hasDirectRoi = $roiLog->investment && $roiLog->investment->is_old && $request->has('direct_roi_amount') && $request->filled('direct_roi_amount') && $request->direct_roi_amount > 0;
+            
+            if (!$hasDirectRoi) {
+                return redirect()->back()->with('error', 'Invalid ROI amount or rate provided.');
+            }
         }
 
         $proofPath = null;
@@ -138,6 +150,11 @@ class RoiController extends Controller
         }
 
         $roiLog->amount = $roiAmount;
+        
+        if ($roiLog->investment && $roiLog->investment->is_old && $request->has('direct_roi_amount') && $request->filled('direct_roi_amount')) {
+            $roiLog->direct_roi_amount = (float) $request->direct_roi_amount;
+        }
+        
         $roiLog->payment_method = $request->payment_method;
         $roiLog->payment_trx_id = $request->payment_trx_id;
         $roiLog->payment_proof = $proofPath;
@@ -145,26 +162,70 @@ class RoiController extends Controller
         $roiLog->save();
 
         $user = $roiLog->user;
-        $user->wallet_balance = ($user->wallet_balance ?? 0) + $roiAmount;
-        $user->save();
+        $totalCredited = 0;
         
-        // Log transaction for ROI earning
-        \App\Models\Transaction::create([
-            'user_id' => $user->id,
-            'amount' => $roiAmount,
-            'type' => 'ROI',
-            'description' => 'ROI Credited',
-            'reference_id' => $roiLog->trx_id,
-        ]);
+        if ($roiAmount > 0) {
+            $user->wallet_balance = ($user->wallet_balance ?? 0) + $roiAmount;
+            $user->save();
+            
+            // Log transaction for ROI earning
+            \App\Models\Transaction::create([
+                'user_id' => $user->id,
+                'amount' => $roiAmount,
+                'type' => 'ROI',
+                'description' => 'ROI Credited',
+                'reference_id' => $roiLog->trx_id,
+            ]);
+            
+            $totalCredited += $roiAmount;
 
-        $user->notify(new \App\Notifications\GenericNotification(
-            'ROI Credited',
-            'Your ROI of ' . format_currency($roiAmount) . ' has been approved and credited to your wallet.',
-            'ph-trend-up'
-        ));
+            // Distribute MLM Commission based on ROI Amount
+            $this->distributeRoiCommission($user, $roiAmount, $roiLog);
+        }
 
-        // Distribute MLM Commission based on ROI Amount
-        $this->distributeRoiCommission($user, $roiAmount, $roiLog);
+        if ($roiLog->direct_roi_amount > 0) {
+            $user->wallet_balance = ($user->wallet_balance ?? 0) + $roiLog->direct_roi_amount;
+            $user->save();
+            
+            // Log transaction for Direct ROI earning
+            \App\Models\Transaction::create([
+                'user_id' => $user->id,
+                'amount' => $roiLog->direct_roi_amount,
+                'type' => 'DIRECT_ROI',
+                'description' => 'Direct ROI Credited',
+                'reference_id' => $roiLog->trx_id,
+            ]);
+            
+            $investment = $roiLog->investment;
+            if ($investment && $investment->is_old) {
+                $investment->amount = max(0, $investment->amount - $roiLog->direct_roi_amount);
+                
+                if ($investment->amount == 0) {
+                    $investment->status = \App\Models\Investment::STATUS_COMPLETED;
+                }
+                
+                $investment->save();
+                
+                // Log transaction for Principal Deduction
+                \App\Models\Transaction::create([
+                    'user_id' => $user->id,
+                    'amount' => -$roiLog->direct_roi_amount, // Negative amount to signify deduction
+                    'type' => 'PRINCIPAL_DEDUCTION',
+                    'description' => 'Principal Deduction from Old Investment',
+                    'reference_id' => $investment->trx_id,
+                ]);
+            }
+            
+            $totalCredited += $roiLog->direct_roi_amount;
+        }
+
+        if ($totalCredited > 0) {
+            $user->notify(new \App\Notifications\GenericNotification(
+                'Returns Credited',
+                'Your returns of ' . format_currency($totalCredited) . ' have been approved and credited to your wallet.',
+                'ph-trend-up'
+            ));
+        }
 
         return redirect()->back()->with('success', 'ROI approved and credited to user.');
     }
@@ -191,7 +252,8 @@ class RoiController extends Controller
 
             $percentage = $levels[$level] ?? 0;
             if ($percentage > 0) {
-                $commissionAmount = ($roiAmount * $percentage) / 100;
+                $investmentAmount = $roiLog->investment->amount ?? 0;
+                $commissionAmount = ($investmentAmount * $percentage) / 100;
 
                 $sponsor->wallet_balance = ($sponsor->wallet_balance ?? 0) + $commissionAmount;
                 $sponsor->save();

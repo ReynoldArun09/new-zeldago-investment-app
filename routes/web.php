@@ -1,18 +1,22 @@
 <?php
 
-Route::get('/run-migrations', function () {
-    if (!\Illuminate\Support\Facades\Schema::hasColumn('users', 'profile_image')) {
-        \Illuminate\Support\Facades\Schema::table('users', function (\Illuminate\Database\Schema\Blueprint $table) {
-            $table->string('profile_image')->nullable()->after('email');
-        });
-        return 'Profile Image column added successfully!';
-    }
-    
-    return 'Profile Image column already exists!';
-});
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\AuthController as UserAuthController;
+
+Route::get('/run-migrations', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', [
+            '--path' => [
+                'database/migrations/2026_08_13_113956_add_is_old_to_investments_table.php',
+                'database/migrations/2026_08_13_123939_add_direct_roi_amount_to_roi_logs_table.php'
+            ],
+            '--force' => true
+        ]);
+        return "Specific migrations executed successfully!<br><pre>" . \Illuminate\Support\Facades\Artisan::output() . "</pre>";
+    } catch (\Exception $e) {
+        return "Error running migrations: " . $e->getMessage() . "<br>File: " . $e->getFile() . " Line: " . $e->getLine();
+    }
+});
 
 Route::middleware('guest')->group(function () {
     Route::get('/', [UserAuthController::class, 'showLoginForm'])->name('login');
@@ -37,6 +41,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/genealogy', [\App\Http\Controllers\User\NetworkController::class, 'genealogy'])->name('genealogy');
         Route::post('/add-investor', [\App\Http\Controllers\User\NetworkController::class, 'addInvestor'])->name('add-investor');
         Route::post('/add-investment', [\App\Http\Controllers\User\NetworkController::class, 'addInvestment'])->name('add-investment');
+        Route::post('/add-old-investment', [\App\Http\Controllers\User\NetworkController::class, 'addOldInvestment'])->name('add-old-investment');
         Route::get('/investor/{id}/investments', [\App\Http\Controllers\User\NetworkController::class, 'investorInvestments'])->name('investor.investments');
     });
 
@@ -44,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('finance')->name('user.finance.')->group(function () {
         Route::get('/transactions/commissions', [\App\Http\Controllers\User\FinanceController::class, 'commissionTransactions'])->name('transactions.commissions');
         Route::get('/transactions/roi', [\App\Http\Controllers\User\FinanceController::class, 'roiTransactions'])->name('transactions.roi');
+        Route::get('/transactions/direct-roi', [\App\Http\Controllers\User\FinanceController::class, 'directRoiTransactions'])->name('transactions.direct_roi');
         Route::get('/withdrawals', [\App\Http\Controllers\User\FinanceController::class, 'withdrawals'])->name('withdrawals');
         Route::post('/withdrawals', [\App\Http\Controllers\User\FinanceController::class, 'submitWithdrawal'])->name('withdrawals.submit');
         Route::get('/transfer', [\App\Http\Controllers\User\FinanceController::class, 'transfer'])->name('transfer');

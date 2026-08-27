@@ -26,6 +26,7 @@ class Investment extends Model
         'roi_cycle_start_date',
         'next_roi_date',
         'duration_months',
+        'is_old',
     ];
 
     protected $casts = [
@@ -34,10 +35,16 @@ class Investment extends Model
         'amount' => 'decimal:2',
         'contribution_amount' => 'decimal:2',
         'total_return' => 'decimal:2',
+        'is_old' => 'boolean',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function roiLogs()
+    {
+        return $this->hasMany(RoiLog::class, 'investment_id');
     }
 }
