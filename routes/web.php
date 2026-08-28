@@ -190,6 +190,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/{id}/reject', [\App\Http\Controllers\Admin\RoiController::class, 'reject'])->name('roi.reject');
         });
 
+        // ROI Management (Old)
+        Route::prefix('old-roi')->name('old-roi.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\RoiController::class, 'oldIndex'])->name('index');
+            Route::get('/pending', [\App\Http\Controllers\Admin\RoiController::class, 'oldPending'])->name('pending');
+            Route::get('/processing', [\App\Http\Controllers\Admin\RoiController::class, 'oldProcessing'])->name('processing');
+        });
+
         // Investment Management
         Route::prefix('investments')->name('investments.')->group(function () {
             Route::get('/export/{status?}', [\App\Http\Controllers\Admin\InvestmentController::class, 'export'])->name('export');

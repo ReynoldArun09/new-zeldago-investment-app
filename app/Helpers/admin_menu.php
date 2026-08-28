@@ -41,6 +41,16 @@ function admin_sidebar_menu(): array
         ],
 
         [
+            'label'    => 'User Management',
+            'icon'     => 'users',
+            'children' => [
+                ['label' => 'All Investors',       'href' => '/admin/users/investors','icon' => 'user'],
+                ['label' => 'All Agents',          'href' => '/admin/users/agents',   'icon' => 'briefcase'],
+                ['label' => 'All Users',           'href' => '/admin/users',              'icon' => 'users'],
+            ],
+        ],
+
+        [
             'label'    => 'Investments',
             'icon'     => 'trending-up',
             'children' => [
@@ -54,22 +64,22 @@ function admin_sidebar_menu(): array
         ],
 
         [
-            'label'    => 'User Management',
-            'icon'     => 'users',
-            'children' => [
-                ['label' => 'All Investors',       'href' => '/admin/users/investors','icon' => 'user'],
-                ['label' => 'All Agents',          'href' => '/admin/users/agents',   'icon' => 'briefcase'],
-                ['label' => 'All Users',           'href' => '/admin/users',              'icon' => 'users'],
-            ],
-        ],
-
-        [
             'label'    => 'ROI Management',
             'icon'     => 'percent',
             'children' => [
                 ['label' => 'All ROI',             'href' => '/admin/roi',                           'icon' => 'list'],
                 ['label' => 'Pending Requests',    'href' => '/admin/roi/pending',                   'icon' => 'clock'],
                 ['label' => 'Processing Requests', 'href' => '/admin/roi/processing',                'icon' => 'settings'],
+            ],
+        ],
+
+        [
+            'label'    => 'ROI Management (Old)',
+            'icon'     => 'percent',
+            'children' => [
+                ['label' => 'All Old ROI',         'href' => '/admin/old-roi',                       'icon' => 'list'],
+                ['label' => 'Pending Requests',    'href' => '/admin/old-roi/pending',               'icon' => 'clock'],
+                ['label' => 'Processing Requests', 'href' => '/admin/old-roi/processing',            'icon' => 'settings'],
             ],
         ],
 

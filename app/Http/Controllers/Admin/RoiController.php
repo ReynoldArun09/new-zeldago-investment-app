@@ -14,7 +14,11 @@ class RoiController extends Controller
      */
     public function index(Request $request)
     {
-        $query = RoiLog::with(['user', 'investment'])->orderByDesc('created_at');
+        $query = RoiLog::with(['user', 'investment'])
+            ->whereHas('investment', function($q) {
+                $q->where('is_old', false)->orWhereNull('is_old');
+            })
+            ->orderByDesc('created_at');
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -29,12 +33,26 @@ class RoiController extends Controller
         $logs = $query->paginate(20);
 
         // Stats
-        $totalRoiPaid = RoiLog::where('status', 'credited')->sum('amount');
-        $totalRecords = RoiLog::count();
-        $creditedCount = RoiLog::where('status', 'credited')->count();
+        $totalRoiPaid = RoiLog::where('status', 'credited')
+            ->whereHas('investment', function($q) {
+                $q->where('is_old', false)->orWhereNull('is_old');
+            })->sum('amount');
+            
+        $totalRecords = RoiLog::whereHas('investment', function($q) {
+            $q->where('is_old', false)->orWhereNull('is_old');
+        })->count();
+        
+        $creditedCount = RoiLog::where('status', 'credited')
+            ->whereHas('investment', function($q) {
+                $q->where('is_old', false)->orWhereNull('is_old');
+            })->count();
+            
         $pendingCount = RoiLog::where('status', 'pending')
             ->whereHas('investment', function($q) {
-                $q->whereNotIn('status', ['PENDING', 'REJECTED']);
+                $q->whereNotIn('status', ['PENDING', 'REJECTED'])
+                  ->where(function($iq) {
+                      $iq->where('is_old', false)->orWhereNull('is_old');
+                  });
             })->count();
 
         return view('admin.roi.index', compact('logs', 'totalRoiPaid', 'totalRecords', 'creditedCount', 'pendingCount'));
@@ -48,7 +66,10 @@ class RoiController extends Controller
         $query = RoiLog::with(['user', 'investment'])
             ->where('status', 'pending')
             ->whereHas('investment', function($q) {
-                $q->whereNotIn('status', ['PENDING', 'REJECTED']);
+                $q->whereNotIn('status', ['PENDING', 'REJECTED'])
+                  ->where(function($iq) {
+                      $iq->where('is_old', false)->orWhereNull('is_old');
+                  });
             })
             ->orderByDesc('created_at');
 
@@ -74,7 +95,12 @@ class RoiController extends Controller
      */
     public function processing(Request $request)
     {
-        $query = RoiLog::with(['user', 'investment'])->where('status', 'processing')->orderByDesc('created_at');
+        $query = RoiLog::with(['user', 'investment'])
+            ->where('status', 'processing')
+            ->whereHas('investment', function($q) {
+                $q->where('is_old', false)->orWhereNull('is_old');
+            })
+            ->orderByDesc('created_at');
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -301,5 +327,110 @@ class RoiController extends Controller
         }
 
         return redirect()->back()->with('success', 'ROI request rejected and user notified.');
+    }
+
+    /**
+     * Show all OLD ROI logs
+     */
+    public function oldIndex(Request $request)
+    {
+        $query = RoiLog::with(['user', 'investment'])
+            ->whereHas('investment', function($q) {
+                $q->where('is_old', true);
+            })
+            ->orderByDesc('created_at');
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('trx_id', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($uq) use ($search) {
+                      $uq->where('username', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $logs = $query->paginate(20);
+
+        // Stats
+        $totalRoiPaid = RoiLog::where('status', 'credited')
+            ->whereHas('investment', function($q) {
+                $q->where('is_old', true);
+            })->sum('amount');
+            
+        $totalRecords = RoiLog::whereHas('investment', function($q) {
+            $q->where('is_old', true);
+        })->count();
+        
+        $creditedCount = RoiLog::where('status', 'credited')
+            ->whereHas('investment', function($q) {
+                $q->where('is_old', true);
+            })->count();
+            
+        $pendingCount = RoiLog::where('status', 'pending')
+            ->whereHas('investment', function($q) {
+                $q->whereNotIn('status', ['PENDING', 'REJECTED'])
+                  ->where('is_old', true);
+            })->count();
+
+        return view('admin.roi.old_index', compact('logs', 'totalRoiPaid', 'totalRecords', 'creditedCount', 'pendingCount'));
+    }
+
+    /**
+     * Show OLD pending ROI requests
+     */
+    public function oldPending(Request $request)
+    {
+        $query = RoiLog::with(['user', 'investment'])
+            ->where('status', 'pending')
+            ->whereHas('investment', function($q) {
+                $q->whereNotIn('status', ['PENDING', 'REJECTED'])
+                  ->where('is_old', true);
+            })
+            ->orderByDesc('created_at');
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('trx_id', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($uq) use ($search) {
+                      $uq->where('username', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $logs = $query->paginate(20);
+
+        $roiSettings = Setting::where('key', 'roi_settings')->value('value') ?? [];
+
+        return view('admin.roi.old_pending', compact('logs', 'roiSettings'));
+    }
+
+    /**
+     * Show OLD processing ROI requests
+     */
+    public function oldProcessing(Request $request)
+    {
+        $query = RoiLog::with(['user', 'investment'])
+            ->where('status', 'processing')
+            ->whereHas('investment', function($q) {
+                $q->where('is_old', true);
+            })
+            ->orderByDesc('created_at');
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('trx_id', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($uq) use ($search) {
+                      $uq->where('username', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $logs = $query->paginate(20);
+        $roiSettings = Setting::where('key', 'roi_settings')->value('value') ?? [];
+
+        return view('admin.roi.old_processing', compact('logs', 'roiSettings'));
     }
 }
