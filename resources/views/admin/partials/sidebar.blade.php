@@ -28,7 +28,11 @@
     {{-- Nav --}}
     <nav class="flex-1 overflow-y-auto px-3 py-3 space-y-0.5">
         @foreach(admin_sidebar_menu() as $item)
-            @if(isset($item['children']))
+            @if(isset($item['is_header']) && $item['is_header'])
+                <div class="px-3 pt-3 pb-1 text-[11px] font-semibold text-white/40 uppercase tracking-wider">
+                    {{ $item['label'] }}
+                </div>
+            @elseif(isset($item['children']))
                 @php $isExpanded = false; @endphp
                 <div class="sidebar-group" data-label="{{ $item['label'] }}">
                     <button type="button"

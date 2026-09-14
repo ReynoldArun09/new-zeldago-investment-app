@@ -43,20 +43,20 @@
             <div>
                 <label for="current_password" class="block text-sm font-medium text-gray-600 mb-1">Current Password <span class="text-red-500">*</span></label>
                 <input type="password" name="current_password" id="current_password" required
-                    class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                    class="block w-full px-3 py-2 bg-white border-2 border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-600 mb-1">New Password <span class="text-red-500">*</span></label>
                     <input type="password" name="password" id="password" required
-                        class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                        class="block w-full px-3 py-2 bg-white border-2 border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
                 </div>
 
                 <div>
                     <label for="password_confirmation" class="block text-sm font-medium text-gray-600 mb-1">Confirm New Password <span class="text-red-500">*</span></label>
                     <input type="password" name="password_confirmation" id="password_confirmation" required
-                        class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                        class="block w-full px-3 py-2 bg-white border-2 border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
                 </div>
             </div>
 

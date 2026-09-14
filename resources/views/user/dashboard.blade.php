@@ -10,7 +10,7 @@
 <div x-data="{ 
     showAddInvestorModal: {{ old('username') !== null && $errors->any() ? 'true' : 'false' }}, 
     showAddInvestmentModal: {{ old('investor_id') !== null && old('investment_id') === null && $errors->any() ? 'true' : 'false' }},
-    showAddOldInvestmentModal: {{ old('investment_id') !== null && $errors->any() ? 'true' : 'false' }},
+
     investmentDate: '{{ old('investment_date') }}',
     roiMonths: [],
     generateMonths() {
@@ -98,9 +98,7 @@
             <button @click="showAddInvestmentModal = true" class="bg-primary hover:opacity-90 text-white text-sm font-semibold py-2.5 px-4 rounded-none transition-colors border border-primary shadow-sm flex items-center gap-2">
                 <i class="ph ph-plus-circle"></i> Add Investments
             </button>
-            <button @click="showAddOldInvestmentModal = true" class="bg-primary hover:opacity-90 text-white text-sm font-semibold py-2.5 px-4 rounded-none transition-colors border border-primary shadow-sm flex items-center gap-2">
-                <i class="ph ph-clock-counter-clockwise"></i> Add Old Investment
-            </button>
+
             @endif
             <a href="{{ route('user.statements.download') }}" class="bg-indigo-100/50 hover:bg-indigo-100 text-primary text-sm font-semibold py-2.5 px-4 rounded-none transition-colors border border-indigo-100 shadow-sm flex items-center gap-2">
                 Download Statements
@@ -180,34 +178,34 @@
 
         @if(Auth::user()->account_type === 'Agent')
         <!-- Card 3 -->
-        <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden" style="background-color: #00a65a;">
+        <div class="flex justify-between shadow-sm h-24 rounded-sm overflow-hidden bg-white" style="border: 2px solid #00a65a; color: #00a65a;">
             <div class="p-4 flex flex-col justify-center">
                 <p class="text-xs mb-1 font-medium opacity-90">Total Commission</p>
                 <p class="text-xl font-bold tracking-wide">{{ format_currency($total_commissions) }}</p>
             </div>
-            <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0,0,0,0.1);">
+            <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0, 166, 90, 0.1);">
                 <i class="ph ph-users-three text-2xl opacity-90"></i>
             </div>
         </div>
 
         <!-- Card 4 -->
-        <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden" style="background-color: #f39c12;">
+        <div class="flex justify-between shadow-sm h-24 rounded-sm overflow-hidden bg-white" style="border: 2px solid #f39c12; color: #f39c12;">
             <div class="p-4 flex flex-col justify-center">
                 <p class="text-xs mb-1 font-medium opacity-90">Total Balance</p>
                 <p class="text-xl font-bold tracking-wide">{{ format_currency($wallet_balance) }}</p>
             </div>
-            <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0,0,0,0.1);">
+            <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(243, 156, 18, 0.1);">
                 <i class="ph ph-wallet text-2xl opacity-90"></i>
             </div>
         </div>
 
         <!-- Card 4.5 -->
-        <div class="text-white flex justify-between shadow-sm h-24 rounded-sm overflow-hidden" style="background-color: #00c0ef;">
+        <div class="flex justify-between shadow-sm h-24 rounded-sm overflow-hidden bg-white" style="border: 2px solid #00c0ef; color: #00c0ef;">
             <div class="p-4 flex flex-col justify-center">
                 <p class="text-xs mb-1 font-medium opacity-90">Total Investments</p>
                 <p class="text-xl font-bold tracking-wide">{{ format_currency($network_investments) }}</p>
             </div>
-            <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0,0,0,0.1);">
+            <div class="w-16 flex items-center justify-center shrink-0" style="background-color: rgba(0, 192, 239, 0.1);">
                 <i class="ph ph-briefcase text-2xl opacity-90"></i>
             </div>
         </div>
@@ -973,94 +971,7 @@
             </div>
         </div>
     </template>
-    <!-- Add Old Investment Modal -->
-    <template x-teleport="body">
-        <div x-show="showAddOldInvestmentModal" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div x-show="showAddOldInvestmentModal" x-transition.opacity class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" @click="showAddOldInvestmentModal = false"></div>
-            
-            <div x-show="showAddOldInvestmentModal" 
-                x-transition:enter="ease-out duration-300"
-                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                x-transition:leave="ease-in duration-200"
-                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                class="relative bg-white rounded-2xl shadow-xl w-[40%] max-h-[90vh] overflow-hidden flex flex-col z-10 border border-indigo-50">
-                
-                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
-                    <h3 class="font-bold text-lg text-indigo-950 flex items-center gap-2">
-                        <i class="ph ph-clock-counter-clockwise text-primary"></i> Add Old Investment
-                    </h3>
-                    <button @click="showAddOldInvestmentModal = false" class="text-slate-400 hover:text-slate-600 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100">
-                        <i class="ph ph-x text-lg"></i>
-                    </button>
-                </div>
 
-                <div class="p-6 overflow-y-auto">
-                    <form method="POST" action="{{ route('user.network.add-old-investment') }}" class="space-y-6">
-                        @csrf
-                        
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Select Investor <span class="text-red-500">*</span></label>
-                            <select name="investor_id" required class="w-full bg-slate-50/50 border border-slate-200 rounded-sm px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all @error('investor_id') border-red-500 @enderror">
-                                <option value="">-- Select an Investor --</option>
-                                @foreach($agent_investors as $investor)
-                                    <option value="{{ $investor->id }}" {{ old('investor_id') == $investor->id ? 'selected' : '' }}>{{ $investor->name }} ({{ $investor->username }})</option>
-                                @endforeach
-                            </select>
-                            @error('investor_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Investment ID <span class="text-red-500">*</span></label>
-                            <input type="text" name="investment_id" value="{{ old('investment_id') }}" required
-                                class="w-full bg-slate-50/50 border border-slate-200 rounded-sm px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all @error('investment_id') border-red-500 @enderror" placeholder="Enter Investment ID">
-                            @error('investment_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Amount <span class="text-red-500">*</span></label>
-                            <input type="number" step="0.01" name="amount" value="{{ old('amount') }}" required
-                                class="w-full bg-slate-50/50 border border-slate-200 rounded-sm px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all @error('amount') border-red-500 @enderror" placeholder="Enter amount">
-                            @error('amount') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Investment Date <span class="text-red-500">*</span></label>
-                            <input type="date" name="investment_date" x-model="investmentDate" @change="generateMonths()" required
-                                class="w-full bg-slate-50/50 border border-slate-200 rounded-sm px-4 py-2.5 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all @error('investment_date') border-red-500 @enderror">
-                            @error('investment_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div class="mt-4" x-show="roiMonths.length > 0">
-                            <h4 class="text-sm font-semibold text-slate-800 mb-3 border-b border-slate-100 pb-2">ROI Payouts (Till Last Month)</h4>
-                            
-                            <template x-for="(month, index) in roiMonths" :key="index">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <div class="flex-1">
-                                        <input type="date" :name="`roi_dates[${index}]`" x-model="month.dateStr" required
-                                            class="w-full bg-slate-50/50 border border-slate-200 rounded-sm px-3 py-2 text-sm text-slate-700 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all">
-                                    </div>
-                                    <button type="button" @click="roiMonths.splice(index, 1)" class="text-red-500 hover:text-red-700 p-2 transition-colors">
-                                        <i class="ph ph-trash text-lg"></i>
-                                    </button>
-                                </div>
-                            </template>
-                        </div>
-
-                        <div class="mt-8 pt-5 border-t border-slate-100 flex justify-end gap-3 shrink-0">
-                            <button type="button" @click="showAddOldInvestmentModal = false" class="px-5 py-2.5 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-sm transition-colors">
-                                Cancel
-                            </button>
-                            <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-primary hover:opacity-90 rounded-sm transition-opacity flex items-center gap-2">
-                                Save
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </template>
     @endif
 </div>
     

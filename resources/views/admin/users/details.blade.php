@@ -692,7 +692,7 @@
             </div>
 
             {{-- Verification Toggle Buttons --}}
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
+            <div class="grid grid-cols-2 sm:grid-cols-2 gap-3 mt-5">
                 {{-- Email Verification --}}
                 <div>
                     <label class="block text-xs text-gray-500 mb-1">Email Verification</label>
@@ -703,28 +703,6 @@
                         {{ $emailVerified ? 'Verified' : 'Unverified' }}
                     </button>
                     <input type="hidden" name="email_verified" id="val-email" value="{{ $emailVerified ? '1' : '0' }}">
-                </div>
-                {{-- Mobile Verification --}}
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">Mobile Verification</label>
-                    @php $mobileVerified = (bool)($user->mobile_verified ?? false); @endphp
-                    <button type="button" id="btn-mobile"
-                        onclick="toggleVerify('mobile', '{{ $mobileVerified ? '1' : '0' }}')"
-                        class="w-full py-2 rounded-none text-sm font-medium text-white transition-colors {{ $mobileVerified ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600' }}">
-                        {{ $mobileVerified ? 'Verified' : 'Unverified' }}
-                    </button>
-                    <input type="hidden" name="mobile_verified" id="val-mobile" value="{{ $mobileVerified ? '1' : '0' }}">
-                </div>
-                {{-- 2FA --}}
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">2FA Verification</label>
-                    @php $twoFa = (bool)($user->two_fa ?? false); @endphp
-                    <button type="button" id="btn-twofa"
-                        onclick="toggleVerify('twofa', '{{ $twoFa ? '1' : '0' }}')"
-                        class="w-full py-2 rounded-none text-sm font-medium text-white transition-colors {{ $twoFa ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600' }}">
-                        {{ $twoFa ? 'Enabled' : 'Disable' }}
-                    </button>
-                    <input type="hidden" name="two_fa" id="val-twofa" value="{{ $twoFa ? '1' : '0' }}">
                 </div>
                 {{-- KYC --}}
                 <div>

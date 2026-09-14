@@ -176,8 +176,6 @@ class UserController extends Controller
         if ($request->filled('country')) $user->country = $request->country;
 
         $user->email_verified_at = $request->input('email_verified') ? now() : null;
-        $user->mobile_verified   = (bool) $request->input('mobile_verified', 0);
-        $user->two_fa            = (bool) $request->input('two_fa', 0);
 
         if ($request->filled('kyc_status')) {
             $user->kyc_status = strtoupper($request->kyc_status);

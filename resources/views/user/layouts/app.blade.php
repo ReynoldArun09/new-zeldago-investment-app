@@ -3,6 +3,7 @@
     $primaryColor = $theme['primaryColor'] ?? '#8b5cf6';
     $sidebarColor = $theme['sidebarColor'] ?? '#ffffff'; 
     $bgColor = $theme['bgColor'] ?? '#ffffff';
+    
     $fontFamily = $theme['fontFamily'] ?? 'Inter, sans-serif';
     $appName = $theme['appName'] ?? 'One Planet';
     

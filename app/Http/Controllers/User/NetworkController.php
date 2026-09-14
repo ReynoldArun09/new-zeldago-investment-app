@@ -71,69 +71,6 @@ class NetworkController extends Controller
 
         return view('user.network.investor_investments', compact('investor', 'investments'));
     }
-    public function addOldInvestment(Request $request)
-    {
-        if (Auth::user()->account_type !== 'Agent') {
-            return back()->with('error', 'Unauthorized action.');
-        }
-
-        $request->validate([
-            'investor_id' => 'required|exists:users,id',
-            'investment_id' => 'required|string|unique:investments,trx_id',
-            'amount' => 'required|numeric|min:0.01',
-            'investment_date' => 'required|date',
-            'roi_dates' => 'nullable|array',
-            'roi_dates.*' => 'required|date',
-        ]);
-
-        $sponsor = Auth::user();
-        $investor = \App\Models\User::where('id', $request->investor_id)->where('sponsor_id', $sponsor->id)->first();
-
-        if (!$investor) {
-            return back()->with('error', 'Invalid investor selected.');
-        }
-
-        $investment = new \App\Models\Investment();
-        $investment->user_id = $investor->id;
-        $investment->trx_id = $request->investment_id;
-        $investment->amount = $request->amount;
-        $investment->status = \App\Models\Investment::STATUS_PENDING;
-        $investment->is_old = true;
-        $investment->roi_cycle_start_date = $request->investment_date;
-        $investment->created_at = $request->investment_date;
-        $investment->updated_at = $request->investment_date;
-        $investment->save();
-        
-        // Create historical ROI logs
-        $last_date = \Carbon\Carbon::parse($request->investment_date);
-
-        if (!empty($request->roi_dates)) {
-            foreach ($request->roi_dates as $index => $roi_date) {
-                $roi = new \App\Models\RoiLog();
-                $roi->trx_id = 'ROI-' . strtoupper(uniqid());
-                $roi->investment_id = $investment->id;
-                $roi->user_id = $investor->id;
-                $roi->amount = 0;
-                $roi->rate = 0;
-                $roi->status = 'pending'; // Needs admin approval to set amounts
-                $roi->created_at = $roi_date;
-                $roi->updated_at = $roi_date;
-                $roi->save();
-
-                $last_date = \Carbon\Carbon::parse($roi_date);
-            }
-        }
-        
-        $roiSetting = \App\Models\Setting::where('key', 'roi_settings')->first();
-        $settings = $roiSetting ? $roiSetting->value : [];
-        $cycleDays = (int) ($settings['cycle_days'] ?? 30);
-        $cycleDays = $cycleDays > 0 ? $cycleDays : 30;
-
-        $investment->next_roi_date = $last_date->copy()->addDays($cycleDays);
-        $investment->save();
-
-        return back()->with('success', 'Old investment added successfully.');
-    }
 
     public function addInvestment(Request $request)
     {

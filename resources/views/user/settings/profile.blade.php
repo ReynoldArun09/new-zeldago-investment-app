@@ -92,7 +92,7 @@
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-600 mb-1">Full Name <span class="text-red-500">*</span></label>
                     <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required
-                        class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                        class="block w-full px-3 py-2 bg-white border-2 border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
                 </div>
 
                 <!-- Email & Mobile Number -->
@@ -100,16 +100,16 @@
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-600 mb-1">Email <span class="text-red-500">*</span></label>
                         <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required
-                            class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                            class="block w-full px-3 py-2 bg-white border-2 border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
                     </div>
                     <div>
                         <label for="phone" class="block text-sm font-medium text-gray-600 mb-1">Mobile Number <span class="text-red-500">*</span></label>
                         <div class="flex">
-                            <span class="inline-flex items-center px-3 rounded-l-sm border border-r-0 border-gray-200 bg-gray-50 text-gray-500 sm:text-sm">
+                            <span class="inline-flex items-center px-3 rounded-l-sm border-2 border-r-0 border-gray-200 bg-gray-50 text-gray-500 sm:text-sm">
                                 +
                             </span>
                             <input type="text" name="phone" id="phone" value="{{ old('phone', $user->phone) }}" required
-                                class="flex-1 block w-full px-3 py-2 bg-white border border-gray-200 rounded-none rounded-r-sm focus:ring-primary focus:border-primary sm:text-sm">
+                                class="flex-1 block w-full px-3 py-2 bg-white border-2 border-gray-200 rounded-none rounded-r-sm focus:ring-primary focus:border-primary sm:text-sm">
                         </div>
                     </div>
                 </div>
@@ -118,7 +118,7 @@
                 <div>
                     <label for="address" class="block text-sm font-medium text-gray-600 mb-1">Address</label>
                     <input type="text" name="address" id="address" value="{{ old('address', $user->address) }}"
-                        class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                        class="block w-full px-3 py-2 bg-white border-2 border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
                 </div>
 
                 <!-- City & State -->
@@ -126,12 +126,12 @@
                     <div>
                         <label for="city" class="block text-sm font-medium text-gray-600 mb-1">City</label>
                         <input type="text" name="city" id="city" value="{{ old('city', $user->city) }}"
-                            class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                            class="block w-full px-3 py-2 bg-white border-2 border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
                     </div>
                     <div>
                         <label for="state" class="block text-sm font-medium text-gray-600 mb-1">State</label>
                         <input type="text" name="state" id="state" value="{{ old('state', $user->state) }}"
-                            class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                            class="block w-full px-3 py-2 bg-white border-2 border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
                     </div>
                 </div>
 
@@ -140,11 +140,11 @@
                     <div>
                         <label for="zip" class="block text-sm font-medium text-gray-600 mb-1">Zip / Postal</label>
                         <input type="text" name="zip" id="zip" value="{{ old('zip', $user->zip) }}"
-                            class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                            class="block w-full px-3 py-2 bg-white border-2 border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
                     </div>
                     <div>
                         <label for="country" class="block text-sm font-medium text-gray-600 mb-1">Country <span class="text-red-500">*</span></label>
-                        <select name="country" id="country" required class="block w-full px-3 py-2 bg-white border border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
+                        <select name="country" id="country" required class="block w-full px-3 py-2 bg-white border-2 border-gray-200 rounded-sm focus:ring-primary focus:border-primary sm:text-sm">
                             <option value="">Select country</option>
                             <option value="India" {{ old('country', $user->country) == 'India' ? 'selected' : '' }}>India</option>
                             <option value="United States" {{ old('country', $user->country) == 'United States' ? 'selected' : '' }}>United States</option>

@@ -40,6 +40,7 @@ function admin_sidebar_menu(): array
             'href'  => '/admin/dashboard',
         ],
 
+        ['is_header' => true, 'label' => 'Users'],
         [
             'label'    => 'User Management',
             'icon'     => 'users',
@@ -50,6 +51,7 @@ function admin_sidebar_menu(): array
             ],
         ],
 
+        ['is_header' => true, 'label' => 'Finance'],
         [
             'label'    => 'Investments',
             'icon'     => 'trending-up',
@@ -92,6 +94,8 @@ function admin_sidebar_menu(): array
             ],
         ],
 
+
+        ['is_header' => true, 'label' => 'Verification'],
         [
             'label'    => 'KYC Management',
             'icon'     => 'shield-check',
@@ -125,6 +129,7 @@ function admin_sidebar_menu(): array
             ],
         ],
 
+        ['is_header' => true, 'label' => 'Operations & Logs'],
         [
             'label'    => 'Reports',
             'icon'     => 'pie-chart',
@@ -154,6 +159,7 @@ function admin_sidebar_menu(): array
             'href'     => '/admin/notifications',
         ],
 
+        ['is_header' => true, 'label' => 'Settings'],
         [
             'label'    => 'System Settings',
             'icon'     => 'settings',
