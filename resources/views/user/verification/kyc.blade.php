@@ -68,12 +68,62 @@
                 <p class="text-gray-600 mt-2">Your KYC documents have been approved. Your account is fully verified.</p>
             </div>
         @else
-            <div class="p-8 text-center">
-                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
-                    <i class="ph ph-identification-card text-3xl text-gray-400"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900">No KYC Details</h3>
-                <p class="text-gray-600 mt-2">Your KYC details are managed by the administration. If you need to update them, please contact support.</p>
+            <div class="p-6 sm:p-8">
+                <h3 class="text-lg font-bold text-gray-900 mb-6 border-b pb-4">Submit KYC Details</h3>
+                
+                <form action="{{ route('user.verification.kyc.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                    @csrf
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Document Type <span class="text-red-500">*</span></label>
+                            <select name="document_type" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[var(--theme-primary)] focus:ring focus:ring-[var(--theme-primary)] focus:ring-opacity-20 transition-colors bg-gray-50/50">
+                                <option value="">Select Document Type</option>
+                                <option value="National ID" {{ old('document_type') == 'National ID' ? 'selected' : '' }}>National ID</option>
+                                <option value="Passport" {{ old('document_type') == 'Passport' ? 'selected' : '' }}>Passport</option>
+                                <option value="Driving License" {{ old('document_type') == 'Driving License' ? 'selected' : '' }}>Driving License</option>
+                                <option value="Other" {{ old('document_type') == 'Other' ? 'selected' : '' }}>Other</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Document Number <span class="text-red-500">*</span></label>
+                            <input type="text" name="document_number" value="{{ old('document_number') }}" required placeholder="e.g. A123456789" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[var(--theme-primary)] focus:ring focus:ring-[var(--theme-primary)] focus:ring-opacity-20 transition-colors bg-gray-50/50">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Country <span class="text-red-500">*</span></label>
+                            <input type="text" name="country" value="{{ old('country') }}" required placeholder="Your Country" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[var(--theme-primary)] focus:ring focus:ring-[var(--theme-primary)] focus:ring-opacity-20 transition-colors bg-gray-50/50">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Full Address <span class="text-red-500">*</span></label>
+                            <input type="text" name="address" value="{{ old('address') }}" required placeholder="Your Full Address" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[var(--theme-primary)] focus:ring focus:ring-[var(--theme-primary)] focus:ring-opacity-20 transition-colors bg-gray-50/50">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Document Front Image <span class="text-red-500">*</span></label>
+                            <input type="file" name="document_front_proof" required accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 file:transition-colors file:cursor-pointer border border-gray-200 rounded-xl p-2 bg-gray-50/50">
+                            <p class="text-xs text-gray-500 mt-2">Max size: 2MB. Format: JPG, PNG</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Document Back Image <span class="text-red-500">*</span></label>
+                            <input type="file" name="document_back_proof" required accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 file:transition-colors file:cursor-pointer border border-gray-200 rounded-xl p-2 bg-gray-50/50">
+                            <p class="text-xs text-gray-500 mt-2">Max size: 2MB. Format: JPG, PNG</p>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-100 flex justify-end">
+                        <button type="submit" class="bg-primary hover:opacity-90 text-white px-8 py-3 rounded-xl font-medium transition-colors shadow-sm flex items-center gap-2">
+                            <i class="ph ph-paper-plane-right"></i>
+                            Submit KYC Details
+                        </button>
+                    </div>
+                </form>
             </div>
         @endif
     </div>

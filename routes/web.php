@@ -71,8 +71,13 @@ Route::middleware('auth')->group(function () {
     // User Verification
     Route::prefix('verification')->name('user.verification.')->group(function () {
         Route::get('/kyc', [\App\Http\Controllers\User\VerificationController::class, 'kyc'])->name('kyc');
+        Route::post('/kyc', [\App\Http\Controllers\User\VerificationController::class, 'storeKyc'])->name('kyc.store');
+        
         Route::get('/nominee', [\App\Http\Controllers\User\VerificationController::class, 'nominee'])->name('nominee');
+        Route::post('/nominee', [\App\Http\Controllers\User\VerificationController::class, 'storeNominee'])->name('nominee.store');
+        
         Route::get('/bank', [\App\Http\Controllers\User\VerificationController::class, 'bank'])->name('bank');
+        Route::post('/bank', [\App\Http\Controllers\User\VerificationController::class, 'storeBank'])->name('bank.store');
         Route::post('/bank/confirm', [\App\Http\Controllers\User\VerificationController::class, 'confirmBank'])->name('bank.confirm');
     });
 
@@ -203,6 +208,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/details/{id}', [\App\Http\Controllers\Admin\InvestmentController::class, 'show'])->name('show');
             Route::post('/{id}/approve', [\App\Http\Controllers\Admin\InvestmentController::class, 'approve'])->name('approve');
             Route::post('/{id}/reject', [\App\Http\Controllers\Admin\InvestmentController::class, 'reject'])->name('reject');
+            Route::post('/{id}/update-roi', [\App\Http\Controllers\Admin\InvestmentController::class, 'updateRoi'])->name('update-roi');
             Route::get('/{status?}', [\App\Http\Controllers\Admin\InvestmentController::class, 'index'])->name('index');
         });
 

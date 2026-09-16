@@ -143,7 +143,7 @@ class RoiController extends Controller
         $request->validate([
             'payment_method' => 'required|string',
             'payment_trx_id' => 'required|string',
-            'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'payment_proof' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $roiLog = RoiLog::with(['user', 'investment'])->findOrFail($id);

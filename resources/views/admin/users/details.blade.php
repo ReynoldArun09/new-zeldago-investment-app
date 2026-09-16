@@ -218,10 +218,112 @@
                 </div>
             </div>
         </div>
+        
+        {{-- Investment History Button --}}
+        @if($user->account_type === 'Normal User' || empty($user->account_type))
+            <button type="button" onclick="document.getElementById('investment-history-section').classList.toggle('hidden')"
+                class="flex items-center gap-1.5 text-sm font-medium text-white px-4 py-2 rounded-none transition-colors bg-teal-500 hover:bg-teal-600 opacity-80">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                Investment History
+            </button>
+        @endif
     </div>
 
+    {{-- Investment History Section --}}
+    @if($user->account_type === 'Normal User' || empty($user->account_type))
+    <div id="investment-history-section" class="bg-white rounded-none shadow-sm p-5 sm:p-6 mb-5 hidden">
+        <div class="flex justify-between items-center mb-5 border-b border-gray-100 pb-2">
+            <h2 class="text-sm font-semibold text-gray-700">Investment History</h2>
+            <button type="button" onclick="document.getElementById('investment-history-section').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-gray-600">
+                <thead class="bg-gray-50 font-medium text-gray-700 border-b border-gray-100">
+                    <tr>
+                        <th class="px-4 py-3">Trx ID</th>
+                        <th class="px-4 py-3 text-right">Amount</th>
+                        <th class="px-4 py-3 text-right">ROI Amount</th>
+                        <th class="px-4 py-3 text-center">Status</th>
+                        <th class="px-4 py-3 text-center">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @forelse($user->investments->sortByDesc('created_at') as $inv)
+                        <tr class="hover:bg-gray-50/50">
+                            <td class="px-4 py-3 font-medium text-[var(--theme-primary)]">{{ $inv->trx_id }}</td>
+                            <td class="px-4 py-3 text-right font-bold text-emerald-600">{{ format_currency($inv->amount) }}</td>
+                            <td class="px-4 py-3 text-right">
+                                <div x-data="{ 
+                                    editMode: false, 
+                                    amount: '{{ $inv->total_roi_returned !== null ? $inv->total_roi_returned : $inv->roiLogs()->where('status', 'credited')->sum('amount') }}',
+                                    async updateRoi() {
+                                        if (this.amount === '') return;
+                                        if (!confirm('Are you sure you want to manually set this ROI amount?')) return;
+                                        try {
+                                            const response = await fetch('{{ route('admin.investments.update-roi', $inv->id) }}', {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                                },
+                                                body: JSON.stringify({ amount: this.amount })
+                                            });
+                                            if (response.ok) {
+                                                this.editMode = false;
+                                                window.location.reload();
+                                            } else {
+                                                alert('Failed to update ROI amount.');
+                                            }
+                                        } catch (e) {
+                                            alert('Error updating ROI amount.');
+                                        }
+                                    }
+                                }">
+                                    <div x-show="!editMode" class="flex items-center justify-end gap-2 group cursor-pointer" @click="editMode = true">
+                                        <span class="font-bold text-sky-600" x-text="new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amount)"></span>
+                                        <button class="text-gray-400 hover:text-sky-600 hidden group-hover:block transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                                        </button>
+                                    </div>
+                                    <div x-show="editMode" x-cloak class="flex items-center gap-1 justify-end" style="display: none;">
+                                        <input type="number" step="any" x-model="amount" class="w-24 px-2 py-1 text-xs border border-gray-300 rounded focus:border-sky-500 focus:outline-none text-right">
+                                        <button @click.stop="updateRoi()" class="text-green-600 hover:text-green-700 bg-green-50 p-1 rounded">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                                        </button>
+                                        <button @click.stop="editMode = false" class="text-red-600 hover:text-red-700 bg-red-50 p-1 rounded">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 text-center">
+                                @if(strtolower($inv->status) === 'completed')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-green-100 text-green-700 uppercase">Completed</span>
+                                @elseif(strtolower($inv->status) === 'active' || strtolower($inv->status) === 'approved')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-blue-100 text-blue-700 uppercase">Active</span>
+                                @elseif(strtolower($inv->status) === 'pending')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-700 uppercase">Pending</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-gray-100 text-gray-700 uppercase">{{ $inv->status }}</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3 text-center text-xs whitespace-nowrap">{{ $inv->created_at->format('M d, Y H:i') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-4 py-8 text-center text-gray-400">No investments found.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @endif
+
     {{-- Information --}}
-    <div class="bg-white rounded-none shadow-sm p-5 sm:p-6">
+    <div class="bg-white rounded-none shadow-sm p-5 sm:p-6 mb-5">
         <h2 class="text-sm font-semibold text-gray-700 mb-5 border-b pb-2">
             Information
         </h2>

@@ -76,12 +76,51 @@
                 </div>
             </div>
         @else
-            <div class="p-8 text-center">
-                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
-                    <i class="ph ph-users text-3xl text-gray-400"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900">No Nominee Details</h3>
-                <p class="text-gray-600 mt-2">Your nominee details are managed by the administration. If you need to update them, please contact support.</p>
+            <div class="p-6 sm:p-8">
+                <h3 class="text-lg font-bold text-gray-900 mb-6 border-b pb-4">Submit Nominee Details</h3>
+                
+                <form action="{{ route('user.verification.nominee.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                    @csrf
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nominee Name <span class="text-red-500">*</span></label>
+                            <input type="text" name="name" value="{{ old('name') }}" required placeholder="Full Name" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[var(--theme-primary)] focus:ring focus:ring-[var(--theme-primary)] focus:ring-opacity-20 transition-colors bg-gray-50/50">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Relation <span class="text-red-500">*</span></label>
+                            <select name="relation" required class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[var(--theme-primary)] focus:ring focus:ring-[var(--theme-primary)] focus:ring-opacity-20 transition-colors bg-gray-50/50">
+                                <option value="">Select Relation</option>
+                                <option value="Spouse" {{ old('relation') == 'Spouse' ? 'selected' : '' }}>Spouse</option>
+                                <option value="Parent" {{ old('relation') == 'Parent' ? 'selected' : '' }}>Parent</option>
+                                <option value="Child" {{ old('relation') == 'Child' ? 'selected' : '' }}>Child</option>
+                                <option value="Sibling" {{ old('relation') == 'Sibling' ? 'selected' : '' }}>Sibling</option>
+                                <option value="Other" {{ old('relation') == 'Other' ? 'selected' : '' }}>Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Identity Front Image <span class="text-red-500">*</span></label>
+                            <input type="file" name="identity_front_proof" required accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 file:transition-colors file:cursor-pointer border border-gray-200 rounded-xl p-2 bg-gray-50/50">
+                            <p class="text-xs text-gray-500 mt-2">Max size: 2MB. Format: JPG, PNG</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Identity Back Image <span class="text-red-500">*</span></label>
+                            <input type="file" name="identity_back_proof" required accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 file:transition-colors file:cursor-pointer border border-gray-200 rounded-xl p-2 bg-gray-50/50">
+                            <p class="text-xs text-gray-500 mt-2">Max size: 2MB. Format: JPG, PNG</p>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-100 flex justify-end">
+                        <button type="submit" class="bg-primary hover:opacity-90 text-white px-8 py-3 rounded-xl font-medium transition-colors shadow-sm flex items-center gap-2">
+                            <i class="ph ph-paper-plane-right"></i>
+                            Submit Nominee Details
+                        </button>
+                    </div>
+                </form>
             </div>
         @endif
     </div>

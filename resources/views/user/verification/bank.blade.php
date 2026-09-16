@@ -104,14 +104,62 @@
                 <p class="text-gray-600 mt-2">Your bank details have been approved. You can now make withdrawals.</p>
             </div>
         @else
-            <div class="p-8 text-center">
-                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-gray-100">
-                    <i class="ph ph-bank text-3xl text-gray-400"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900">No Bank Details</h3>
-                <p class="text-gray-600 mt-2">Your bank details are managed by the administration. If you need to update them, please contact support.</p>
+            <div class="p-6 sm:p-8">
+                <h3 class="text-lg font-bold text-gray-900 mb-6 border-b pb-4">Submit Bank Details</h3>
+                
+                <form action="{{ route('user.verification.bank.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                    @csrf
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Account Holder Name <span class="text-red-500">*</span></label>
+                            <input type="text" name="name" value="{{ old('name') }}" required placeholder="Full Name as per bank" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[var(--theme-primary)] focus:ring focus:ring-[var(--theme-primary)] focus:ring-opacity-20 transition-colors bg-gray-50/50">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Bank Name <span class="text-red-500">*</span></label>
+                            <input type="text" name="bank_name" value="{{ old('bank_name') }}" required placeholder="e.g. State Bank of India" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[var(--theme-primary)] focus:ring focus:ring-[var(--theme-primary)] focus:ring-opacity-20 transition-colors bg-gray-50/50">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Account Number <span class="text-red-500">*</span></label>
+                            <input type="text" name="account_number" value="{{ old('account_number') }}" required placeholder="Account Number" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[var(--theme-primary)] focus:ring focus:ring-[var(--theme-primary)] focus:ring-opacity-20 transition-colors bg-gray-50/50">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">IFSC Code <span class="text-red-500">*</span></label>
+                            <input type="text" name="ifsc_code" value="{{ old('ifsc_code') }}" required placeholder="IFSC Code" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[var(--theme-primary)] focus:ring focus:ring-[var(--theme-primary)] focus:ring-opacity-20 transition-colors bg-gray-50/50">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">UPI ID <span class="text-gray-400 font-normal">(Optional)</span></label>
+                            <input type="text" name="upi_id" value="{{ old('upi_id') }}" placeholder="e.g. user@ybl" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[var(--theme-primary)] focus:ring focus:ring-[var(--theme-primary)] focus:ring-opacity-20 transition-colors bg-gray-50/50">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">UPI Number <span class="text-gray-400 font-normal">(Optional)</span></label>
+                            <input type="text" name="upi_number" value="{{ old('upi_number') }}" placeholder="UPI Number" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[var(--theme-primary)] focus:ring focus:ring-[var(--theme-primary)] focus:ring-opacity-20 transition-colors bg-gray-50/50">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Passbook / Cancelled Cheque / Bank Proof Image <span class="text-red-500">*</span></label>
+                        <input type="file" name="proof_image" required accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:opacity-90 file:transition-colors file:cursor-pointer border border-gray-200 rounded-xl p-2 bg-gray-50/50">
+                        <p class="text-xs text-gray-500 mt-2">Max size: 2MB. Format: JPG, PNG</p>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-100 flex justify-end">
+                        <button type="submit" class="bg-primary hover:opacity-90 text-white px-8 py-3 rounded-xl font-medium transition-colors shadow-sm flex items-center gap-2">
+                            <i class="ph ph-paper-plane-right"></i>
+                            Submit Bank Details
+                        </button>
+                    </div>
+                </form>
             </div>
-        @endif
     </div>
 </div>
 @endsection

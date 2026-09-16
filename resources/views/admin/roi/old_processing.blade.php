@@ -101,6 +101,11 @@
                                                         
                                                         <!-- Step 1: Amount / Percentage -->
                                                         <div x-show="step === 1" class="space-y-4">
+                                                            <div class="flex items-center justify-between p-3 bg-blue-50/50 rounded-lg border border-blue-100 mb-2">
+                                                                <span class="text-sm text-gray-600 font-medium">Investment Amount:</span>
+                                                                <span class="text-base font-bold text-[var(--theme-primary)]">{{ format_currency($log->investment->amount ?? 0) }}</span>
+                                                            </div>
+                                                            
                                                             @if(in_array('manual', $roiSettings['roi_type'] ?? []))
                                                             <div>
                                                                 <label class="block text-sm text-gray-600 mb-1">ROI Payout Amount ({{ default_currency() }})</label>
@@ -142,8 +147,8 @@
                                                                 <input type="text" name="payment_trx_id" required class="w-full rounded-lg border-gray-300 focus:border-[var(--theme-primary)] focus:ring-0 text-sm p-3" placeholder="Enter Trx ID">
                                                             </div>
                                                             <div>
-                                                                <label class="block text-sm text-gray-600 mb-1">Payment Proof Image</label>
-                                                                <input type="file" name="payment_proof" accept="image/*" required class="w-full rounded-lg border-gray-300 focus:border-[var(--theme-primary)] focus:ring-0 text-sm p-2">
+                                                                <label class="block text-sm text-gray-600 mb-1">Payment Proof Image (Optional)</label>
+                                                                <input type="file" name="payment_proof" accept="image/*" class="w-full rounded-lg border-gray-300 focus:border-[var(--theme-primary)] focus:ring-0 text-sm p-2">
                                                             </div>
                                                         </div>
                                                     </div>

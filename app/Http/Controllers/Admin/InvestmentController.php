@@ -201,4 +201,20 @@ class InvestmentController extends Controller
 
         return redirect()->back()->with('success', 'Investment has been rejected.');
     }
+
+    public function updateRoi(Request $request, $id)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:0'
+        ]);
+
+        $investment = Investment::findOrFail($id);
+        $investment->total_roi_returned = $request->amount;
+        $investment->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'ROI Amount updated successfully'
+        ]);
+    }
 }

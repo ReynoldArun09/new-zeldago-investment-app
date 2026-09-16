@@ -83,9 +83,9 @@
                         @endif
                     </div>
                     <div>
-                        <label for="profile_image" class="block text-sm font-medium text-gray-700 mb-1">Profile Photo</label>
-                        <input type="file" name="profile_image" id="profile_image" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:opacity-90">
-                        <p class="text-xs text-gray-500 mt-1">JPG, JPEG, PNG or GIF (Max 2MB)</p>
+                        <label for="profile_image" class="block text-sm font-medium text-gray-700 mb-2">Profile Photo</label>
+                        <input type="file" name="profile_image" id="profile_image" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[var(--theme-primary, #4f46e5)] file:text-white hover:file:opacity-90 file:transition-colors file:cursor-pointer border border-gray-200 rounded-xl p-2 bg-gray-50/50">
+                        <p class="text-xs text-gray-500 mt-2">JPG, JPEG, PNG or GIF (Max 2MB)</p>
                     </div>
                 </div>
                 <!-- Full Name -->
