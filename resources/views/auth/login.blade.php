@@ -28,16 +28,8 @@
         body {
             font-family: var(--font-main);
             background-color: var(--body-bg);
-            /* Premium animated gradient background */
+            /* Premium gradient background */
             background: linear-gradient(-45deg, #f8fafc, #e2e8f0, var(--primary-light), #f1f5f9);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
         }
 
         .premium-card {
@@ -93,7 +85,7 @@
         <div class="absolute -bottom-40 -left-40 w-96 h-96 rounded-full opacity-20 blur-3xl mix-blend-multiply" style="background-color: var(--primary-dark);"></div>
     </div>
 
-    <div class="w-full max-w-[420px] relative z-10 my-auto">
+    <div class="w-full max-w-md relative z-10 my-auto">
         
         <div class="premium-card p-8 sm:p-10 relative overflow-hidden">
             <!-- Subtle top border accent -->
@@ -119,7 +111,7 @@
                     <label for="login_id" class="block text-xs font-bold text-slate-600 uppercase tracking-wider ml-1">Email or Username</label>
                     <div class="relative group">
                         <input type="text" id="login_id" name="login_id" value="{{ old('login_id') }}" 
-                            class="premium-input block w-full pl-11 pr-4 py-3.5 rounded-xl text-slate-800 placeholder-slate-400 font-medium outline-none" 
+                            class="premium-input block w-full pl-10 pr-4 py-3 border border-transparent rounded-xl text-slate-800 placeholder-slate-400 font-medium outline-none" 
                             placeholder="Enter your credentials" required>
                         <div class="input-icon absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors duration-300">
                             <i class="ph ph-user text-slate-400 text-lg transition-colors duration-300"></i>
@@ -137,7 +129,7 @@
                     </div>
                     <div class="relative group">
                         <input type="password" id="password" name="password" 
-                            class="premium-input block w-full pl-11 pr-11 py-3.5 rounded-xl text-slate-800 placeholder-slate-400 font-medium outline-none" 
+                            class="premium-input block w-full pl-10 pr-10 py-3 border border-transparent rounded-xl text-slate-800 placeholder-slate-400 font-medium outline-none" 
                             placeholder="••••••••" required>
                         <div class="input-icon absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors duration-300">
                             <i class="ph ph-lock-key text-slate-400 text-lg transition-colors duration-300"></i>
