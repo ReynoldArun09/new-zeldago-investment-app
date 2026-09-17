@@ -67,11 +67,7 @@ class DashboardController extends Controller
             ->latest()
             ->get();
             
-        // Old Investments for user
-        $old_user_investments = \App\Models\Investment::with('roiLogs')->where('user_id', $user->id)
-            ->where('is_old', true)
-            ->latest()
-            ->get();
+
 
         // Investment Counts
         $active_investments_count = \App\Models\Investment::where('user_id', $user->id)
@@ -118,7 +114,7 @@ class DashboardController extends Controller
             'recent_rois',
             'recent_direct_rois',
             'user_investments',
-            'old_user_investments',
+
             'active_investments_count',
             'closed_investments_count',
             'old_investments_amount',

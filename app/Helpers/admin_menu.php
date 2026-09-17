@@ -75,15 +75,6 @@ function admin_sidebar_menu(): array
             ],
         ],
 
-        [
-            'label'    => 'ROI Management (Old)',
-            'icon'     => 'percent',
-            'children' => [
-                ['label' => 'All Old ROI',         'href' => '/admin/old-roi',                       'icon' => 'list'],
-                ['label' => 'Pending Requests',    'href' => '/admin/old-roi/pending',               'icon' => 'clock'],
-                ['label' => 'Processing Requests', 'href' => '/admin/old-roi/processing',            'icon' => 'settings'],
-            ],
-        ],
 
         [
             'label'    => 'Agent Withdrawal',

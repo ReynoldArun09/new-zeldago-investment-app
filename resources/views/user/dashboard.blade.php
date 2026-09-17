@@ -338,21 +338,14 @@
             </div>
         </div>
     </div>
-    <div class="mb-8" x-data="{ invTab: 'normal' }">
+    <div class="mb-8">
         <div class="bg-white rounded-2xl p-6 shadow-sm shadow-indigo-100/50 border border-slate-50 flex flex-col">
             <div class="flex justify-between items-center mb-6">
-                <div class="flex items-center gap-4">
-                    <h3 class="text-sm font-bold text-indigo-950" x-text="invTab === 'normal' ? 'My Investments' : 'My Old Investments'">My Investments</h3>
-                    <div class="flex bg-gray-100 p-1 rounded-lg">
-                        <button @click="invTab = 'normal'" :class="invTab === 'normal' ? 'shadow-sm text-white' : 'text-gray-500 hover:text-gray-700'" :style="invTab === 'normal' ? 'background-color: var(--primary);' : ''" class="px-4 py-1.5 text-xs font-medium rounded-md transition-all">My Investments</button>
-                        <button @click="invTab = 'old'" :class="invTab === 'old' ? 'shadow-sm text-white' : 'text-gray-500 hover:text-gray-700'" :style="invTab === 'old' ? 'background-color: var(--primary);' : ''" class="px-4 py-1.5 text-xs font-medium rounded-md transition-all">My Old Investments</button>
-                    </div>
-                </div>
+                <h3 class="text-sm font-bold text-indigo-950">My Investments</h3>
                 <a href="{{ route('user.investments.active') }}" class="text-xs text-primary font-semibold hover:underline">View All</a>
             </div>
 
-            <!-- Normal Investments Tab -->
-            <div x-show="invTab === 'normal'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100">
+            <div>
                 @if($user_investments->isEmpty())
                     <div class="flex-1 flex items-center justify-center py-10">
                         <p class="text-sm text-slate-400">No active investments</p>
@@ -481,129 +474,6 @@
                     </table>
                 </div>
             @endif
-            </div>
-
-            <!-- Old Investments Tab -->
-            <div x-show="invTab === 'old'" style="display: none;" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform scale-95" x-transition:enter-end="opacity-100 transform scale-100">
-                @if($old_user_investments->isEmpty())
-                    <div class="flex-1 flex items-center justify-center py-10">
-                        <p class="text-sm text-slate-400">No old investments</p>
-                    </div>
-                @else
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="text-white text-xs font-bold uppercase tracking-wider" style="background-color: var(--primary);">
-                                    <th class="px-5 py-3 font-medium">Transaction ID</th>
-                                    <th class="px-5 py-3 font-medium">Investment Amount</th>
-                                    <th class="px-5 py-3 font-medium">Date</th>
-                                    <th class="px-5 py-3 font-medium text-center">Status</th>
-                                    <th class="px-5 py-3 font-medium text-right">Details</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-50">
-                                @foreach($old_user_investments as $inv)
-                                    <tr class="hover:bg-slate-50/50 transition-colors">
-                                        <td class="px-5 py-4">
-                                            <p class="text-sm font-bold text-indigo-950">
-                                                {{ $inv->trx_id ?? 'N/A' }}
-                                            </p>
-                                        </td>
-                                        <td class="px-5 py-4">
-                                            <p class="text-sm font-bold text-green-600">{{ format_currency($inv->amount) }}</p>
-                                        </td>
-                                        <td class="px-5 py-4">
-                                            <p class="text-sm text-slate-600">{{ $inv->created_at->format('M d, Y') }}</p>
-                                            <p class="text-xs text-slate-400">{{ $inv->created_at->format('h:i A') }}</p>
-                                        </td>
-                                        <td class="px-5 py-4 text-center">
-                                            @if($inv->status === 'pending')
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                                                    <i class="ph ph-clock text-amber-500"></i> Pending
-                                                </span>
-                                            @elseif(strtoupper($inv->status) === 'ACTIVE')
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-green-50 text-green-700 border border-green-200">
-                                                    <i class="ph ph-check-circle text-green-500"></i> Active
-                                                </span>
-                                            @else
-                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-gray-50 text-gray-700 border border-gray-200">
-                                                    {{ ucfirst($inv->status) }}
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="px-5 py-4 text-right" x-data="{ showRoiModal: false }">
-                                            <button @click="showRoiModal = true" class="text-xs font-semibold text-primary hover:underline bg-indigo-50 px-3 py-1.5 rounded-md border border-indigo-100 transition-colors hover:bg-indigo-100">View ROI</button>
-                                            
-                                            <!-- ROI Modal -->
-                                            <template x-teleport="body">
-                                                <div x-show="showRoiModal" style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                                                    <div x-show="showRoiModal" x-transition.opacity class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" @click="showRoiModal = false"></div>
-                                                    
-                                                    <div x-show="showRoiModal" 
-                                                        x-transition:enter="ease-out duration-300"
-                                                        x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                                        x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-                                                        x-transition:leave="ease-in duration-200"
-                                                        x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-                                                        x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                                                        class="relative bg-white rounded-2xl shadow-xl w-[90%] max-w-2xl max-h-[90vh] overflow-hidden flex flex-col z-10 border border-indigo-50 text-left">
-                                                        
-                                                        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 shrink-0">
-                                                            <h3 class="font-bold text-lg text-indigo-950 flex items-center gap-2">
-                                                                <i class="ph ph-chart-line-up text-primary"></i> ROI Returns - {{ $inv->trx_id ?? 'N/A' }}
-                                                            </h3>
-                                                            <button @click="showRoiModal = false" class="text-slate-400 hover:text-slate-600 transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100">
-                                                                <i class="ph ph-x text-lg"></i>
-                                                            </button>
-                                                        </div>
-                                                        
-                                                        <div class="p-6 overflow-y-auto bg-slate-50/30 flex-1">
-                                                            @if($inv->roiLogs->isEmpty())
-                                                                <div class="text-center py-8">
-                                                                    <div class="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-3">
-                                                                        <i class="ph ph-chart-line-down text-xl text-indigo-400"></i>
-                                                                    </div>
-                                                                    <p class="text-slate-500 font-medium text-sm">No ROI returns yet.</p>
-                                                                    <p class="text-slate-400 text-xs mt-1">Returns will appear here once credited.</p>
-                                                                </div>
-                                                            @else
-                                                                <div class="space-y-3">
-                                                                    @foreach($inv->roiLogs()->orderBy('created_at', 'desc')->get() as $log)
-                                                                        <div class="bg-white border border-slate-100 p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow flex justify-between items-center group">
-                                                                            <div class="flex items-center gap-4">
-                                                                                <div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                                                                                    <i class="ph ph-money text-green-600 text-lg"></i>
-                                                                                </div>
-                                                                                <div>
-                                                                                    <p class="text-sm font-bold text-slate-700">Return #{{ $loop->iteration }}</p>
-                                                                                    <p class="text-xs text-slate-500">{{ $log->created_at->format('M d, Y') }} &bull; {{ $log->created_at->format('h:i A') }}</p>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div class="text-right">
-                                                                                <p class="font-bold text-green-600">+{{ format_currency($log->amount > 0 ? $log->amount : $log->direct_roi_amount) }}</p>
-                                                                                <span class="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-medium 
-                                                                                    @if($log->status == 'credited') bg-green-100 text-green-700
-                                                                                    @elseif($log->status == 'pending') bg-yellow-100 text-yellow-700
-                                                                                    @else bg-red-100 text-red-700
-                                                                                    @endif">
-                                                                                    {{ ucfirst($log->status) }}
-                                                                                </span>
-                                                                            </div>
-                                                                        </div>
-                                                                    @endforeach
-                                                                </div>
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </template>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                @endif
             </div>
         </div>
     </div>
